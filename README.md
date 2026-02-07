@@ -1,4 +1,4 @@
-# 🏥 Hospital Management System (HMS)
+# Hospital Management System (HMS)
 
 > **A Comprehensive Academic Project:** Enterprise-Grade Hospital Operating System with Push-Intelligence Architecture
 
@@ -8,26 +8,26 @@
 
 ---
 
-## 🎯 PROJECT OVERVIEW
+## PROJECT OVERVIEW
 
 The **Hospital Management System (HMS)** is a next-generation hospital operating system designed to transition healthcare facilities from **reactive information-pull** architectures to **proactive push-intelligence ecosystems**. Built as an academic project with production-grade engineering principles, HMS demonstrates how distributed systems, event-driven architecture, and real-time data orchestration can revolutionize hospital operations.
 
-### 🌐 **LIVE DEMO**
+### LIVE DEMO
 **[View Live Website →](https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/index.html)**
 
-> 💡 **Note:** Explore the interactive animated architecture blueprint showcasing the complete hospital ecosystem design.
+> **Note:** Explore the interactive animated architecture blueprint showcasing the complete hospital ecosystem design.
 
 ---
 
-## ✨ KEY FEATURES
+## KEY FEATURES
 
-### 🔄 **Push-Intelligence Paradigm**
+### Push-Intelligence Paradigm
 - Real-time event-driven alerts instead of manual dashboard searching
 - WebSocket-based instant notifications to relevant staff
 - Critical value alerts for diagnostic results
 - Automatic task dispatch and resource optimization
 
-### 🏗️ **Modular Architecture**
+### Modular Architecture
 - **Clinical Division** - Smart CPOE with atomic order integrity
 - **Diagnostic Division** - Result streaming with push alerts
 - **Logistics Division** - Intelligent task dispatch engine
@@ -36,21 +36,21 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 - **Revenue Division** - Synchronized ledger preventing financial leakage
 - **HR & Governance** - Executive dashboards with institutional analytics
 
-### 🔐 **Security & Compliance**
+### Security & Compliance
 - HIPAA/HL7/FHIR privacy standards
 - Break-Glass protocol with dual-signature access elevation
 - JWT-based RBAC (Role-Based Access Control)
 - 256-bit AES encrypted tunnels
 - Automated audit trails and compliance reporting
 
-### ⚡ **High-Performance Infrastructure**
+### High-Performance Infrastructure
 - Hybrid Backend: Java (ACID) + Node.js (WebSocket)
 - PostgreSQL 16+ with ACID-compliant transactions
 - HikariCP connection pooling with WAL recovery
 - 16GB dedicated edge hardware deployment
 - Sub-millisecond local data retrieval
 
-### 🎨 **Modern User Experience**
+### Modern User Experience
 - Mobile-first responsive design
 - Smooth 60fps animations with GPU acceleration
 - Glass-morphism UI with vibrant gradients
@@ -59,7 +59,7 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ---
 
-## 🛠️ TECHNOLOGY STACK
+## TECHNOLOGY STACK
 
 | Layer | Technology |
 |-------|------------|
@@ -74,7 +74,7 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ---
 
-## 📊 ARCHITECTURE OVERVIEW
+## ARCHITECTURE OVERVIEW
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -102,26 +102,26 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ---
 
-## 🎓 ACADEMIC PURPOSE
+## ACADEMIC PURPOSE
 
 This project demonstrates:
 
-✅ **System Design Excellence** - How to architect complex, distributed healthcare systems
-✅ **Real-Time Architecture** - Event-driven patterns with WebSocket orchestration  
-✅ **Database Integrity** - ACID compliance, transaction management, WAL recovery
-✅ **Security Best Practices** - HIPAA compliance, authentication, authorization
-✅ **Frontend Performance** - 60fps animations, GPU acceleration, responsive design
-✅ **DevOps & Deployment** - CI/CD pipelines, automated builds, production readiness
+- **System Design Excellence** - How to architect complex, distributed healthcare systems
+- **Real-Time Architecture** - Event-driven patterns with WebSocket orchestration  
+- **Database Integrity** - ACID compliance, transaction management, WAL recovery
+- **Security Best Practices** - HIPAA compliance, authentication, authorization
+- **Frontend Performance** - 60fps animations, GPU acceleration, responsive design
+- **DevOps & Deployment** - CI/CD pipelines, automated builds, production readiness
 
 **Intended Audience:**
-- 🎓 Computer Science Students - Study advanced system architecture
-- 👨‍🏫 Educators - Teach enterprise software engineering principles
-- 🏢 Companies - Evaluate technical capabilities and architectural thinking
-- 👨‍💼 Recruiters - Assess engineering depth and full-stack proficiency
+- Computer Science Students - Study advanced system architecture
+- Educators - Teach enterprise software engineering principles
+- Companies - Evaluate technical capabilities and architectural thinking
+- Recruiters - Assess engineering depth and full-stack proficiency
 
 ---
 
-## 📁 PROJECT STRUCTURE
+## PROJECT STRUCTURE
 
 ```
 Hospital-Management-System/
@@ -129,7 +129,7 @@ Hospital-Management-System/
 ├── README.md                        # This file
 ├── .gitignore                       # Git ignore rules
 │
-└── planning/                        # 📋 PLANNING & DEVELOPMENT
+└── planning/                        # PLANNING & DEVELOPMENT
     ├── index.html                   # Source document
     ├── style.css                    # Source styles (local only)
     ├── animations.css               # Source animations (local only)
@@ -137,13 +137,13 @@ Hospital-Management-System/
     ├── plan.txt                     # Project planning notes
     ├── build-minify.ps1             # CSS/JS minification script
     │
-    ├── assets/                      # 🖼️ Images
+    ├── assets/                      # Images
     │   ├── background.png
     │   ├── health\ monitor.png
     │   ├── monitoring.png
     │   └── reception.png
     │
-    └── dist/                        # 🚀 PRODUCTION (Minified)
+    └── dist/                        # PRODUCTION (Minified)
         ├── index.html               # Production document
         ├── css/
         │   ├── style.min.css        (30% reduction)
@@ -154,7 +154,7 @@ Hospital-Management-System/
 
 ---
 
-## 🚀 QUICK START
+## QUICK START
 
 ### 1. **View Live Website**
 Visit: https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/
@@ -188,27 +188,27 @@ The `dist/` folder contains optimized production files ready for deployment.
 
 ---
 
-## 🎬 FEATURES SHOWCASE
+## FEATURES SHOWCASE
 
-### ✨ Animated Hero Section
+### Animated Hero Section
 - Vibrant multi-layer gradient backgrounds
 - 12-second color-shifting animation cycle
 - Smooth 60fps performance with GPU acceleration
 - Responsive design for all devices
 
-### 📝 Typewriter Effect
+### Typewriter Effect
 - Infinite looping text animation
 - Gradient text transition effects
 - Character-by-character reveal timing
 - Professional presentation layer
 
-### 🎯 Scroll Triggered Animations
+### Scroll Triggered Animations
 - Role tag reveals with stagger effect
 - Content fade-ins as you scroll
 - Glowing border animations
 - Smooth scroll performance with requestAnimationFrame
 
-### 🎨 Premium UI Design
+### Premium UI Design
 - Glass-morphism effect cards
 - Vibrant blue gradient ecosystem
 - Professional typography hierarchy
@@ -226,7 +226,7 @@ For in-depth information about:
 
 ---
 
-## 👥 PROJECT TEAM
+## PROJECT TEAM
 
 | Role | Name | Responsibility |
 |------|------|-----------------|
@@ -238,21 +238,21 @@ For in-depth information about:
 
 ---
 
-## 📜 LICENSE
+## LICENSE
 
 This project is licensed under the **HMS Academic License v1.0** - See [LICENSE](LICENSE) file for details.
 
 **Key Points:**
-- ✅ Educational and learning purposes
-- ✅ Academic and institutional analysis
-- ✅ Company technical evaluation
-- ❌ **NO** commercial use without written permission
-- ❌ **NO** production healthcare deployment
-- ⚠️ Unauthorized code = repository stripping
+- Educational and learning purposes
+- Academic and institutional analysis
+- Company technical evaluation
+- NO commercial use without written permission
+- NO production healthcare deployment
+- Unauthorized code = repository stripping
 
 ---
 
-## 🔗 IMPORTANT LINKS
+## IMPORTANT LINKS
 
 - 🌐 **Live Demo:** [Visit Website](https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/index.html)
 - 📖 **GitHub Repository:** https://github.com/koushaljhacs/Hospital-Management-System
@@ -261,7 +261,7 @@ This project is licensed under the **HMS Academic License v1.0** - See [LICENSE]
 
 ---
 
-## ⚠️ DISCLAIMER
+## DISCLAIMER
 
 **This is an EDUCATIONAL PROJECT ONLY.** 
 
@@ -273,7 +273,7 @@ This project is licensed under the **HMS Academic License v1.0** - See [LICENSE]
 
 ---
 
-## 🤝 CONTRIBUTING
+## CONTRIBUTING
 
 Contributions welcome! Please:
 
@@ -287,7 +287,7 @@ All contributors will be acknowledged in the project.
 
 ---
 
-## 📧 CONTACT & INQUIRIES
+## CONTACT & INQUIRIES
 
 For:
 - 📞 **General Questions** - Open a GitHub issue
@@ -297,9 +297,9 @@ For:
 
 ---
 
-## ⭐ SHOW YOUR SUPPORT
+## SHOW YOUR SUPPORT
 
-If you find this project useful for learning, please give it a star! ⭐
+If you find this project useful for learning, please give it a star!
 
 Your support helps others discover this comprehensive healthcare system architecture example.
 
@@ -307,7 +307,7 @@ Your support helps others discover this comprehensive healthcare system architec
 
 <div align="center">
 
-### 🏥 Hospital Management System (HMS)
+### Hospital Management System (HMS)
 ### *Enterprise-Grade Architecture for Academic Excellence*
 
 **© 2026 KOUSHAL JHA | All Rights Reserved**
