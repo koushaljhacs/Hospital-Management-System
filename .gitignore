@@ -3,6 +3,12 @@ node_modules/
 build/
 temp/
 
+# Root level files - keep everything in planning/ folder only
+index.html
+css/
+js/
+assets/
+
 # Source CSS and JS files (keep minified versions in dist/ only)
 planning/style.css
 planning/animations.css
