@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMS Architectural Blueprint | Koushal Jha</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0052cc;
+            --secondary-teal: #00a3bf;
+            --dark-bg: #091e42;
+            --glass-white: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --nav-height: 80px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #172b4d;
+            background: #f4f7fa;
+            background-image:
+                fixed-radial-gradient(at 0% 0%, rgba(0, 82, 204, 0.15) 0px, transparent 50%),
+                fixed-radial-gradient(at 100% 100%, rgba(0, 163, 191, 0.15) 0px, transparent 50%);
+            scroll-behavior: smooth;
+            line-height: 1.8;
+            overflow-x: hidden;
+            perspective: 3000px;
+        }
+
+        /* Expanded Horizontal Workspace */
+        .container-fluid {
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+
+        /* Fixed Navigation Adjustment */
+        section {
+            scroll-margin-top: calc(var(--nav-height) + 40px);
+            padding: 10rem 0;
+            opacity: 0;
+            transform: translateY(120px) scale(0.98);
+            transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        section.reveal {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* 3D Glass Header */
+        .navbar {
+            height: var(--nav-height);
+            background: rgba(9, 30, 66, 0.92);
+            backdrop-filter: blur(25px) saturate(200%);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 2500;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--secondary-teal) !important;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0.5rem 0.8rem !important;
+        }
+
+        .dropdown-menu {
+            background: rgba(9, 30, 66, 0.98);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+            min-width: 280px;
+        }
+
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--secondary-teal);
+            transform: translateX(10px);
+        }
+
+        @media (min-width: 992px) {
+            .nav-item.dropdown:hover .dropdown-menu {
+                display: block;
+            }
+        }
+
+        /* ADVANCED HERO: Neural Interactive 3D Section with Positioning Fix */
+        .hero {
+            background: linear-gradient(145deg, #091e42 0%, #001529 100%);
+            color: white;
+            min-height: 100vh;
+            padding: var(--nav-height) 1rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-interactive-layer {
+            position: relative;
+            z-index: 10;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            width: 100%;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 5.5rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 2.5rem;
+            line-height: 1.1;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            background: linear-gradient(90deg, #fff 0%, #a5adba 50%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: translateZ(150px);
+            filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
+            animation: textShiny 8s linear infinite;
+        }
+
+        @keyframes textShiny {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .hero-lead {
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            transform: translateZ(100px);
+            transition: all 0.4s ease;
+        }
+
+        .stat-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateZ(130px) rotateY(10deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* SH 3D "Recessive/Hole" Transition for Containers */
+        .content-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(25px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 4.5rem;
+            height: 100%;
+            transition: all 0.6s cubic-bezier(0.2, 0, 0, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 40px 100px rgba(9, 30, 66, 0.15);
+            cursor: pointer;
+        }
+
+        .content-card:hover {
+            transform: translateZ(-60px) scale(0.97);
+            box-shadow:
+                inset 0 20px 60px rgba(0, 0, 0, 0.15),
+                0 10px 20px rgba(9, 30, 66, 0.05);
+            border-color: rgba(0, 163, 191, 0.5);
+            background: rgba(255, 255, 255, 0.65);
+        }
+
+        .section-title {
+            font-weight: 800;
+            font-size: 3.2rem;
+            margin-bottom: 7rem;
+            color: var(--dark-bg);
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        /* Logic Blocks */
+        .logic-block {
+            background: rgba(9, 30, 66, 0.08);
+            border-left: 6px solid var(--primary-blue);
+            padding: 2.5rem 3rem;
+            margin: 2.5rem 0;
+            border-radius: 4px 30px 30px 4px;
+            font-size: 1.1rem;
+        }
+
+        /* FIXED: STRUCTURAL BORDER REMOVAL FOR 1.2 AND 4 */
+        #latent-analysis .logic-block,
+        #solutions .logic-block {
+            border-left: none !important;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 82, 204, 0.2);
+            border-radius: 30px;
+            box-shadow: inset 0 2px 20px rgba(255, 255, 255, 1);
+        }
+
+        .tech-spec {
+            font-family: 'JetBrains Mono', monospace;
+            background: #091e42;
+            color: #4c9aff;
+            padding: 2.2rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            border-bottom: 5px solid var(--secondary-teal);
+            margin-top: 2rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            transform: translateZ(40px);
+        }
+
+        .role-tag {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px 25px;
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .role-tag:hover {
+            transform: translateY(-12px) translateZ(30px) scale(1.15);
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 20px 40px rgba(0, 82, 204, 0.4);
+        }
+
+        /* ROADMAP GEOMETRIC AXIS RE-ENGINEERING */
+        .roadmap-container {
+            position: relative;
+            padding-left: 140px;
+            margin-left: 1rem;
+        }
+
+        .roadmap-track {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 120px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .roadmap-axis-line {
+            width: 10px;
+            height: 100%;
+            background: var(--secondary-teal);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .roadmap-bubble {
+            position: absolute;
+            left: 50%;
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle, #00fff2 0%, #00a3bf 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 35px #00fff2, 0 0 10px #00fff2;
+            z-index: 5;
+            animation: bubbleSlideFlow 10s infinite linear;
+            opacity: 0;
+            transform: translateX(-50%);
+        }
+
+        @keyframes bubbleSlideFlow {
+            0% {
+                top: 0%;
+                opacity: 0;
+                transform: translateX(-50%) scale(0.5);
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            95% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+                transform: translateX(-50%) scale(2);
+            }
+        }
+
+        .roadmap-step {
+            position: relative;
+            margin-bottom: 12rem;
+            transform-style: preserve-3d;
+        }
+
+        .roadmap-step::before {
+            content: '';
+            position: absolute;
+            left: -80px;
+            top: 5px;
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            border: 10px solid var(--secondary-teal);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(0, 163, 191, 1);
+            z-index: 10;
+            transform: translateX(-50%);
+        }
+
+        /* Footer Architect Highlighting */
+        .footer {
+            background: #040812;
+            color: white;
+            padding: 12rem 1rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-architect-info {
+            max-width: 800px;
+            margin: 0 auto 5rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+            margin: 0 15px;
+        }
+
+        .footer-link:hover {
+            color: var(--secondary-teal);
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .roadmap-container {
+                padding-left: 80px;
+            }
+
+            .roadmap-track {
+                width: 60px;
+            }
+
+            .roadmap-step::before {
+                width: 44px;
+                height: 44px;
+                border-width: 6px;
+                left: -50px;
+            }
+
+            .roadmap-bubble {
+                width: 18px;
+                height: 18px;
+                left: 50%;
+            }
+        }
+
+        /* Image Styles */
+        img {
+            max-width: 100%;
+            height: auto;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .img-fluid {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-card img {
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-card img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR WITH COMPREHENSIVE DROPDOWNS -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid px-lg-5">
+            <a class="navbar-brand" href="#intro"><i class="fas fa-microchip me-3"></i> HMS CORE OS</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#intro-content"
+                            data-bs-toggle="dropdown">Introduction</a>
+                        <ul class="dropdown-menu shadow-lg border-0">
+                            <li><a class="dropdown-item" href="#intro-1-1">1.1 Healthcare Crisis</a></li>
+                            <li><a class="dropdown-item" href="#latent-analysis-header">1.2 Latent Friction Analysis</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#intro-content">1.3 Mission Statement</a></li>
+                            <li><a class="dropdown-item" href="#intro-content">1.4 Technological Sovereignty</a></li>
+                            <li><a class="dropdown-item" href="#intro-content">1.5 Push-Intelligence Paradigm</a></li>
+                            <li><a class="dropdown-item" href="#intro-content">1.6 Governance & Privacy</a></li>
+                            <li><a class="dropdown-item" href="#intro-content">1.7 Local-Edge Pipeline</a></li>
+                            <li><a class="dropdown-item" href="#intro-content">1.8 Scalability Philosophy</a></li>
+                            <li>
+                                <img src="assets/hospital-atrium.webp" alt="Hospital Atrium Vision" class="img-fluid rounded-3 mt-2" style="max-height: 180px; width: 100%; object-fit: cover;">
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#ecosystem" data-bs-toggle="dropdown">Ecosystem</a>
+                        <ul class="dropdown-menu shadow-lg border-0">
+                            <li><a class="dropdown-item" href="#eco-2-1">2.1 Conceptual Overview</a></li>
+                            <li><a class="dropdown-item" href="#role-defs">2.2 Role Definitions</a></li>
+                            <li><a class="dropdown-item" href="#journey">2.3 Patient Journey Mapping</a></li>
+                            <li><a class="dropdown-item" href="#hardware">2.4 Hardware Strategy</a></li>
+                            <li><a class="dropdown-item" href="#team">2.5 Engineering Team</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#architecture"
+                            data-bs-toggle="dropdown">Architecture</a>
+                        <ul class="dropdown-menu shadow-lg border-0">
+                            <li><a class="dropdown-item" href="#arch-3-1">3.1 Clinical Division</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-2">3.2 Diagnostic Division</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-3">3.3 Logistics Division</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-4">3.4 In-Patient Division</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-5">3.5 Pharmacy & Store</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-6">3.6 Revenue Division</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-7">3.7 HR & Governance</a></li>
+                            <li><a class="dropdown-item" href="#arch-3-8">3.8 System Pulse Logic</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#solutions" data-bs-toggle="dropdown">Solutions</a>
+                        <ul class="dropdown-menu shadow-lg border-0">
+                            <li><a class="dropdown-item" href="#sol-4-1">4.1 UX Optimization</a></li>
+                            <li><a class="dropdown-item" href="#sol-4-2">4.2 Break-Glass Security</a></li>
+                            <li><a class="dropdown-item" href="#sol-4-3">4.3 WebSocket Alerts</a></li>
+                            <li><a class="dropdown-item" href="#sol-4-4">4.4 Resource Coordination</a></li>
+                            <li><a class="dropdown-item" href="#sol-4-6">4.6 Atomic Transactions</a></li>
+                            <li><a class="dropdown-item" href="#sol-4-8">4.8 Institutional Analytics</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <img src="assets/hms-dashboard.webp" alt="HMS Dashboard" class="img-fluid rounded-3 mt-2" style="max-height: 180px; width: 100%; object-fit: cover;">
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#techstack">System</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#conclusion">Impact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#roadmap">Roadmap</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#standards">AI & Standards</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN WRAPPER -->
+    <main class="main-content">
+
+        <!-- HERO -->
+        <header class="hero" id="intro">
+            <canvas id="hero-canvas"></canvas>
+            <div class="container-fluid position-absolute top-50 start-50 translate-middle opacity-25 z-0">
+                <img src="assets/tech-bg.webp" alt="Technology Architecture Background" class="img-fluid rounded-4" style="max-height: 500px; opacity: 0.4;">
+            </div>
+            <div class="container-fluid hero-interactive-layer" id="hero-tilt-box">
+                <div
+                    class="mb-5 d-inline-block px-5 py-2 rounded-pill bg-primary bg-opacity-20 text-white border border-primary border-opacity-40 shadow-lg">
+                    <small class="fw-bold text-uppercase tracking-widest">Architectural Dossier 2026</small>
+                </div>
+                <h1 class="hero-title">Hospital Management System</h1>
+                <p class="hero-lead">Transitioning Healthcare from Information Search to a Proactive Push-Intelligence
+                    Ecosystem. A multi-engine orchestration platform designed for clinical absolute integrity.</p>
+
+                <div class="d-flex flex-wrap justify-content-center gap-5 mt-5">
+                    <div class="stat-pill"><small class="d-block opacity-60 text-uppercase fw-extrabold mb-2">Hybrid
+                            Backend</small><span class="h4 mb-0 fw-900">Java & Node.js</span></div>
+                    <div class="stat-pill"><small class="d-block opacity-60 text-uppercase fw-extrabold mb-2">DB
+                            Logic</small><span class="h4 mb-0 fw-900">PostgreSQL 16+</span></div>
+                    <div class="stat-pill"><small class="d-block opacity-60 text-uppercase fw-extrabold mb-2">Edge
+                            Host</small><span class="h4 mb-0 fw-900">16GB Dedicated</span></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 1. INTRODUCTION (FULLY DETAILED 1.1 - 1.8) -->
+        <section id="intro-content">
+            <div class="container-fluid">
+                <h2 class="section-title">1. Architectural Vision & Necessity</h2>
+                <div class="row g-5">
+                    <div class="col-lg-7">
+                        <h4 id="intro-1-1">1.1 THE CONTEMPORARY HEALTHCARE CRISIS: INFORMATION LATENCY</h4>
+                        <p>In the contemporary global healthcare landscape, the primary challenge has evolved from "how
+                            to store data" to "how to mobilize data." While medical science has achieved unprecedented
+                            diagnostic precision, the operational framework of the average hospital remains trapped in a
+                            legacy of asynchronous communication. We define this as the "Diagnostic-Operational Gap."
+                            Modern hospitals generate millions of data points, yet most of this intelligence remains
+                            "latent"—sitting in a database until a human manually queries it. This project is
+                            specifically engineered to transition the healthcare facility from a reactive posture to a
+                            proactive, event-driven ecosystem.</p>
+
+                        <h4 class="mt-5" id="latent-analysis-header">1.2 DEEP-LAYER ANALYSIS OF "LATENT FRICTION" &
+                            SYSTEMIC LOSS</h4>
+                        <div id="latent-analysis">
+                            <p>Through extensive industry modeling, we have identified "Latent Friction" as the single
+                                greatest threat to hospital sustainability. Friction is not merely a delay; it is the
+                                physical and financial cost of desynchronization. We categorize these failures into
+                                three high-impact domains:</p>
+                            <div class="logic-block"><strong>A. CLINICAL DEGRADATION:</strong> In life-critical
+                                scenarios (Sepsis, Cardiac events), the "pull-based" workflow where doctors must
+                                manually refresh screens to find lab updates leads to catastrophic delays in
+                                intervention.</div>
+                            <div class="logic-block"><strong>B. OPERATIONAL STAGNATION (THE THROUGHPUT
+                                    BOTTLENECK):</strong> "Artificial Full Capacity" occurs when beds are physically
+                                empty but labeled as "In-Maintenance" because the sanitization staff is not digitally
+                                synced with the administration.</div>
+                            <div class="logic-block"><strong>C. FINANCIAL LEAKAGE (THE DESYNCHRONIZED LEDGER):</strong>
+                                Significant revenue loss occurs when clinical actions (medication administration at the
+                                bedside) and financial events (billing/audit) are disconnected, leading to unbilled
+                                consumables.</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="content-card">
+                            <h4 id="intro-1-3" class="mb-4 fw-900">1.3 THE MISSION: TRANSITIONING TO AN EVENT-DRIVEN
+                                ECOSYSTEM</h4>
+                            <p>The mission of this project is to implement a "Smart Clinical Nervous System." This
+                                represents a paradigm shift from a "Software Product" to a "Hospital Operating System."
+                                We are architecting a platform where every user role is a node in a real-time network.
+                                By closing the visibility gap between front-office registration and back-office facility
+                                management, we maximize institutional throughput.</p>
+                            <hr class="my-5 opacity-10">
+                            <h4 id="intro-1-4" class="mb-3 fw-900">1.4 TECHNOLOGICAL SOVEREIGNTY: THE ZERO-COST
+                                INFRASTRUCTURE MANDATE</h4>
+                            <p class="small mb-0 opacity-80">As a Principal Architect-led initiative, we have rejected
+                                "Off-the-shelf" software in favor of a bespoke, Hybrid-Backend architecture that ensures
+                                <strong>Performance vs. Integrity</strong>, <strong>Data Sovereignty</strong>, and a
+                                <strong>Zero-Payment Logic</strong> using professional open-source tools.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5 pt-5 g-5">
+                    <div class="col-md-6">
+                        <h4>1.5 MISSION-CRITICAL OBJECTIVE: THE "PUSH-INTELLIGENCE" PARADIGM</h4>
+                        <p>Our ultimate objective is to eliminate "Information Searching." We move away from the
+                            traditional dashboard model to a "Push-Intelligence" model. In this paradigm, the system
+                            actively identifies critical lab values and logistical bottlenecks instantly.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>1.6 GOVERNANCE, PRIVACY, AND REGULATORY ALIGNMENT (HIPAA/HL7)</h4>
+                        <p>This project is built on the foundation of "Privacy by Design." We incorporate international
+                            standards (HIPAA/HL7) to ensure that Electronic Health Records (EHR) are encrypted, audited,
+                            and accessible only via verified RBAC.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>1.7 IMPLEMENTATION STRATEGY: THE LOCAL-EDGE PIPELINE OVERVIEW</h4>
+                        <p>To ensure the system remains agile, we implement a modern DevOps lifecycle on our local-edge
+                            hardware. Through a customized CI/CD pipeline, system updates are deployed with zero
+                            downtime.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>1.8 SCALABILITY AND INTEROPERABILITY PHILOSOPHY</h4>
+                        <p>While optimized for local deployment, the architecture is designed for "Horizontal
+                            Scalability." By utilizing a micro-service approach, the system can expand to accommodate
+                            multi-facility networks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ECOSYSTEM & TEAM -->
+        <section id="ecosystem">
+            <div class="container-fluid">
+                <h2 class="section-title text-center">2. Operational Ecosystem</h2>
+                <div id="eco-2-1" class="text-center mb-5">
+                    <h4 class="fw-900">2.1 HIGH-LEVEL CONCEPTUAL OVERVIEW</h4>
+                    <p class="lead">The HMS by Koushal Jha transitions the hospital from "Manual Search" to
+                        "Push-Intelligence," ensuring clinical events trigger immediate logistical and financial
+                        reactions.</p>
+                </div>
+
+                <h4 class="mb-5 text-center fw-900" id="role-defs">2.2 GRANULAR ROLE DEFINITIONS (20 ROLES)</h4>
+
+                <div class="content-card mb-5">
+                    <div class="row g-5 text-start">
+                        <div class="col-12 border-bottom border-opacity-10 pb-4 mb-4">
+                            <h6 class="text-primary text-uppercase fw-bold mb-4">2.2.1 ADMINISTRATIVE TIER</h6>
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="role-tag">Super Admin</div>
+                                <div class="role-tag">IT Admin</div>
+                                <div class="role-tag">Billing Admin</div>
+                            </div>
+                        </div>
+                        <div class="col-12 border-bottom border-opacity-10 pb-4 mb-4">
+                            <h6 class="text-danger text-uppercase fw-bold mb-4">2.2.2 CLINICAL TIER</h6>
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="role-tag">Doctors</div>
+                                <div class="role-tag">Nurses</div>
+                                <div class="role-tag">Lab Technicians</div>
+                                <div class="role-tag">Radiologists</div>
+                            </div>
+                        </div>
+                        <div class="col-12 border-bottom border-opacity-10 pb-4 mb-4">
+                            <h6 class="text-success text-uppercase fw-bold mb-4">2.2.3 OPERATIONAL & FINANCIAL TIER</h6>
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="role-tag">Receptionist</div>
+                                <div class="role-tag">Pharmacists</div>
+                                <div class="role-tag">Billing Staff</div>
+                                <div class="role-tag">Finance Manager</div>
+                            </div>
+                        </div>
+                        <div class="col-12 border-bottom border-opacity-10 pb-4 mb-4">
+                            <h6 class="text-dark text-uppercase fw-bold mb-4">2.2.4 FACILITY & LOGISTICAL TIER</h6>
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="role-tag">Director</div>
+                                <div class="role-tag">Chancellor</div>
+                                <div class="role-tag">HR Manager</div>
+                                <div class="role-tag">Peon/Ground Staff</div>
+                                <div class="role-tag">Security Guard</div>
+                                <div class="role-tag">Technicians</div>
+                                <div class="role-tag">Ambulance Driver</div>
+                                <div class="role-tag">Inventory Manager</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-warning text-uppercase fw-bold mb-4">2.2.5 END-USER TIER</h6>
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="role-tag">Patient</div>
+                                <div class="role-tag">Normal User</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="journey" class="mt-5 pt-5 text-center">
+                    <h4 class="mb-5 fw-900">2.3 UNIFIED PATIENT JOURNEY</h4>
+                    <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+                        <div class="role-tag px-5 py-3 bg-dark text-white shadow-lg">1. PRE-ADMISSION</div>
+                        <div class="role-tag px-5 py-3 bg-dark text-white shadow-lg">2. ADMISSION</div>
+                        <div class="role-tag px-5 py-3 bg-dark text-white shadow-lg">3. CLINICAL CYCLE</div>
+                        <div class="role-tag px-5 py-3 bg-dark text-white shadow-lg">4. LOGISTICS</div>
+                        <div class="role-tag px-5 py-3 bg-dark text-white shadow-lg">5. DISCHARGE</div>
+                    </div>
+                </div>
+
+                <div id="hardware" class="mt-5 pt-5 content-card text-center">
+                    <h4 class="mb-4 fw-900">2.4 HARDWARE STRATEGY: LOCAL-EDGE PRODUCTION</h4>
+                    <p>Deployment on 16GB RAM / 512GB SSD dedicated host ensures sub-millisecond local retrieval and
+                        absolute physical control over sensitive records.</p>
+                </div>
+
+                <!-- TEAM (DEVELOPER NAME & ROLE ON SINGLE LINE) -->
+                <div id="team" class="row mt-5 pt-5 text-center">
+                    <h4 class="mb-5 fw-900">2.5 ENGINEERING COMMAND: TEAM & TECHNICAL OWNERSHIP</h4>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="content-card text-start">
+                            <div class="d-flex flex-column gap-1">
+                                <h5 class="fw-900 text-primary mb-0">KOUSHAL JHA</h5>
+                                <small
+                                    class="text-dark fw-bold text-uppercase border-bottom border-dark border-opacity-10 pb-2 mb-3">Lead
+                                    Architect | Project Planning | Full Stack Engineer</small>
+                            </div>
+                            <p class="small opacity-70">Ownership: Overall System Architecture, Hybrid Engine Design,
+                                and Project Lifecycle Planning.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="content-card text-start">
+                            <div class="d-flex flex-column gap-1">
+                                <h5 class="fw-900 text-primary mb-0">HITANSHU DHAKREY</h5>
+                                <small
+                                    class="text-dark fw-bold text-uppercase border-bottom border-dark border-opacity-10 pb-2 mb-3">Frontend
+                                    & DB Developer | DBA</small>
+                            </div>
+                            <p class="small opacity-70">Ownership: PostgreSQL 16+ Schema Design, ACID-compliant Java
+                                Business Logic, and Database Administration.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="content-card text-start">
+                            <div class="d-flex flex-column gap-1">
+                                <h5 class="fw-900 text-primary mb-0">ABHAY BANSAL</h5>
+                                <small
+                                    class="text-dark fw-bold text-uppercase border-bottom border-dark border-opacity-10 pb-2 mb-3">Node.js
+                                    Developer</small>
+                            </div>
+                            <p class="small opacity-70">Ownership: Asynchronous Event Layer and WebSocket Notification
+                                Engine.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 mb-4">
+                        <div class="content-card text-start">
+                            <div class="d-flex flex-column gap-1">
+                                <h5 class="fw-900 text-primary mb-0">SUNDRAM</h5>
+                                <small
+                                    class="text-dark fw-bold text-uppercase border-bottom border-dark border-opacity-10 pb-2 mb-3">Frontend
+                                    Developer</small>
+                            </div>
+                            <p class="small opacity-70">Ownership: Responsive Web UI Components and Hospital UI
+                                Language.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-6 mb-4">
+                        <div class="content-card text-start">
+                            <div class="d-flex flex-column gap-1">
+                                <h5 class="fw-900 text-primary mb-0">SUYASH</h5>
+                                <small
+                                    class="text-dark fw-bold text-uppercase border-bottom border-dark border-opacity-10 pb-2 mb-3">Frontend
+                                    Developer</small>
+                            </div>
+                            <p class="small opacity-70">Ownership: Stateful UI Interaction and Cross-Platform
+                                Compatibility.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Dashboard Image added after team section -->
+                    <div class="col-12 mt-5 text-center">
+                        <img src="assets/hms-dashboard.webp" alt="HMS Dashboard Interface" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; width: 100%; object-fit: cover;">
+                        <p class="mt-3 small text-muted">HMS Dashboard Interface - Real-time Monitoring</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ARCHITECTURE -->
+        <section id="architecture">
+            <div class="container-fluid">
+                <img src="assets/postgres-architecture.webp" alt="PostgreSQL Database Architecture" class="img-fluid rounded-4 shadow-lg mb-5" style="width: 100%; max-height: 500px; object-fit: cover;">
+                <h2 class="section-title">3. Functional Architecture</h2>
+                <div class="row g-4">
+                    <div class="col-lg-6" id="arch-3-1">
+                        <div class="content-card">
+                            <h5>3.1 CLINICAL DIVISION: SMART CPOE & TEMPLATES</h5>
+                            <p class="small opacity-80">Java-backed module for medical order atomic integrity. Rapid
+                                Order Sets (JSON) automate entries with a single click.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" id="arch-3-2">
+                        <div class="content-card">
+                            <h5>3.2 DIAGNOSTIC DIVISION: RESULT STREAMING</h5>
+                            <p class="small opacity-80">WebSocket "Push" triggers on Technician database commit,
+                                Ensuring Physicians receive active "Critical Value" alerts.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" id="arch-3-3">
+                        <div class="content-card">
+                            <h5>3.3 LOGISTICS DIVISION: TASK DISPATCH ENGINE</h5>
+                            <p class="small opacity-80">Algorithmically assigns transport tasks to staff nearest to
+                                patient "Zones."</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" id="arch-3-4">
+                        <div class="content-card">
+                            <h5>3.4 IN-PATIENT DIVISION: BED STATE MACHINE</h5>
+                            <p class="small opacity-80">Mandatory flows: Occupied -> Vacated -> Sanitization -> Ready,
+                                preventing bookings until readiness verified.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" id="arch-3-5">
+                        <div class="content-card">
+                            <h5>3.5 PHARMACY & STORE: FIFO INVENTORY</h5>
+                            <p class="small opacity-80">Dispensing priorities based on expiry. Triggers automated
+                                procurement on definition of safety thresholds.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" id="arch-3-6">
+                        <div class="content-card">
+                            <h5>3.6 REVENUE DIVISION: SYNCHRONIZED LEDGER</h5>
+                            <p class="small opacity-80">Atomic Hooks ensure bedside actions update patient ledger and
+                                inventory simultaneously to stop leakage.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" id="arch-3-7">
+                        <div class="content-card">
+                            <h5>3.7 HR & GOVERNANCE: EXECUTIVE OVERSIGHT</h5>
+                            <p class="small opacity-80">Governance Portals display Throughput Heatmaps and Revenue
+                                Velocity analytics.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="arch-3-8" class="mt-5 content-card bg-primary bg-opacity-10 border-0 text-center">
+                    <h5 class="fw-900 mb-5">3.8 CROSS-MODULE INTERDEPENDENCY (THE SYSTEM PULSE)</h5>
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="role-tag bg-white shadow-sm">CLINICAL → REVENUE</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="role-tag bg-white shadow-sm">DIAGNOSTIC → CLINICAL</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="role-tag bg-white shadow-sm">CLINICAL → LOGISTICS</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="role-tag bg-white shadow-sm">INPATIENT → RECEPTION</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. KEY SOLUTIONS -->
+        <section id="solutions">
+            <div class="container-fluid">
+                <h2 class="section-title">4. Technical Solutions to Systemic Challenges</h2>
+                <div class="row g-5">
+                    <div class="col-md-6" id="sol-4-1">
+                        <div class="content-card">
+                            <h4>4.1 UX OPTIMIZATION: SMART ONE-CLICK ENTRY</h4>
+                            <div class="logic-block">Utilizes JSON Rapid Order Sets auto-populating 90% of fields.
+                                Background validation cross-references Patient Allergy Profiles before database commit.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="sol-4-2">
+                        <div class="content-card">
+                            <h4>4.2 SECURITY: BREAK-GLASS ACCESS PROTOCOL</h4>
+                            <div class="logic-block">Temporary RBAC elevation requiring dual-signature (Doctor + digital
+                                witness). Automated audit report escalation triggers high-priority reports to IT Admin.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="sol-4-3">
+                        <div class="content-card">
+                            <h4>4.3 REAL-TIME ALERTS: WEBSOCKET ENGINE</h4>
+                            <div class="logic-block">Node.js layer maintains active Socket.io connections with
+                                heartbeats. Automatic fallback to FCM ensures critical diagnostic alert re-delivery to
+                                offline devices.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="sol-4-6">
+                        <div class="content-card">
+                            <h4>4.6 FINANCIAL INTEGRITY: ATOMIC POC BILLING</h4>
+                            <div class="logic-block">Java @Transactional blocks treat Ledger Update, Inventory
+                                Deduction, and Clinical Action as a single unit. WAL ensures data consistency during
+                                crashes.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="sol-4-8">
+                        <div class="content-card">
+                            <h4>4.8 INSTITUTIONAL ANALYTICS: STRATEGIC VISIBILITY</h4>
+                            <div class="logic-block">Atomic data aggregated into Materialized Views for sub-second
+                                Revenue Velocity and Occupancy Heatmaps.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. TECHNOLOGY STACK -->
+        <section id="techstack" class="bg-dark text-white">
+            <div class="container-fluid">
+                <h2 class="section-title text-white">5. Technology Stack & Infrastructure</h2>
+                <div class="row g-4 text-start">
+                    <div class="col-lg-4">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-microchip me-3"></i> 5.1 THE HYBRID
+                                ENGINE</h5>
+                            <p class="small opacity-70">Synchronizing Java (ACID Logic) with Node.js (WebSocket Speed)
+                                for real-time orchestration.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">INTER-PROCESS
+                                    SYNC</small>IPC via PostgreSQL Notify/Listen Patterns</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-database me-3"></i> 5.2 DATA
+                                INTEGRITY LAYER</h5>
+                            <p class="small opacity-70">PostgreSQL 16+ Relational foundation with JSONB optimization for
+                                semi-structured lab reports and financial auditing.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">DURABILITY
+                                    PROTOCOL</small>HikariCP Connection Pool + WAL Recovery</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-desktop me-3"></i> 5.3 FRONTEND
+                                ARCHITECTURE</h5>
+                            <p class="small opacity-70">Mobile-First Stateful UI using ES6+ Modern JavaScript and
+                                Vanilla JS Observers for reactive sub-second updates.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">UI ENGINE</small>Fetch API
+                                + Service Worker Caching</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-server me-3"></i> 5.4 DEVOPS &
+                                PERSISTENCE</h5>
+                            <p class="small opacity-70">Nginx Reverse Proxy & Load Balancer with Ngrok secure ingress on
+                                our dedicated 16GB edge hardware host.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">GATEKEEPER</small>SSL
+                                Termination + 256-bit AES Tunnels</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-comments me-3"></i> 5.5
+                                COMMUNICATION STACK</h5>
+                            <p class="small opacity-70">FCM (Firebase) Web-Push alerts and SMTP Carrier Gateways for
+                                zero-cost email-to-SMS staff notifications.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">NOTIFICATION
+                                    HUB</small>Firebase Messaging + SMTP Carrier Relay</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-sync me-3"></i> 5.6 CI/CD AUTOMATION
+                            </h5>
+                            <p class="small opacity-70">Local Git-hook automation triggering Maven auto-builds and
+                                atomic PM2 reloads with health-checks.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">PIPELINE</small>Git
+                                post-receive Hooks + Maven Auto-Build</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-user-shield me-3"></i> 5.7
+                                CYBERSECURITY JWT</h5>
+                            <p class="small opacity-70">JWT-based RBAC state management combined with multi-layered
+                                hardware firewall and rate limiting.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">DEFENSE</small>Encrypted
+                                RBAC Tokens + IP Tables Firewall</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-card bg-white bg-opacity-5 border-secondary border-opacity-10 h-100">
+                            <h5 class="text-secondary fw-900 mb-4"><i class="fas fa-hard-drive me-3"></i> 5.8 DATA
+                                RESILIENCE WAL</h5>
+                            <p class="small opacity-70">Automated 4-hour pg_dump cycles combined with Write-Ahead
+                                Logging (WAL) for absolute power-loss database recovery.</p>
+                            <div class="tech-spec"><small class="text-secondary d-block mb-1">SAFETY</small>Cron pg_dump
+                                + WAL Persistence Log</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ROADMAP -->
+        <section id="roadmap" class="bg-light">
+            <div class="container-fluid">
+                <h2 class="section-title text-center">7. Future Scope: The Roadmap</h2>
+                <div class="row">
+                    <div class="col-lg-12 mx-auto">
+                        <div class="roadmap-container">
+                            <div class="roadmap-track">
+                                <div class="roadmap-axis-line">
+                                    <div class="roadmap-bubble"></div>
+                                    <div class="roadmap-bubble"></div>
+                                    <div class="roadmap-bubble"></div>
+                                    <div class="roadmap-bubble"></div>
+                                </div>
+                            </div>
+
+                            <div class="roadmap-step">
+                                <h5>7.1 PHASE II: AI PREDICTIVE ANALYTICS</h5>
+                                <p>Early warning models for Sepsis prediction and NLP Clinical Summarization for reduced
+                                    medical entry friction.</p>
+                            </div>
+                            <div class="roadmap-step">
+                                <h5>7.2 PHASE III: IOT & TELEMETRY</h5>
+                                <p>Direct vitals monitoring via HL7/FHIR and RFID asset tracking for real-time equipment
+                                    logistics.</p>
+                            </div>
+                            <div class="roadmap-step">
+                                <h5>7.3 PHASE IV: UNIVERSAL mHEALTH</h5>
+                                <p>Telemedicine Module (WebRTC) and Blockchain decentralized ledgers for portability.
+                                </p>
+                            </div>
+                            <div class="roadmap-step border-0 mb-0">
+                                <h5>7.4 ENTERPRISE EXPANSION</h5>
+                                <p>Multi-facility PostgreSQL Master-Slave replication strategy managed from a
+                                    centralized institutional portal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 text-center">
+                <img src="assets/hospital-atrium.webp" alt="Future Hospital Ecosystem Vision" class="img-fluid rounded-4" style="width: 100%; max-height: 400px; object-fit: cover;">
+                <p class="mt-3 small text-muted">Future AI-Driven Hospital Ecosystem Vision</p>
+            </div>
+        </section>
+
+        <!-- 8. REFERENCES & AI PIPELINE -->
+        <section id="standards">
+            <div class="container-fluid">
+                <h2 class="section-title">8. References & AI Pipeline</h2>
+                <div class="row g-5">
+                    <div class="col-lg-12">
+                        <h4>8.2 THE AI-DRIVEN DEVELOPMENT PIPELINE (RESEARCH & EXECUTION)</h4>
+                        <div class="content-card p-5">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-4"><strong>GEMINI (Google):</strong> Context Keeper, ensuring tightly
+                                    coupled architecture.</li>
+                                <li class="mb-4"><strong>GEMINI 3 PRO:</strong> High-depth engineering: Bed State
+                                    Machine logic and institutional analytics.</li>
+                                <li class="mb-4"><strong>GEMINI DEEP-RESEARCH:</strong> Forensic Red-Teaming for
+                                    sensitive configuration protection.</li>
+                                <li class="mb-4"><strong>DEEPSEEK:</strong> Generation of precision code fragments for
+                                    Algorithm sync.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 mt-5">
+                        <h4>8.3 DESIGN, VALIDATION, & AUTOMATED TESTING</h4>
+                        <div class="content-card p-5">
+                            <ul class="list-unstyled mb-0 opacity-80">
+                                <li class="mb-4"><strong>ChatGPT:</strong> Leveraged for UI layouts, medical
+                                    iconography, and alert animations.</li>
+                                <li class="mb-4"><strong>CURSOR AI:</strong> Phase 1 (Structural) - Real-time unit
+                                    testing and validation.</li>
+                                <li class="mb-4"><strong>BLACKBOX AI:</strong> Phase 2 (Operational) - End-to-end
+                                    patient journey simulation.</li>
+                                <li class="mb-4"><strong>CODEX (Open AI):</strong> Phase 3 (Integration) - Stress
+                                    testing of inter-module triggers.</li>
+                                <li><strong>POSTMAN:</strong> RESTful endpoint and WebSocket handshake integrity
+                                    validation.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 mt-5">
+                        <h4>8.1 COMPLIANCE STANDARDS</h4>
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="role-tag bg-white shadow-sm text-center">HIPAA / HL7 / FHIR PRIVACY</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="role-tag bg-white shadow-sm text-center">W3C & WHATWG WEB STANDARDS</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="role-tag bg-white shadow-sm text-center">RFC 7519 (JWT) COMPLIANCE</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="role-tag bg-white shadow-sm text-center">POSTGRESQL 16 ACID / WAL</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER WITH ARCHITECT HIGHLIGHT -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="footer-architect-info shadow-lg">
+                    <h5 class="text-secondary fw-900 text-uppercase tracking-widest mb-4">Lead Architect Signature</h5>
+                    <div class="d-flex flex-column align-items-center gap-2">
+                        <span class="h2 mb-0 fw-900">KOUSHAL JHA</span>
+                        <p class="text-white opacity-75 mb-4">Principal Architect | Full Project Responsibility &
+                            Strategic Command</p>
+                        <div class="d-flex justify-content-center gap-4">
+                            <a href="https://www.linkedin.com/in/koushal-jha-cs27/" target="_blank"
+                                class="footer-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="https://github.com/koushaljhacs" target="_blank" class="footer-link"><i
+                                    class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <p class="small mb-0 text-white-50 opacity-50">&copy; 2026 Integrated Hospital Operating System |
+                    Koushal Jha Architectural Dossier</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* ADVANCED CANVAS ENGINE */
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 80;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = document.querySelector('.hero').offsetHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 1;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 163, 191, 0.4)'; ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x; const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.beginPath(); ctx.strokeStyle = `rgba(0, 82, 204, ${0.15 * (1 - dist / 150)})`;
+                        ctx.lineWidth = 0.5; ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        /* 3D TILT ENGINE */
+        const tiltBox = document.getElementById('hero-tilt-box');
+        document.querySelector('.hero').addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 45;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 45;
+            tiltBox.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+        document.querySelector('.hero').addEventListener('mouseleave', () => {
+            tiltBox.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        /* BI-DIRECTIONAL SCROLL OBSERVER */
+        const observerOptions = { threshold: 0.15 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                } else {
+                    entry.target.classList.remove('reveal');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => revealObserver.observe(section));
+
+        /* SCROLLSPY */
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('section, header').forEach(section => {
+                if (window.pageYOffset >= section.offsetTop - 120) current = section.getAttribute('id');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href').substring(1).split('-')[0] === current.split('-')[0]);
+            });
+        });
+    </script>
+</body>
+
+</html>
