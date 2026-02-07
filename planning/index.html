@@ -13,435 +13,14 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <style>
-        :root {
-            --primary-blue: #0052cc;
-            --secondary-teal: #00a3bf;
-            --dark-bg: #091e42;
-            --glass-white: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.35);
-            --nav-height: 80px;
-        }
+    <!-- Animations CSS -->
+    <link rel="stylesheet" href="animations.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #172b4d;
-            background: #f4f7fa;
-            background-image:
-                fixed-radial-gradient(at 0% 0%, rgba(0, 82, 204, 0.15) 0px, transparent 50%),
-                fixed-radial-gradient(at 100% 100%, rgba(0, 163, 191, 0.15) 0px, transparent 50%);
-            scroll-behavior: smooth;
-            line-height: 1.8;
-            overflow-x: hidden;
-            perspective: 3000px;
-        }
 
-        /* Expanded Horizontal Workspace */
-        .container-fluid {
-            padding-left: 5%;
-            padding-right: 5%;
-        }
-
-        /* Fixed Navigation Adjustment */
-        section {
-            scroll-margin-top: calc(var(--nav-height) + 40px);
-            padding: 10rem 0;
-            opacity: 0;
-            transform: translateY(120px) scale(0.98);
-            transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        section.reveal {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* 3D Glass Header */
-        .navbar {
-            height: var(--nav-height);
-            background: rgba(9, 30, 66, 0.92);
-            backdrop-filter: blur(25px) saturate(200%);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 2500;
-        }
-
-        .navbar-brand {
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--secondary-teal) !important;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            padding: 0.5rem 0.8rem !important;
-        }
-
-        .dropdown-menu {
-            background: rgba(9, 30, 66, 0.98);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
-            min-width: 280px;
-        }
-
-        .dropdown-item {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.8rem 1.2rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            color: var(--secondary-teal);
-            transform: translateX(10px);
-        }
-
-        @media (min-width: 992px) {
-            .nav-item.dropdown:hover .dropdown-menu {
-                display: block;
-            }
-        }
-
-        /* ADVANCED HERO: Neural Interactive 3D Section with Positioning Fix */
-        .hero {
-            background: linear-gradient(145deg, #091e42 0%, #001529 100%);
-            color: white;
-            min-height: 100vh;
-            padding: var(--nav-height) 1rem 4rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transform-style: preserve-3d;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #hero-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .hero-interactive-layer {
-            position: relative;
-            z-index: 10;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            width: 100%;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 6vw, 5.5rem);
-            font-weight: 900;
-            letter-spacing: -2px;
-            margin-bottom: 2.5rem;
-            line-height: 1.1;
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-            background: linear-gradient(90deg, #fff 0%, #a5adba 50%, #fff 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transform: translateZ(150px);
-            filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
-            animation: textShiny 8s linear infinite;
-        }
-
-        @keyframes textShiny {
-            to {
-                background-position: 200% center;
-            }
-        }
-
-        .hero-lead {
-            max-width: 1100px;
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
-        .stat-pill {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem 3rem;
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            transform: translateZ(100px);
-            transition: all 0.4s ease;
-        }
-
-        .stat-pill:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateZ(130px) rotateY(10deg);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* SH 3D "Recessive/Hole" Transition for Containers */
-        .content-card {
-            background: var(--glass-white);
-            backdrop-filter: blur(25px) saturate(160%);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            padding: 4.5rem;
-            height: 100%;
-            transition: all 0.6s cubic-bezier(0.2, 0, 0, 1);
-            transform-style: preserve-3d;
-            box-shadow: 0 40px 100px rgba(9, 30, 66, 0.15);
-            cursor: pointer;
-        }
-
-        .content-card:hover {
-            transform: translateZ(-60px) scale(0.97);
-            box-shadow:
-                inset 0 20px 60px rgba(0, 0, 0, 0.15),
-                0 10px 20px rgba(9, 30, 66, 0.05);
-            border-color: rgba(0, 163, 191, 0.5);
-            background: rgba(255, 255, 255, 0.65);
-        }
-
-        .section-title {
-            font-weight: 800;
-            font-size: 3.2rem;
-            margin-bottom: 7rem;
-            color: var(--dark-bg);
-            text-transform: uppercase;
-            letter-spacing: -2px;
-        }
-
-        /* Logic Blocks */
-        .logic-block {
-            background: rgba(9, 30, 66, 0.08);
-            border-left: 6px solid var(--primary-blue);
-            padding: 2.5rem 3rem;
-            margin: 2.5rem 0;
-            border-radius: 4px 30px 30px 4px;
-            font-size: 1.1rem;
-        }
-
-        /* FIXED: STRUCTURAL BORDER REMOVAL FOR 1.2 AND 4 */
-        #latent-analysis .logic-block,
-        #solutions .logic-block {
-            border-left: none !important;
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(0, 82, 204, 0.2);
-            border-radius: 30px;
-            box-shadow: inset 0 2px 20px rgba(255, 255, 255, 1);
-        }
-
-        .tech-spec {
-            font-family: 'JetBrains Mono', monospace;
-            background: #091e42;
-            color: #4c9aff;
-            padding: 2.2rem;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            border-bottom: 5px solid var(--secondary-teal);
-            margin-top: 2rem;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-            transform: translateZ(40px);
-        }
-
-        .role-tag {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 15px 25px;
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            font-weight: 800;
-            font-size: 0.85rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .role-tag:hover {
-            transform: translateY(-12px) translateZ(30px) scale(1.15);
-            background: var(--primary-blue);
-            color: white;
-            box-shadow: 0 20px 40px rgba(0, 82, 204, 0.4);
-        }
-
-        /* ROADMAP GEOMETRIC AXIS RE-ENGINEERING */
-        .roadmap-container {
-            position: relative;
-            padding-left: 140px;
-            margin-left: 1rem;
-        }
-
-        .roadmap-track {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 120px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .roadmap-axis-line {
-            width: 10px;
-            height: 100%;
-            background: var(--secondary-teal);
-            border-radius: 10px;
-            position: relative;
-        }
-
-        .roadmap-bubble {
-            position: absolute;
-            left: 50%;
-            width: 28px;
-            height: 28px;
-            background: radial-gradient(circle, #00fff2 0%, #00a3bf 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 35px #00fff2, 0 0 10px #00fff2;
-            z-index: 5;
-            animation: bubbleSlideFlow 10s infinite linear;
-            opacity: 0;
-            transform: translateX(-50%);
-        }
-
-        @keyframes bubbleSlideFlow {
-            0% {
-                top: 0%;
-                opacity: 0;
-                transform: translateX(-50%) scale(0.5);
-            }
-
-            5% {
-                opacity: 1;
-            }
-
-            95% {
-                opacity: 1;
-            }
-
-            100% {
-                top: 100%;
-                opacity: 0;
-                transform: translateX(-50%) scale(2);
-            }
-        }
-
-        .roadmap-step {
-            position: relative;
-            margin-bottom: 12rem;
-            transform-style: preserve-3d;
-        }
-
-        .roadmap-step::before {
-            content: '';
-            position: absolute;
-            left: -80px;
-            top: 5px;
-            width: 64px;
-            height: 64px;
-            background: #fff;
-            border: 10px solid var(--secondary-teal);
-            border-radius: 50%;
-            box-shadow: 0 0 60px rgba(0, 163, 191, 1);
-            z-index: 10;
-            transform: translateX(-50%);
-        }
-
-        /* Footer Architect Highlighting */
-        .footer {
-            background: #040812;
-            color: white;
-            padding: 12rem 1rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .footer-architect-info {
-            max-width: 800px;
-            margin: 0 auto 5rem;
-            padding: 3rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-        }
-
-        .footer-link {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 1.5rem;
-            margin: 0 15px;
-        }
-
-        .footer-link:hover {
-            color: var(--secondary-teal);
-            transform: translateY(-5px);
-        }
-
-        @media (max-width: 992px) {
-            .hero-title {
-                font-size: 3rem;
-            }
-
-            .roadmap-container {
-                padding-left: 80px;
-            }
-
-            .roadmap-track {
-                width: 60px;
-            }
-
-            .roadmap-step::before {
-                width: 44px;
-                height: 44px;
-                border-width: 6px;
-                left: -50px;
-            }
-
-            .roadmap-bubble {
-                width: 18px;
-                height: 18px;
-                left: 50%;
-            }
-        }
-
-        /* Image Styles */
-        img {
-            max-width: 100%;
-            height: auto;
-            transition: all 0.3s ease;
-            border-radius: 20px;
-        }
-
-        .img-fluid {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .content-card img {
-            border-radius: 20px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .content-card img:hover {
-            transform: scale(1.02);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+</head>
 </head>
 
 <body>
@@ -468,9 +47,7 @@
                             <li><a class="dropdown-item" href="#intro-content">1.6 Governance & Privacy</a></li>
                             <li><a class="dropdown-item" href="#intro-content">1.7 Local-Edge Pipeline</a></li>
                             <li><a class="dropdown-item" href="#intro-content">1.8 Scalability Philosophy</a></li>
-                            <li>
-                                <img src="assets/hospital-atrium.webp" alt="Hospital Atrium Vision" class="img-fluid rounded-3 mt-2" style="max-height: 180px; width: 100%; object-fit: cover;">
-                            </li>
+                            <!-- REMOVED IMAGE FROM DROPDOWN -->
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -508,9 +85,6 @@
                             <li><a class="dropdown-item" href="#sol-4-8">4.8 Institutional Analytics</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <img src="assets/hms-dashboard.webp" alt="HMS Dashboard" class="img-fluid rounded-3 mt-2" style="max-height: 180px; width: 100%; object-fit: cover;">
-                    </li>
                     <li class="nav-item"><a class="nav-link" href="#techstack">System</a></li>
                     <li class="nav-item"><a class="nav-link" href="#conclusion">Impact</a></li>
                     <li class="nav-item"><a class="nav-link" href="#roadmap">Roadmap</a></li>
@@ -526,9 +100,7 @@
         <!-- HERO -->
         <header class="hero" id="intro">
             <canvas id="hero-canvas"></canvas>
-            <div class="container-fluid position-absolute top-50 start-50 translate-middle opacity-25 z-0">
-                <img src="assets/tech-bg.webp" alt="Technology Architecture Background" class="img-fluid rounded-4" style="max-height: 500px; opacity: 0.4;">
-            </div>
+            <!-- REMOVED IMG TAG HERE; BG IS NOW HANDLED BY CSS BODY::BEFORE -->
             <div class="container-fluid hero-interactive-layer" id="hero-tilt-box">
                 <div
                     class="mb-5 d-inline-block px-5 py-2 rounded-pill bg-primary bg-opacity-20 text-white border border-primary border-opacity-40 shadow-lg">
@@ -553,7 +125,7 @@
         <section id="intro-content">
             <div class="container-fluid">
                 <h2 class="section-title">1. Architectural Vision & Necessity</h2>
-                <div class="row g-5">
+                <div class="row g-3">
                     <div class="col-lg-7">
                         <h4 id="intro-1-1">1.1 THE CONTEMPORARY HEALTHCARE CRISIS: INFORMATION LATENCY</h4>
                         <p>In the contemporary global healthcare landscape, the primary challenge has evolved from "how
@@ -565,7 +137,7 @@
                             specifically engineered to transition the healthcare facility from a reactive posture to a
                             proactive, event-driven ecosystem.</p>
 
-                        <h4 class="mt-5" id="latent-analysis-header">1.2 DEEP-LAYER ANALYSIS OF "LATENT FRICTION" &
+                        <h4 class="mt-3" id="latent-analysis-header">1.2 DEEP-LAYER ANALYSIS OF "LATENT FRICTION" &
                             SYSTEMIC LOSS</h4>
                         <div id="latent-analysis">
                             <p>Through extensive industry modeling, we have identified "Latent Friction" as the single
@@ -607,7 +179,7 @@
                     </div>
                 </div>
 
-                <div class="row mt-5 pt-5 g-5">
+                <div class="row mt-4 pt-3 g-3">
                     <div class="col-md-6">
                         <h4>1.5 MISSION-CRITICAL OBJECTIVE: THE "PUSH-INTELLIGENCE" PARADIGM</h4>
                         <p>Our ultimate objective is to eliminate "Information Searching." We move away from the
@@ -636,6 +208,11 @@
             </div>
         </section>
 
+        <!-- FULL-WIDTH IMAGE: Health Monitor -->
+        <div class="container-fluid">
+            <img src="assets/health monitor.png" alt="Clinical Vitals Monitoring" class="content-integrated-img">
+        </div>
+
         <!-- 2. ECOSYSTEM & TEAM -->
         <section id="ecosystem">
             <div class="container-fluid">
@@ -645,6 +222,13 @@
                     <p class="lead">The HMS by Koushal Jha transitions the hospital from "Manual Search" to
                         "Push-Intelligence," ensuring clinical events trigger immediate logistical and financial
                         reactions.</p>
+                </div>
+
+                <!-- FULL-WIDTH IMAGE: Reception -->
+                <div class="row justify-content-center mt-5 pt-3">
+                    <div class="col-lg-10">
+                        <img src="assets/reception.png" alt="Hospital Reception Integration" class="content-integrated-img">
+                    </div>
                 </div>
 
                 <h4 class="mb-5 text-center fw-900" id="role-defs">2.2 GRANULAR ROLE DEFINITIONS (20 ROLES)</h4>
@@ -700,7 +284,7 @@
                     </div>
                 </div>
 
-                <div id="journey" class="mt-5 pt-5 text-center">
+                    <div id="journey" class="mt-4 pt-3 text-center">
                     <h4 class="mb-5 fw-900">2.3 UNIFIED PATIENT JOURNEY</h4>
                     <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
                         <div class="role-tag px-5 py-3 bg-dark text-white shadow-lg">1. PRE-ADMISSION</div>
@@ -711,14 +295,14 @@
                     </div>
                 </div>
 
-                <div id="hardware" class="mt-5 pt-5 content-card text-center">
+                <div id="hardware" class="mt-4 pt-3 content-card text-center">
                     <h4 class="mb-4 fw-900">2.4 HARDWARE STRATEGY: LOCAL-EDGE PRODUCTION</h4>
                     <p>Deployment on 16GB RAM / 512GB SSD dedicated host ensures sub-millisecond local retrieval and
                         absolute physical control over sensitive records.</p>
                 </div>
 
                 <!-- TEAM (DEVELOPER NAME & ROLE ON SINGLE LINE) -->
-                <div id="team" class="row mt-5 pt-5 text-center">
+                <div id="team" class="row mt-4 pt-3 text-center">
                     <h4 class="mb-5 fw-900">2.5 ENGINEERING COMMAND: TEAM & TECHNICAL OWNERSHIP</h4>
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="content-card text-start">
@@ -780,22 +364,25 @@
                                 Compatibility.</p>
                         </div>
                     </div>
-                    
-                    <!-- Dashboard Image added after team section -->
-                    <div class="col-12 mt-5 text-center">
-                        <img src="assets/hms-dashboard.webp" alt="HMS Dashboard Interface" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; width: 100%; object-fit: cover;">
-                        <p class="mt-3 small text-muted">HMS Dashboard Interface - Real-time Monitoring</p>
-                    </div>
                 </div>
+
+
             </div>
         </section>
 
         <!-- 3. ARCHITECTURE -->
         <section id="architecture">
-            <div class="container-fluid">
-                <img src="assets/postgres-architecture.webp" alt="PostgreSQL Database Architecture" class="img-fluid rounded-4 shadow-lg mb-5" style="width: 100%; max-height: 500px; object-fit: cover;">
-                <h2 class="section-title">3. Functional Architecture</h2>
-                <div class="row g-4">
+            <div class="container-fluid text-center">
+                <h2 class="section-title text-start">3. Functional Architecture</h2>
+
+                <!-- FULL-WIDTH IMAGE: Monitoring Dashboard -->
+                <div class="row justify-content-center mb-5 pb-3">
+                    <div class="col-lg-10">
+                        <img src="assets/monitoring.png" alt="HMS Core Dashboard" class="content-integrated-img">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3 text-start">
                     <div class="col-lg-6" id="arch-3-1">
                         <div class="content-card">
                             <h5>3.1 CLINICAL DIVISION: SMART CPOE & TEMPLATES</h5>
@@ -847,7 +434,7 @@
                     </div>
                 </div>
 
-                <div id="arch-3-8" class="mt-5 content-card bg-primary bg-opacity-10 border-0 text-center">
+                <div id="arch-3-8" class="mt-4 content-card bg-primary bg-opacity-10 border-0 text-center">
                     <h5 class="fw-900 mb-5">3.8 CROSS-MODULE INTERDEPENDENCY (THE SYSTEM PULSE)</h5>
                     <div class="row g-4">
                         <div class="col-md-3">
@@ -1004,6 +591,30 @@
             </div>
         </section>
 
+        <!-- 6. IMPACT & CONCLUSION (RESTORED SECTION) -->
+        <section id="conclusion">
+            <div class="container-fluid">
+                <h2 class="section-title">6. Global Impact & Conclusion</h2>
+                <div class="row g-5">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="content-card text-center">
+                            <h4 class="mb-4 fw-900 text-primary">TRANSFORMING CLINICAL OUTCOMES</h4>
+                            <p class="lead mb-5">By implementing a "Push-Intelligence" architecture, this HMS reduces
+                                diagnostic response times by up to 40%, directly translating to improved patient
+                                survival rates in critical care units. The elimination of "manual search" allows medical
+                                professionals to focus on treatment rather than data entry.</p>
+                            <hr class="my-5 opacity-10">
+                            <h4 class="mb-4 fw-900 text-primary">SCALABILITY STATEMENT</h4>
+                            <p class="opacity-80">The system is architected for horizontal expansion, capable of
+                                evolving from a single-facility deployment to a multi-center enterprise network. It
+                                stands as a testament to modern engineering—delivering high-performance healthcare
+                                operations with zero licensing overhead.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- 7. ROADMAP -->
         <section id="roadmap" class="bg-light">
             <div class="container-fluid">
@@ -1043,10 +654,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="mt-5 text-center">
-                <img src="assets/hospital-atrium.webp" alt="Future Hospital Ecosystem Vision" class="img-fluid rounded-4" style="width: 100%; max-height: 400px; object-fit: cover;">
-                <p class="mt-3 small text-muted">Future AI-Driven Hospital Ecosystem Vision</p>
             </div>
         </section>
 
@@ -1134,95 +741,7 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        /* ADVANCED CANVAS ENGINE */
-        const canvas = document.getElementById('hero-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        const particleCount = 80;
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = document.querySelector('.hero').offsetHeight;
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.radius = Math.random() * 1.5 + 1;
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0, 163, 191, 0.4)'; ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
-
-        function animateCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach((p, i) => {
-                p.update(); p.draw();
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = p.x - particles[j].x; const dy = p.y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 150) {
-                        ctx.beginPath(); ctx.strokeStyle = `rgba(0, 82, 204, ${0.15 * (1 - dist / 150)})`;
-                        ctx.lineWidth = 0.5; ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
-                    }
-                }
-            });
-            requestAnimationFrame(animateCanvas);
-        }
-        animateCanvas();
-
-        /* 3D TILT ENGINE */
-        const tiltBox = document.getElementById('hero-tilt-box');
-        document.querySelector('.hero').addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 45;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 45;
-            tiltBox.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
-        document.querySelector('.hero').addEventListener('mouseleave', () => {
-            tiltBox.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-
-        /* BI-DIRECTIONAL SCROLL OBSERVER */
-        const observerOptions = { threshold: 0.15 };
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('reveal');
-                } else {
-                    entry.target.classList.remove('reveal');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('section').forEach(section => revealObserver.observe(section));
-
-        /* SCROLLSPY */
-        window.addEventListener('scroll', () => {
-            let current = '';
-            document.querySelectorAll('section, header').forEach(section => {
-                if (window.pageYOffset >= section.offsetTop - 120) current = section.getAttribute('id');
-            });
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.toggle('active', link.getAttribute('href').substring(1).split('-')[0] === current.split('-')[0]);
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
