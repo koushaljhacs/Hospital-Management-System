@@ -78,25 +78,25 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│           PUSH-INTELLIGENCE ECOSYSTEM                │
+│           PUSH-INTELLIGENCE ECOSYSTEM               │
 ├─────────────────────────────────────────────────────┤
-│                                                       │
+│                                                     │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐   │
 │  │   Clinical   │→ │  Diagnostic  │→ │ Logistics│   │
 │  │   Division   │  │   Division   │  │ Division │   │
 │  └──────────────┘  └──────────────┘  └──────────┘   │
-│         ↓                  ↓                ↓         │
+│         ↓                  ↓                ↓       │
 │  ┌──────────────────────────────────────────────┐   │
 │  │     Real-Time Event Bus (WebSocket)          │   │
 │  └──────────────────────────────────────────────┘   │
-│         ↓                  ↓                ↓         │
+│         ↓                  ↓                ↓       │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐   │
 │  │ In-Patient   │  │  Pharmacy &  │  │ Revenue  │   │
 │  │  Division    │  │    Store     │  │ Division │   │
 │  └──────────────┘  └──────────────┘  └──────────┘   │
-│                                                       │
-│     PostgreSQL 16+ (ACID Transactions + WAL)         │
-│                                                       │
+│                                                     │
+│     PostgreSQL 16+ (ACID Transactions + WAL)        │
+│                                                     │
 └─────────────────────────────────────────────────────┘
 ```
 
