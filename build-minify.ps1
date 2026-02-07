@@ -2,7 +2,7 @@
 # Purpose: Minify CSS and JavaScript files for production deployment
 
 $srcDir = "./planning"
-$distDir = "./dist"
+$distDir = "./planning/dist"
 
 # Create dist directories if they don't exist
 New-Item -ItemType Directory -Path "$distDir/css" -Force | Out-Null
