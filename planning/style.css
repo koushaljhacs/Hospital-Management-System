@@ -12,16 +12,22 @@
 body {
     font-family: 'Inter', sans-serif;
     color: #172b4d;
-    background: #f4f7fa;
-    /* Base gradient */
+    background: linear-gradient(135deg, #f0f4f8 0%, #e3f2fd 25%, #f3e5f5 50%, #e8f5e9 75%, #fff3e0 100%);
+    /* Enhanced vibrant gradient */
     background-image:
-        fixed-radial-gradient(at 0% 0%, rgba(0, 82, 204, 0.15) 0px, transparent 50%),
-        fixed-radial-gradient(at 100% 100%, rgba(0, 163, 191, 0.15) 0px, transparent 50%);
+        linear-gradient(135deg, rgba(0, 82, 204, 0.08) 0%, transparent 40%),
+        linear-gradient(225deg, rgba(0, 163, 191, 0.1) 0%, transparent 40%),
+        linear-gradient(45deg, rgba(63, 81, 181, 0.06) 0%, transparent 50%),
+        linear-gradient(-45deg, rgba(0, 150, 136, 0.08) 0%, transparent 50%),
+        fixed-radial-gradient(at 0% 0%, rgba(0, 82, 204, 0.2) 0px, transparent 50%),
+        fixed-radial-gradient(at 100% 100%, rgba(0, 163, 191, 0.2) 0px, transparent 50%);
+    background-attachment: fixed;
     scroll-behavior: smooth;
     line-height: 1.8;
     overflow-x: hidden;
     perspective: 3000px;
     position: relative;
+    padding-top: var(--nav-height); /* Account for fixed navbar */
 }
 
 /* GLOBAL BACKGROUND IMAGE FIX - UPDATED TRANSPARENCY */
@@ -55,6 +61,8 @@ section {
     transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+    will-change: opacity, transform;
+    backface-visibility: hidden;
 }
 
 section.reveal {
@@ -162,6 +170,9 @@ section.reveal {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: heroSectionBackgroundGradient 12s ease-in-out 0s infinite;
+    will-change: background;
+    backface-visibility: hidden;
 }
 
 /* HERO BACKGROUND IMAGE WITH HIGHER OPACITY */
@@ -209,7 +220,9 @@ section.reveal {
     margin-right: auto;
     background: linear-gradient(90deg, #fff 0%, #a5adba 50%, #fff 100%);
     background-size: 200% auto;
+    background-clip: text;
     -webkit-background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px rgba(0, 163, 191, 0.4); /* Text border effect */
     transform: translateZ(150px);
@@ -221,6 +234,7 @@ section.reveal {
     border-radius: 25px;
     border: 2px solid rgba(0, 163, 191, 0.4);
     box-shadow: 0 0 30px rgba(0, 163, 191, 0.25), inset 0 0 20px rgba(0, 163, 191, 0.1), 0 0 60px rgba(0, 82, 204, 0.15);
+    will-change: transform, filter, box-shadow, text-shadow;
     /* Multiple simultaneous animations for premium effect */
     animation: 
         textShiny 8s linear infinite,
@@ -228,6 +242,9 @@ section.reveal {
         textGlow 4s ease-in-out 1.8s infinite,
         textBorderGlow 4s ease-in-out 2.2s infinite,
         heroTitleBorderGlow 4s ease-in-out 2.5s infinite;
+    word-break: break-word;
+    min-height: 6rem;
+    backface-visibility: hidden;
 }
 
 @keyframes textShiny {
@@ -304,6 +321,8 @@ section.reveal {
     animation-delay: calc(var(--pill-index) * 0.15s);
     position: relative;
     overflow: hidden;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .stat-pill::before {
@@ -362,6 +381,8 @@ section.reveal {
     box-shadow: 0 40px 100px rgba(9, 30, 66, 0.15);
     cursor: pointer;
     position: relative;
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
 }
 
 .content-card:hover {
@@ -434,6 +455,9 @@ section.reveal {
     font-size: 0.85rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 }
 
 .role-tag:hover {
@@ -444,11 +468,6 @@ section.reveal {
 }
 
 /* ROLE TAG STAGGER ANIMATION */
-.role-tag {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    opacity: 0;
-}
-
 .role-tag.revealed {
     animation: roleTagSlideIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     animation-delay: calc(var(--tag-index, 0) * 0.18s); /* Increased stagger for smoother reveal */
@@ -669,9 +688,13 @@ section.reveal {
     position: relative;
 }
 
-/* SECTION 2.2 - ROLE DEFINITIONS WITH TOP PADDING */
+/* SECTION 2.2 - ROLE DEFINITIONS WITH LARGE TOP PADDING FOR IMAGE GAP */
 #role-defs {
-    padding-top: 3rem;
-    margin-top: 2rem;
-    border-top: 2px solid rgba(0, 163, 191, 0.2);
+    padding-top: 5rem;
+    margin-top: 5rem;
+    border-top: 3px solid rgba(0, 163, 191, 0.4);
+    display: block;
+    width: 100%;
+    clear: both;
+}
 }

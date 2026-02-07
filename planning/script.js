@@ -1,27 +1,62 @@
 /* HMS - Hospital Management System JavaScript */
 
-/* TYPEWRITER EFFECT FOR HERO TITLE */
+/* TYPEWRITER EFFECT FOR HERO TITLE - INFINITE LOOP */
 function typewriterEffect() {
     const heroTitle = document.querySelector('.hero-title');
     if (!heroTitle) return;
     
-    const text = heroTitle.textContent.trim();
-    heroTitle.style.minWidth = 'fit-content';
-    heroTitle.textContent = '';
+    const text = 'Hospital Management System';
+    let isTyping = true;
     
-    let index = 0;
-    const speed = 110; // milliseconds per character - optimized for smooth readable pace
-    
-    function typeCharacter() {
-        if (index < text.length) {
-            heroTitle.textContent += text.charAt(index);
-            index++;
-            setTimeout(typeCharacter, speed);
+    function startTypeAnimation() {
+        // Make text visible during typing
+        heroTitle.style.webkitTextFillColor = '#ffffff';
+        heroTitle.style.webkitBackgroundClip = 'unset';
+        heroTitle.style.backgroundClip = 'unset';
+        heroTitle.style.color = '#ffffff';
+        heroTitle.style.minWidth = 'fit-content';
+        heroTitle.textContent = '';
+        
+        let index = 0;
+        const speed = 80; // milliseconds per character
+        let lastTime = performance.now();
+        isTyping = true;
+        
+        function typeCharacter(currentTime) {
+            if (currentTime - lastTime >= speed) {
+                if (index < text.length) {
+                    heroTitle.textContent += text.charAt(index);
+                    index++;
+                    lastTime = currentTime;
+                } else {
+                    // Typing complete - restore gradient effect
+                    heroTitle.style.transition = 'color 0.5s ease, -webkit-text-fill-color 0.5s ease';
+                    heroTitle.style.webkitTextFillColor = 'transparent';
+                    heroTitle.style.webkitBackgroundClip = 'text';
+                    heroTitle.style.backgroundClip = 'text';
+                    heroTitle.style.color = 'transparent';
+                    isTyping = false;
+                    
+                    // After showing gradient for 3 seconds, loop back to typing
+                    setTimeout(() => {
+                        heroTitle.style.transition = 'none';
+                        startTypeAnimation();
+                    }, 3000);
+                    return;
+                }
+            }
+            if (isTyping) {
+                requestAnimationFrame(typeCharacter);
+            }
         }
+        
+        requestAnimationFrame(typeCharacter);
     }
     
     // Start typewriter after initial reveal animation (0.3s delay + slight offset)
-    setTimeout(typeCharacter, 700);
+    setTimeout(() => {
+        startTypeAnimation();
+    }, 700);
 }
 
 /* HERO INITIALIZATION - SEQUENTIAL ANIMATIONS */
@@ -133,23 +168,29 @@ heroSection.addEventListener('mouseleave', () => {
     heroTitle.style.textShadow = '0 0 10px rgba(0, 163, 191, 0), 0 0 20px rgba(0, 82, 204, 0), 0 20px 50px rgba(0, 0, 0, 0.6)';
 });
 
-/* FLOATING ANIMATION FOR STAT PILLS ON SCROLL - OPTIMIZED TO FIX FLOATING ISSUE */
+/* FLOATING ANIMATION FOR STAT PILLS ON SCROLL - GPU ACCELERATED SMOOTH */
+let ticking = false;
 window.addEventListener('scroll', () => {
-    const statPills = document.querySelectorAll('.stat-pill');
-    const scrollPos = window.scrollY;
-    
-    statPills.forEach((pill, index) => {
-        // Only apply subtle float effect when hero section is in view
-        const heroSection = document.querySelector('.hero');
-        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-        
-        if (scrollPos < heroBottom) {
-            const floatOffset = Math.sin((scrollPos * 0.003) + (index * 0.5)) * 6; // Reduced float amplitude
-            pill.style.transform = `translateZ(50px) translateY(${floatOffset}px)`;
-        } else {
-            pill.style.transform = `translateZ(0) translateY(0)`; // Reset after hero
-        }
-    });
+    if (!ticking) {
+        requestAnimationFrame(() => {
+            const statPills = document.querySelectorAll('.stat-pill');
+            const scrollPos = window.scrollY;
+            const heroSection = document.querySelector('.hero');
+            const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+            
+            statPills.forEach((pill, index) => {
+                // Only apply subtle float effect when hero section is in view
+                if (scrollPos < heroBottom) {
+                    const floatOffset = Math.sin((scrollPos * 0.003) + (index * 0.5)) * 6; // Reduced float amplitude
+                    pill.style.transform = `translateZ(50px) translateY(${floatOffset}px)`;
+                } else {
+                    pill.style.transform = `translateZ(0) translateY(0)`; // Reset after hero
+                }
+            });
+            ticking = false;
+        });
+        ticking = true;
+    }
 });
 
 /* BI-DIRECTIONAL SCROLL OBSERVER */
@@ -192,14 +233,26 @@ document.querySelectorAll('.content-card, .content-integrated-img, .full-image, 
     contentObserver.observe(el);
 });
 
-/* SCROLLSPY */
+/* SCROLLSPY - GPU ACCELERATED */
+let scrollTicking = false;
 window.addEventListener('scroll', () => {
-    let current = '';
-    document.querySelectorAll('section, header').forEach(section => {
-        if (window.pageYOffset >= section.offsetTop - 120) current = section.getAttribute('id');
-    });
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href').substring(1).split('-')[0] === current.split('-')[0]);
-    });
+    if (!scrollTicking) {
+        requestAnimationFrame(() => {
+            let current = '';
+            document.querySelectorAll('section, header').forEach(section => {
+                if (window.pageYOffset >= section.offsetTop - 120) current = section.getAttribute('id');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const isActive = link.getAttribute('href').substring(1).split('-')[0] === current.split('-')[0];
+                if (isActive && !link.classList.contains('active')) {
+                    link.classList.add('active');
+                } else if (!isActive && link.classList.contains('active')) {
+                    link.classList.remove('active');
+                }
+            });
+            scrollTicking = false;
+        });
+        scrollTicking = true;
+    }
 });
 

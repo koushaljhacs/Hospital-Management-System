@@ -1,0 +1,27 @@
+# Build artifacts (keep dist/ for deployment)
+node_modules/
+build/
+temp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
