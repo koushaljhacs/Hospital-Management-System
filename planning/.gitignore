@@ -1,0 +1,38 @@
+# Build artifacts (keep dist/ for deployment)
+node_modules/
+build/
+temp/
+
+# Root level files - keep everything in planning/ folder only
+index.html
+css/
+js/
+assets/
+
+# Source CSS and JS files (keep minified versions in dist/ only)
+planning/style.css
+planning/animations.css
+planning/script.js
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local

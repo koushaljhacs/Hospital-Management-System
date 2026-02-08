@@ -102,6 +102,73 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ---
 
+## INTERACTIVE ARCHITECTURE BLUEPRINT
+
+This project includes a comprehensive **Interactive Mermaid Diagram** showcasing the complete system architecture:
+
+### 🗂️ Planning Resources
+
+**Location:** `/planning/` folder
+
+- **`architecture.html`** - Complete system architecture diagram with Mermaid flowchart
+- **`architecture/css/architecture.css`** - Modular CSS styles for diagram
+- **`architecture/js/architecture.js`** - JavaScript for zoom controls and interactions
+- **`index.html`** - Main planning and concept documentation
+- **`plan.txt`** - Project planning notes and requirements
+
+### 📊 Architecture Diagram Features
+
+The interactive diagram includes:
+
+1. **10 Major System Divisions:**
+   - 🏥 Clinical Division - Smart CPOE, Order Sets, Allergy Checks
+   - 📊 Diagnostic Division - Lab Streaming, RIS/PACS, Critical Values
+   - 📍 Logistics Division - Zone-Based Dispatch, Auto-Assignment
+   - 🛏️ In-Patient Division - Bed State Machine, Admission Workflow
+   - 💊 Pharmacy Division - FIFO Logic, Inventory Management
+   - 💰 Revenue Division - Point-of-Care Billing, Atomic Ledger
+   - 👥 HR & Governance - Shift Management, Analytics Dashboard
+   - 🔒 Security & Access - RBAC, Break-Glass, Audit Logging
+   - ⚙️ Infrastructure Layer - Nginx, Ngrok, SSL, Firewall, PM2
+   - 📡 Communication Layer - WebSocket, FCM, SMTP, Patient Portal
+
+2. **Backend Infrastructure:**
+   - ☕ **Java Engine** - ACID transactions, synchronized ledger
+   - 🟢 **Node.js Engine** - Event streaming, WebSocket orchestration
+   - 🗄️ **PostgreSQL 16+** - JSONB support, WAL recovery, materialized views
+
+3. **Data Flow Visualization:**
+   - Animated connecting lines showing data relationships
+   - Color-coded connections for different interaction types
+   - Edge labels describing workflow and data direction
+   - 60+ system components fully interconnected
+
+### 🎯 How to View
+
+1. **Online (GitHub Pages):**
+   ```
+   https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/architecture/architecture.html
+   ```
+
+2. **Locally:**
+   ```bash
+   cd planning
+   # Option 1: View source files (development)
+   open architecture/architecture.html
+   
+   # Option 2: View minified production files
+   open dist/architecture/architecture.html
+   ```
+
+3. **Zoom Controls:**
+   - Use the floating zoom buttons (bottom-right corner)
+   - `+` button: Zoom in
+   - `-` button: Zoom out
+   - `Reset` button: Return to default view (40%)
+   - Percentage indicator: Shows current zoom level
+
+---
+
 ## ACADEMIC PURPOSE
 
 This project demonstrates:
@@ -125,31 +192,57 @@ This project demonstrates:
 
 ```
 Hospital-Management-System/
-├── LICENSE                          # Custom Academic License
-├── README.md                        # This file
-├── .gitignore                       # Git ignore rules
+├── LICENSE                              # Custom Academic License
+├── README.md                            # This file
+├── .gitignore                           # Git ignore rules
 │
-└── planning/                        # PLANNING & DEVELOPMENT
-    ├── index.html                   # Source document
-    ├── style.css                    # Source styles (local only)
-    ├── animations.css               # Source animations (local only)
-    ├── script.js                    # Source JavaScript (local only)
-    ├── plan.txt                     # Project planning notes
-    ├── build-minify.ps1             # CSS/JS minification script
+└── planning/                            # PLANNING & DEVELOPMENT
+    ├── .gitignore                       # Planning-specific git rules
+    ├── LICENSE.md                       # Academic license for planning
+    ├── README.md                        # Planning documentation
+    ├── index.html                       # Main planning document (source)
+    ├── style.css                        # Source styles (modular)
+    ├── animations.css                   # Source animations
+    ├── script.js                        # Source JavaScript
+    ├── plan.txt                         # Project planning notes
+    ├── build-minify.ps1                 # CSS/JS minification script
     │
-    ├── assets/                      # Images
+    ├── assets/                          # Images
     │   ├── background.png
     │   ├── health\ monitor.png
     │   ├── monitoring.png
     │   └── reception.png
     │
-    └── dist/                        # PRODUCTION (Minified)
-        ├── index.html               # Production document
+    ├── architecture/                    # ARCHITECTURE DIAGRAM (Source)
+    │   ├── architecture.html            # Interactive Mermaid diagram
+    │   ├── css/
+    │   │   └── architecture.css         # Diagram styles (343 lines)
+    │   └── js/
+    │       └── architecture.js          # Diagram interactions (70+ lines)
+    │
+    ├── security/                        # SECURITY MODULES (Silent Protection)
+    │   ├── README.md                    # Security documentation
+    │   ├── security.config.js           # Master initialization
+    │   ├── device-checker.js            # Mobile detection & blocking
+    │   ├── anti-debug.js                # DevTools disabling (F12, Ctrl+Shift+I)
+    │   ├── copy-protection.js           # Copy/paste/cut prevention
+    │   ├── screenshot-blocker.js        # Print Screen blocking
+    │   └── context-menu-blocker.js      # Right-click menu disabling
+    │
+    └── dist/                            # PRODUCTION (Minified Assets)
+        ├── index.html                   # Production main document
         ├── css/
-        │   ├── style.min.css        (30% reduction)
-        │   └── animations.min.css   (44% reduction)
-        └── js/
-            └── script.min.js        (35% reduction)
+        │   ├── style.min.css            # (30% reduction from source)
+        │   └── animations.min.css       # (44% reduction from source)
+        ├── js/
+        │   └── script.min.js            # (35% reduction from source)
+        │
+        └── architecture/                # ARCHITECTURE DIAGRAM (Production)
+            ├── architecture.html        # Production version (minified paths)
+            ├── css/
+            │   └── architecture.min.css # Minified CSS (single line)
+            └── js/
+                └── architecture.min.js  # Minified JS (single line)
 ```
 
 ---
