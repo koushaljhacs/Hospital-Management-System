@@ -1,8 +1,8 @@
 # HMS Hospital Management System - CSS/JS Minification Script
 # Purpose: Minify CSS and JavaScript files for production deployment
 
-$srcDir = "./planning"
-$distDir = "./planning/dist"
+$srcDir = "."
+$distDir = "./dist"
 
 # Create dist directories if they don't exist
 New-Item -ItemType Directory -Path "$distDir/css" -Force | Out-Null
@@ -78,25 +78,15 @@ function Update-HTML {
     # Update security script paths
     $html = $html -replace 'src="\./security/', 'src="security/'
 
-    # For architecture.html, inline the CSS and JS for self-contained rendering
+    # For architecture.html, keep external links like development
     if ($inputFile -like "*architecture.html") {
-        $cssContent = Get-Content "$srcDir/architecture/css/architecture.css" -Raw
-        $jsContent = Get-Content "$srcDir/architecture/js/architecture.js" -Raw
-        $securityConfig = Get-Content "$srcDir/security/security.config.js" -Raw
-        $deviceChecker = Get-Content "$srcDir/security/device-checker.js" -Raw
-        $antiDebug = Get-Content "$srcDir/security/anti-debug.js" -Raw
-        $copyProtection = Get-Content "$srcDir/security/copy-protection.js" -Raw
-        $screenshotBlocker = Get-Content "$srcDir/security/screenshot-blocker.js" -Raw
-        $contextMenuBlocker = Get-Content "$srcDir/security/context-menu-blocker.js" -Raw
-
-        $html = $html -replace '<link rel="stylesheet" href="\./css/architecture\.css">', "<style>`n$cssContent`n</style>"
-        $html = $html -replace '<script src="\.\./security/security\.config\.js"></script>', "<script>`n$securityConfig`n</script>"
-        $html = $html -replace '<script src="\.\./security/device-checker\.js"></script>', "<script>`n$deviceChecker`n</script>"
-        $html = $html -replace '<script src="\.\./security/anti-debug\.js"></script>', "<script>`n$antiDebug`n</script>"
-        $html = $html -replace '<script src="\.\./security/copy-protection\.js"></script>', "<script>`n$copyProtection`n</script>"
-        $html = $html -replace '<script src="\.\./security/screenshot-blocker\.js"></script>', "<script>`n$screenshotBlocker`n</script>"
-        $html = $html -replace '<script src="\.\./security/context-menu-blocker\.js"></script>', "<script>`n$contextMenuBlocker`n</script>"
-        $html = $html -replace '<script src="\./js/architecture\.js"></script>', "<script>`n$jsContent`n</script>"
+        # Remove security script references
+        $html = $html -replace '<script src="\.\./security/security\.config\.js"></script>', ''
+        $html = $html -replace '<script src="\.\./security/device-checker\.js"></script>', ''
+        $html = $html -replace '<script src="\.\./security/anti-debug\.js"></script>', ''
+        $html = $html -replace '<script src="\.\./security/copy-protection\.js"></script>', ''
+        $html = $html -replace '<script src="\.\./security/screenshot-blocker\.js"></script>', ''
+        $html = $html -replace '<script src="\.\./security/context-menu-blocker\.js"></script>', ''
     }
 
     Set-Content -Path $outputFile -Value $html -NoNewline
@@ -117,13 +107,11 @@ Write-Host "=== Processing HTML Files ===" -ForegroundColor Cyan
 Update-HTML "$srcDir/index.html" "$distDir/index.html"
 Update-HTML "$srcDir/architecture/architecture.html" "$distDir/architecture/architecture.html"
 
-# Copy additional assets if needed (e.g., architecture CSS/JS)
-Copy-Item "$srcDir/architecture/css/architecture.css" "$distDir/architecture/css/architecture.css" -Force
-Copy-Item "$srcDir/architecture/js/architecture.js" "$distDir/architecture/js/architecture.js" -Force
+# Inline architecture CSS/JS into HTML for tight encapsulation (no external dependencies)
+# Note: CSS and JS are now inlined in architecture.html for production
 
-# Copy assets and security folders to dist
+# Copy assets folder to dist
 Copy-Item "$srcDir/assets" "$distDir/assets" -Recurse -Force
-Copy-Item "$srcDir/security" "$distDir/security" -Recurse -Force
 
 # Display file sizes
 Write-Host "=== File Size Comparison ===" -ForegroundColor Green

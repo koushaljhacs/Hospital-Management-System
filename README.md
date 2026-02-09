@@ -1,4 +1,4 @@
-# Hospital Management System (HMS)
+# 🏥 Hospital Management System (HMS)
 
 > **A Comprehensive Academic Project:** Enterprise-Grade Hospital Operating System with Push-Intelligence Architecture
 
@@ -8,26 +8,26 @@
 
 ---
 
-## PROJECT OVERVIEW
+## 🎯 PROJECT OVERVIEW
 
 The **Hospital Management System (HMS)** is a next-generation hospital operating system designed to transition healthcare facilities from **reactive information-pull** architectures to **proactive push-intelligence ecosystems**. Built as an academic project with production-grade engineering principles, HMS demonstrates how distributed systems, event-driven architecture, and real-time data orchestration can revolutionize hospital operations.
 
-### LIVE DEMO
+### 🌐 **LIVE DEMO**
 **[View Live Website →](https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/index.html)**
 
-> **Note:** Explore the interactive animated architecture blueprint showcasing the complete hospital ecosystem design.
+> 💡 **Note:** Explore the interactive animated architecture blueprint showcasing the complete hospital ecosystem design.
 
 ---
 
-## KEY FEATURES
+## ✨ KEY FEATURES
 
-### Push-Intelligence Paradigm
+### 🔄 **Push-Intelligence Paradigm**
 - Real-time event-driven alerts instead of manual dashboard searching
 - WebSocket-based instant notifications to relevant staff
 - Critical value alerts for diagnostic results
 - Automatic task dispatch and resource optimization
 
-### Modular Architecture
+### 🏗️ **Modular Architecture**
 - **Clinical Division** - Smart CPOE with atomic order integrity
 - **Diagnostic Division** - Result streaming with push alerts
 - **Logistics Division** - Intelligent task dispatch engine
@@ -36,21 +36,21 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 - **Revenue Division** - Synchronized ledger preventing financial leakage
 - **HR & Governance** - Executive dashboards with institutional analytics
 
-### Security & Compliance
+### 🔐 **Security & Compliance**
 - HIPAA/HL7/FHIR privacy standards
 - Break-Glass protocol with dual-signature access elevation
 - JWT-based RBAC (Role-Based Access Control)
 - 256-bit AES encrypted tunnels
 - Automated audit trails and compliance reporting
 
-### High-Performance Infrastructure
+### ⚡ **High-Performance Infrastructure**
 - Hybrid Backend: Java (ACID) + Node.js (WebSocket)
 - PostgreSQL 16+ with ACID-compliant transactions
 - HikariCP connection pooling with WAL recovery
 - 16GB dedicated edge hardware deployment
 - Sub-millisecond local data retrieval
 
-### Modern User Experience
+### 🎨 **Modern User Experience**
 - Mobile-first responsive design
 - Smooth 60fps animations with GPU acceleration
 - Glass-morphism UI with vibrant gradients
@@ -59,7 +59,7 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ---
 
-## TECHNOLOGY STACK
+## 🛠️ TECHNOLOGY STACK
 
 | Layer | Technology |
 |-------|------------|
@@ -74,180 +74,108 @@ The **Hospital Management System (HMS)** is a next-generation hospital operating
 
 ---
 
-## ARCHITECTURE OVERVIEW
+## 📊 ARCHITECTURE OVERVIEW
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│           PUSH-INTELLIGENCE ECOSYSTEM               │
+│           PUSH-INTELLIGENCE ECOSYSTEM                │
 ├─────────────────────────────────────────────────────┤
-│                                                     │
+│                                                       │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐   │
 │  │   Clinical   │→ │  Diagnostic  │→ │ Logistics│   │
 │  │   Division   │  │   Division   │  │ Division │   │
 │  └──────────────┘  └──────────────┘  └──────────┘   │
-│         ↓                  ↓                ↓       │
+│         ↓                  ↓                ↓         │
 │  ┌──────────────────────────────────────────────┐   │
 │  │     Real-Time Event Bus (WebSocket)          │   │
 │  └──────────────────────────────────────────────┘   │
-│         ↓                  ↓                ↓       │
+│         ↓                  ↓                ↓         │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐   │
 │  │ In-Patient   │  │  Pharmacy &  │  │ Revenue  │   │
 │  │  Division    │  │    Store     │  │ Division │   │
 │  └──────────────┘  └──────────────┘  └──────────┘   │
-│                                                     │
-│     PostgreSQL 16+ (ACID Transactions + WAL)        │
-│                                                     │
+│                                                       │
+│     PostgreSQL 16+ (ACID Transactions + WAL)         │
+│                                                       │
 └─────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## INTERACTIVE ARCHITECTURE BLUEPRINT
-
-This project includes a comprehensive **Interactive Mermaid Diagram** showcasing the complete system architecture:
-
-### 🗂️ Planning Resources
-
-**Location:** `/planning/` folder
-
-- **`architecture.html`** - Complete system architecture diagram with Mermaid flowchart
-- **`architecture/css/architecture.css`** - Modular CSS styles for diagram
-- **`architecture/js/architecture.js`** - JavaScript for zoom controls and interactions
-- **`index.html`** - Main planning and concept documentation
-- **`plan.txt`** - Project planning notes and requirements
-
-### 📊 Architecture Diagram Features
-
-The interactive diagram includes:
-
-1. **10 Major System Divisions:**
-   - 🏥 Clinical Division - Smart CPOE, Order Sets, Allergy Checks
-   - 📊 Diagnostic Division - Lab Streaming, RIS/PACS, Critical Values
-   - 📍 Logistics Division - Zone-Based Dispatch, Auto-Assignment
-   - 🛏️ In-Patient Division - Bed State Machine, Admission Workflow
-   - 💊 Pharmacy Division - FIFO Logic, Inventory Management
-   - 💰 Revenue Division - Point-of-Care Billing, Atomic Ledger
-   - 👥 HR & Governance - Shift Management, Analytics Dashboard
-   - 🔒 Security & Access - RBAC, Break-Glass, Audit Logging
-   - ⚙️ Infrastructure Layer - Nginx, Ngrok, SSL, Firewall, PM2
-   - 📡 Communication Layer - WebSocket, FCM, SMTP, Patient Portal
-
-2. **Backend Infrastructure:**
-   - ☕ **Java Engine** - ACID transactions, synchronized ledger
-   - 🟢 **Node.js Engine** - Event streaming, WebSocket orchestration
-   - 🗄️ **PostgreSQL 16+** - JSONB support, WAL recovery, materialized views
-
-3. **Data Flow Visualization:**
-   - Animated connecting lines showing data relationships
-   - Color-coded connections for different interaction types
-   - Edge labels describing workflow and data direction
-   - 60+ system components fully interconnected
-
-### 🎯 How to View
-
-1. **Online (GitHub Pages):**
-   ```
-   https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/architecture/architecture.html
-   ```
-
-2. **Locally:**
-   ```bash
-   cd planning
-   # Option 1: View source files (development)
-   open architecture/architecture.html
-   
-   # Option 2: View minified production files
-   open dist/architecture/architecture.html
-   ```
-
-3. **Zoom Controls:**
-   - Use the floating zoom buttons (bottom-right corner)
-   - `+` button: Zoom in
-   - `-` button: Zoom out
-   - `Reset` button: Return to default view (40%)
-   - Percentage indicator: Shows current zoom level
-
----
-
-## ACADEMIC PURPOSE
+## 🎓 ACADEMIC PURPOSE
 
 This project demonstrates:
 
-- **System Design Excellence** - How to architect complex, distributed healthcare systems
-- **Real-Time Architecture** - Event-driven patterns with WebSocket orchestration  
-- **Database Integrity** - ACID compliance, transaction management, WAL recovery
-- **Security Best Practices** - HIPAA compliance, authentication, authorization
-- **Frontend Performance** - 60fps animations, GPU acceleration, responsive design
-- **DevOps & Deployment** - CI/CD pipelines, automated builds, production readiness
+✅ **System Design Excellence** - How to architect complex, distributed healthcare systems
+✅ **Real-Time Architecture** - Event-driven patterns with WebSocket orchestration  
+✅ **Database Integrity** - ACID compliance, transaction management, WAL recovery
+✅ **Security Best Practices** - HIPAA compliance, authentication, authorization
+✅ **Frontend Performance** - 60fps animations, GPU acceleration, responsive design
+✅ **DevOps & Deployment** - CI/CD pipelines, automated builds, production readiness
 
 **Intended Audience:**
-- Computer Science Students - Study advanced system architecture
-- Educators - Teach enterprise software engineering principles
-- Companies - Evaluate technical capabilities and architectural thinking
-- Recruiters - Assess engineering depth and full-stack proficiency
+- 🎓 Computer Science Students - Study advanced system architecture
+- 👨‍🏫 Educators - Teach enterprise software engineering principles
+- 🏢 Companies - Evaluate technical capabilities and architectural thinking
+- 👨‍💼 Recruiters - Assess engineering depth and full-stack proficiency
 
 ---
 
-## PROJECT STRUCTURE
+## 📁 PROJECT STRUCTURE
 
 ```
 Hospital-Management-System/
-├── LICENSE                              # Custom Academic License
-├── README.md                            # This file
-├── .gitignore                           # Git ignore rules
+├── LICENSE.md                       # Custom Academic License
+├── README.md                        # This file
+├── .gitignore                       # Git ignore rules
 │
-└── planning/                            # PLANNING & DEVELOPMENT
-    ├── .gitignore                       # Planning-specific git rules
-    ├── LICENSE.md                       # Academic license for planning
-    ├── README.md                        # Planning documentation
-    ├── index.html                       # Main planning document (source)
-    ├── style.css                        # Source styles (modular)
-    ├── animations.css                   # Source animations
-    ├── script.js                        # Source JavaScript
-    ├── plan.txt                         # Project planning notes
-    ├── build-minify.ps1                 # CSS/JS minification script
+└── planning/                        # 📋 PLANNING & DEVELOPMENT
+    ├── index.html                   # Main source document
+    ├── style.css                    # Main styles (local only)
+    ├── animations.css               # Animation styles (local only)
+    ├── script.js                    # Main JavaScript (local only)
+    ├── plan.txt                     # Project planning notes
+    ├── build-minify.ps1             # CSS/JS minification script
     │
-    ├── assets/                          # Images
+    ├── architecture/                # 🏗️ Architecture Components
+    │   ├── architecture.html        # Architecture blueprint source
+    │   ├── css/
+    │   │   └── architecture.css     # Architecture diagram styles
+    │   └── js/
+    │       └── architecture.js      # Architecture diagram scripts
+    │
+    ├── assets/                      # 🖼️ Images
     │   ├── background.png
-    │   ├── health\ monitor.png
+    │   ├── health monitor.png
     │   ├── monitoring.png
     │   └── reception.png
     │
-    ├── architecture/                    # ARCHITECTURE DIAGRAM (Source)
-    │   ├── architecture.html            # Interactive Mermaid diagram
-    │   ├── css/
-    │   │   └── architecture.css         # Diagram styles (343 lines)
-    │   └── js/
-    │       └── architecture.js          # Diagram interactions (70+ lines)
-    │
-    ├── security/                        # SECURITY MODULES (Silent Protection)
-    │   ├── README.md                    # Security documentation
-    │   ├── security.config.js           # Master initialization
-    │   ├── device-checker.js            # Mobile detection & blocking
-    │   ├── anti-debug.js                # DevTools disabling (F12, Ctrl+Shift+I)
-    │   ├── copy-protection.js           # Copy/paste/cut prevention
-    │   ├── screenshot-blocker.js        # Print Screen blocking
-    │   └── context-menu-blocker.js      # Right-click menu disabling
-    │
-    └── dist/                            # PRODUCTION (Minified Assets)
-        ├── index.html                   # Production main document
+    └── dist/                        # 🚀 PRODUCTION (Minified)
+        ├── index.html               # Production main document
         ├── css/
-        │   ├── style.min.css            # (30% reduction from source)
-        │   └── animations.min.css       # (44% reduction from source)
+        │   ├── style.min.css        # Minified styles (30% reduction)
+        │   └── animations.min.css   # Minified animations (45% reduction)
         ├── js/
-        │   └── script.min.js            # (35% reduction from source)
+        │   └── script.min.js        # Minified script (35% reduction)
         │
-        └── architecture/                # ARCHITECTURE DIAGRAM (Production)
-            ├── architecture.html        # Production version (minified paths)
-            ├── css/
-            │   └── architecture.min.css # Minified CSS (single line)
-            └── js/
-                └── architecture.min.js  # Minified JS (single line)
-```
+        ├── architecture/            # 🏗️ Production Architecture
+        │   ├── architecture.html    # Production architecture blueprint
+        │   ├── css/
+        │   │   ├── architecture.css
+        │   │   └── architecture.min.css
+        │   └── js/
+        │       ├── architecture.js
+        │       └── architecture.min.js
+        │
+        └── assets/                  # 🖼️ Production Images
+            ├── background.png
+            ├── health monitor.png
+            ├── monitoring.png
+            └── reception.png
 
 ---
 
-## QUICK START
+## 🚀 QUICK START
 
 ### 1. **View Live Website**
 Visit: https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/
@@ -281,27 +209,27 @@ The `dist/` folder contains optimized production files ready for deployment.
 
 ---
 
-## FEATURES SHOWCASE
+## 🎬 FEATURES SHOWCASE
 
-### Animated Hero Section
+### ✨ Animated Hero Section
 - Vibrant multi-layer gradient backgrounds
 - 12-second color-shifting animation cycle
 - Smooth 60fps performance with GPU acceleration
 - Responsive design for all devices
 
-### Typewriter Effect
+### 📝 Typewriter Effect
 - Infinite looping text animation
 - Gradient text transition effects
 - Character-by-character reveal timing
 - Professional presentation layer
 
-### Scroll Triggered Animations
+### 🎯 Scroll Triggered Animations
 - Role tag reveals with stagger effect
 - Content fade-ins as you scroll
 - Glowing border animations
 - Smooth scroll performance with requestAnimationFrame
 
-### Premium UI Design
+### 🎨 Premium UI Design
 - Glass-morphism effect cards
 - Vibrant blue gradient ecosystem
 - Professional typography hierarchy
@@ -319,7 +247,7 @@ For in-depth information about:
 
 ---
 
-## PROJECT TEAM
+## 👥 PROJECT TEAM
 
 | Role | Name | Responsibility |
 |------|------|-----------------|
@@ -331,21 +259,21 @@ For in-depth information about:
 
 ---
 
-## LICENSE
+## 📜 LICENSE
 
 This project is licensed under the **HMS Academic License v1.0** - See [LICENSE](LICENSE) file for details.
 
 **Key Points:**
-- Educational and learning purposes
-- Academic and institutional analysis
-- Company technical evaluation
-- NO commercial use without written permission
-- NO production healthcare deployment
-- Unauthorized code = repository stripping
+- ✅ Educational and learning purposes
+- ✅ Academic and institutional analysis
+- ✅ Company technical evaluation
+- ❌ **NO** commercial use without written permission
+- ❌ **NO** production healthcare deployment
+- ⚠️ Unauthorized code = repository stripping
 
 ---
 
-## IMPORTANT LINKS
+## 🔗 IMPORTANT LINKS
 
 - 🌐 **Live Demo:** [Visit Website](https://koushaljhacs.github.io/Hospital-Management-System/planning/dist/index.html)
 - 📖 **GitHub Repository:** https://github.com/koushaljhacs/Hospital-Management-System
@@ -354,7 +282,7 @@ This project is licensed under the **HMS Academic License v1.0** - See [LICENSE]
 
 ---
 
-## DISCLAIMER
+## ⚠️ DISCLAIMER
 
 **This is an EDUCATIONAL PROJECT ONLY.** 
 
@@ -366,7 +294,7 @@ This project is licensed under the **HMS Academic License v1.0** - See [LICENSE]
 
 ---
 
-## CONTRIBUTING
+## 🤝 CONTRIBUTING
 
 Contributions welcome! Please:
 
@@ -380,7 +308,7 @@ All contributors will be acknowledged in the project.
 
 ---
 
-## CONTACT & INQUIRIES
+## 📧 CONTACT & INQUIRIES
 
 For:
 - 📞 **General Questions** - Open a GitHub issue
@@ -390,9 +318,30 @@ For:
 
 ---
 
-## SHOW YOUR SUPPORT
+## 🔧 RECENT UPDATES (Production Build & Security Removal)
 
-If you find this project useful for learning, please give it a star!
+### Security Module Removal
+- **Removed Security Folder:** The `planning/security/` directory containing restrictive security modules (anti-debug, copy-protection, screenshot-blocker, etc.) has been completely deleted to eliminate access restrictions and enable free exploration of the project.
+- **Updated HTML Files:** Removed all security script references from `planning/index.html` and `planning/architecture/architecture.html` to ensure clean, unrestricted access.
+- **Production Consistency:** Both development and production versions now render identically without security blocks, allowing seamless testing across localhost and GitHub Pages.
+
+### Production Build Optimization
+- **Minification Applied:** CSS and JavaScript files are minified for production deployment:
+  - `style.css`: 18,136 bytes → 12,625 bytes (30% reduction)
+  - `animations.css`: 7,578 bytes → 4,201 bytes (45% reduction)
+  - `script.js`: 9,568 bytes → 6,262 bytes (35% reduction)
+- **Build Script:** Updated `planning/build-minify.ps1` to handle security removal and maintain external asset links for consistent rendering.
+- **Production Files:** The `planning/dist/` folder contains optimized, minified files ready for deployment with identical functionality to development versions.
+
+### Architecture Consistency
+- **External Assets:** Production build maintains external CSS/JS links (no inlining) to ensure `architecture.html` renders the same in both development and production environments.
+- **No Security Interference:** Removed all security modules that previously blocked right-click, copy/paste, screenshots, and developer tools, allowing full project analysis and learning.
+
+---
+
+## ⭐ SHOW YOUR SUPPORT
+
+If you find this project useful for learning, please give it a star! ⭐
 
 Your support helps others discover this comprehensive healthcare system architecture example.
 
@@ -400,7 +349,7 @@ Your support helps others discover this comprehensive healthcare system architec
 
 <div align="center">
 
-### Hospital Management System (HMS)
+### 🏥 Hospital Management System (HMS)
 ### *Enterprise-Grade Architecture for Academic Excellence*
 
 **© 2026 KOUSHAL JHA | All Rights Reserved**
