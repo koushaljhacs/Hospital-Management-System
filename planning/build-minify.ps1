@@ -72,11 +72,11 @@ function Update-HTML {
     # Update JS links
     $html = $html -replace 'src="script\.js"', 'src="js/script.min.js"'
 
-    # Update asset paths (for dist, go up one level)
-    $html = $html -replace 'src="assets/', 'src="../assets/'
+    # Update asset paths (for GitHub Pages deployment, assets are in same level)
+    $html = $html -replace 'src="assets/', 'src="assets/'
 
     # Update security script paths
-    $html = $html -replace 'src="\./security/', 'src="../security/'
+    $html = $html -replace 'src="\./security/', 'src="security/'
 
     # For architecture.html, update its specific links
     if ($inputFile -like "*architecture.html") {
@@ -106,6 +106,10 @@ Update-HTML "$srcDir/architecture/architecture.html" "$distDir/architecture/arch
 # Copy additional assets if needed (e.g., architecture CSS/JS)
 Copy-Item "$srcDir/architecture/css/architecture.css" "$distDir/architecture/css/architecture.css" -Force
 Copy-Item "$srcDir/architecture/js/architecture.js" "$distDir/architecture/js/architecture.js" -Force
+
+# Copy assets and security folders to dist
+Copy-Item "$srcDir/assets" "$distDir/assets" -Recurse -Force
+Copy-Item "$srcDir/security" "$distDir/security" -Recurse -Force
 
 # Display file sizes
 Write-Host "=== File Size Comparison ===" -ForegroundColor Green
