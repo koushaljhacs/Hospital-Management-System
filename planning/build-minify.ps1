@@ -1,8 +1,8 @@
 # HMS Hospital Management System - CSS/JS Minification Script
 # Purpose: Minify CSS and JavaScript files for production deployment
 
-$srcDir = "."
-$distDir = "./dist"
+$srcDir = "./planning"
+$distDir = "./planning/dist"
 
 # Create dist directories if they don't exist
 New-Item -ItemType Directory -Path "$distDir/css" -Force | Out-Null
@@ -78,11 +78,25 @@ function Update-HTML {
     # Update security script paths
     $html = $html -replace 'src="\./security/', 'src="security/'
 
-    # For architecture.html, update its specific links
+    # For architecture.html, inline the CSS and JS for self-contained rendering
     if ($inputFile -like "*architecture.html") {
-        $html = $html -replace 'href="\./css/architecture\.css"', 'href="./css/architecture.css"'
-        $html = $html -replace 'src="\./js/architecture\.js"', 'src="./js/architecture.js"'
-        $html = $html -replace 'src="\.\./security/', 'src="../security/'
+        $cssContent = Get-Content "$srcDir/architecture/css/architecture.css" -Raw
+        $jsContent = Get-Content "$srcDir/architecture/js/architecture.js" -Raw
+        $securityConfig = Get-Content "$srcDir/security/security.config.js" -Raw
+        $deviceChecker = Get-Content "$srcDir/security/device-checker.js" -Raw
+        $antiDebug = Get-Content "$srcDir/security/anti-debug.js" -Raw
+        $copyProtection = Get-Content "$srcDir/security/copy-protection.js" -Raw
+        $screenshotBlocker = Get-Content "$srcDir/security/screenshot-blocker.js" -Raw
+        $contextMenuBlocker = Get-Content "$srcDir/security/context-menu-blocker.js" -Raw
+
+        $html = $html -replace '<link rel="stylesheet" href="\./css/architecture\.css">', "<style>`n$cssContent`n</style>"
+        $html = $html -replace '<script src="\.\./security/security\.config\.js"></script>', "<script>`n$securityConfig`n</script>"
+        $html = $html -replace '<script src="\.\./security/device-checker\.js"></script>', "<script>`n$deviceChecker`n</script>"
+        $html = $html -replace '<script src="\.\./security/anti-debug\.js"></script>', "<script>`n$antiDebug`n</script>"
+        $html = $html -replace '<script src="\.\./security/copy-protection\.js"></script>', "<script>`n$copyProtection`n</script>"
+        $html = $html -replace '<script src="\.\./security/screenshot-blocker\.js"></script>', "<script>`n$screenshotBlocker`n</script>"
+        $html = $html -replace '<script src="\.\./security/context-menu-blocker\.js"></script>', "<script>`n$contextMenuBlocker`n</script>"
+        $html = $html -replace '<script src="\./js/architecture\.js"></script>', "<script>`n$jsContent`n</script>"
     }
 
     Set-Content -Path $outputFile -Value $html -NoNewline

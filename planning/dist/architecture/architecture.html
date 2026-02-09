@@ -11,7 +11,351 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Architecture Diagram Styles -->
-    <link rel="stylesheet" href="./css/architecture.css">
+    <style>
+/* ====================================================================
+   HOSTEL MANAGEMENT SYSTEM - ARCHITECTURE DIAGRAM STYLES
+   Extracted from architecture.html for modular organization
+   ==================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* --- PERFORMANCE OPTIMIZED BACKGROUND --- */
+@keyframes bgCycle {
+    0%, 100% { background-color: #f8fafc; }
+    25% { background-color: #f1f5f9; }
+    50% { background-color: #ecfdf5; }
+    75% { background-color: #eef2ff; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden;
+    background-color: #f8fafc;
+    animation: bgCycle 20s infinite ease-in-out;
+    position: relative;
+    transform: translateZ(0);
+}
+
+body::before {
+    content: ""; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    background: linear-gradient(-45deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05), rgba(99, 102, 241, 0.05), rgba(100, 116, 139, 0.05));
+    background-size: 400% 400%; 
+    animation: gradientShift 15s ease infinite;
+    z-index: -1; 
+    pointer-events: none; 
+    will-change: background-position;
+}
+
+/* --- HARDWARE ACCELERATED MULTI-COLOR RAINBOW ANIMATION --- */
+@keyframes letterWave {
+    0%, 100% { 
+        transform: translateY(0); 
+        color: #3b82f6;
+        text-shadow: 0 5px 10px rgba(59, 130, 246, 0.1); 
+    }
+    25% { color: #10b981; }
+    50% { color: #f59e0b; }
+    75% { color: #ef4444; }
+    90% { 
+        color: #00f5ff; 
+        text-shadow: 0 5px 15px rgba(0, 245, 255, 0.3); 
+        transform: translateY(-8px);
+    }
+}
+
+.animated-title span {
+    display: inline-block;
+    animation: letterWave 4s infinite ease-in-out;
+    transition: color 0.3s ease;
+    will-change: transform, color;
+    backface-visibility: hidden;
+}
+
+/* --- ULTRA-WIDE ISOLATED SERVER VAULT DESIGN --- */
+.isolated-server-room {
+    background: #020617;
+    border: 4px solid #1e293b;
+    border-radius: 16px;
+    padding: 10px;
+    width: 1100px;
+    height: 520px;
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.6),
+        inset 0 0 40px rgba(59, 130, 246, 0.05);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: visible !important;
+    box-sizing: border-box;
+}
+
+.room-label {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 30px;
+}
+
+.label-text {
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+.status-dot-pulse {
+    width: 10px;
+    height: 10px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #22c55e;
+    animation: blink 2s infinite;
+}
+
+.rack-enclosure {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    width: 1000px;
+    height: 400px;
+    padding: 30px 50px;
+    position: relative;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box;
+}
+
+.rack-side-bar {
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    width: 12px;
+    background: linear-gradient(to bottom, #334155, #0f172a, #334155);
+}
+
+.bar-left { 
+    left: 0; 
+    border-radius: 12px 0 0 12px; 
+}
+
+.bar-right { 
+    right: 0; 
+    border-radius: 0 12px 12px 0; 
+}
+
+.blade {
+    background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    transition: all 0.3s ease;
+}
+
+.blade:hover {
+    border-color: #00f5ff;
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.4);
+    transform: scale(1.01);
+}
+
+.blade-icon { 
+    width: 40px; 
+    height: 40px; 
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 8px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    color: #94a3b8; 
+    font-size: 20px; 
+    border: 1px solid #1e293b;
+}
+
+.blade-content { 
+    flex-grow: 1; 
+    text-align: left; 
+}
+
+.blade-title { 
+    color: #f8fafc; 
+    font-size: 14px; 
+    font-weight: 800; 
+    font-family: 'JetBrains Mono', monospace; 
+    display: block; 
+}
+
+.blade-sub { 
+    color: #64748b; 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; 
+}
+
+.load-meter { 
+    height: 6px; 
+    background: #020617; 
+    border-radius: 3px; 
+    width: 180px; 
+    overflow: hidden; 
+    margin-top: 10px; 
+}
+
+.load-fill { 
+    height: 100%; 
+    background: #3b82f6; 
+    animation: dataFlow 2s infinite ease-in-out; 
+}
+
+.led-array { 
+    display: flex; 
+    gap: 8px; 
+    margin-left: 30px; 
+}
+
+.led-p { 
+    width: 8px; 
+    height: 8px; 
+    border-radius: 50%; 
+    background: #1e293b; 
+}
+
+.led-p.active { 
+    animation: blink 1.5s infinite; 
+    background: #22c55e; 
+    box-shadow: 0 0 10px #22c55e; 
+}
+
+@keyframes dataFlow {
+    0%, 100% { background: #3b82f6; width: 30%; }
+    50% { background: #60a5fa; width: 95%; }
+}
+
+@keyframes blink { 
+    0%, 100% { opacity: 1; } 
+    50% { opacity: 0.3; } 
+}
+
+/* --- GLOBAL UI --- */
+.diagram-header {
+    background: rgba(255, 255, 255, 0.7); 
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5); 
+    padding: 1rem 3rem;
+    position: sticky; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0 10px 40px -10px rgba(31, 38, 135, 0.08);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    transform: translateZ(0);
+}
+
+.diagram-viewport {
+    width: 100vw; 
+    height: calc(100vh - 145px); 
+    overflow: auto;
+    padding: 80px; 
+    position: relative; 
+    contain: size layout style;
+}
+
+.mermaid {
+    width: max-content; 
+    margin-left: 40px; 
+    margin-right: auto;
+    background: rgba(255, 255, 255, 0.8); 
+    padding: 4rem; 
+    border-radius: 2.5rem;
+    transform-origin: top left; 
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 30px 60px -12px rgba(0,0,0,0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    will-change: transform;
+}
+
+.zoom-controls { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    z-index: 2000; 
+}
+
+.zoom-btn {
+    width: 50px; 
+    height: 50px; 
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.2); 
+    border-radius: 16px; 
+    color: #3b82f6;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 20px;
+    cursor: pointer; 
+    transition: transform 0.2s; 
+    will-change: transform;
+}
+
+.zoom-btn:hover { 
+    background: #3b82f6; 
+    color: #ffffff; 
+    transform: scale(1.05); 
+}
+
+.zoom-indicator {
+    background: #0f172a; 
+    color: white; 
+    padding: 6px 12px; 
+    border-radius: 8px;
+    font-size: 11px; 
+    font-weight: 800; 
+    text-align: center; 
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.mermaid .edgePath path { 
+    stroke: #3b82f6 !important; 
+    stroke-width: 2.5px !important; 
+}
+
+.mermaid .nodeLabel { 
+    font-size: 14px !important; 
+    font-weight: 700 !important; 
+}
+
+.mermaid .cluster rect { 
+    fill: rgba(248, 250, 252, 0.4) !important; 
+    rx: 20; 
+}
+
+</style>
 </head>
 <body>
 <body>
@@ -257,14 +601,875 @@
     </div>
 
     <!-- Architecture Diagram Scripts -->
-    <script src="./js/architecture.js"></script>
+    <script>
+/* ====================================================================
+   HOSTEL MANAGEMENT SYSTEM - ARCHITECTURE DIAGRAM SCRIPTS
+   Extracted from architecture.html for modular organization
+   ==================================================================== */
+
+/**
+ * Initialize animated title with letter-wave animation
+ */
+window.onload = function() {
+    const titleEl = document.getElementById('mainTitle');
+    if (!titleEl) return;
+    
+    const text = titleEl.innerText;
+    const fragment = document.createDocumentFragment();
+    
+    [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.innerText = char === ' ' ? '\u00A0' : char;
+        span.style.animationDelay = (i * 0.1) + 's';
+        fragment.appendChild(span);
+    });
+    
+    titleEl.innerHTML = '';
+    titleEl.appendChild(fragment);
+    setTimeout(updateZoomUI, 100); 
+};
+
+/**
+ * Zoom control functionality for Mermaid diagram
+ */
+let currentZoom = 0.4; 
+const zoomElement = document.getElementById('mermaidDiagram');
+const zoomIndicator = document.getElementById('zoomPercentage');
+
+function updateZoomUI() {
+    if (zoomElement) {
+        zoomElement.style.transform = `scale(${currentZoom}) translate3d(0,0,0)`;
+    }
+    if (zoomIndicator) {
+        zoomIndicator.innerText = Math.round(currentZoom * 100) + '%';
+    }
+}
+
+function adjustZoom(delta) {
+    const newZoom = currentZoom + delta;
+    if (newZoom >= 0.1 && newZoom <= 3.0) {
+        currentZoom = parseFloat(newZoom.toFixed(1));
+        updateZoomUI();
+    }
+}
+
+function resetZoom() {
+    currentZoom = 0.4;
+    updateZoomUI();
+}
+
+/**
+ * Initialize Mermaid diagram with configuration
+ */
+mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    securityLevel: 'loose',
+    flowchart: {
+        rankSpacing: 200, 
+        nodeSpacing: 130, 
+        curve: 'basis',
+        useMaxWidth: false,
+        htmlLabels: true,
+        padding: 40
+    },
+    themeVariables: {
+        primaryColor: '#ffffff',
+        primaryTextColor: '#1e293b',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#3b82f6',
+        fontFamily: 'Plus Jakarta Sans',
+        fontSize: '15px',
+        nodePadding: 5
+    }
+});
+
+</script>
 
     <!-- Security Modules -->
-    <script src="../security/security.config.js"></script>
-    <script src="../security/device-checker.js"></script>
-    <script src="../security/anti-debug.js"></script>
-    <script src="../security/copy-protection.js"></script>
-    <script src="../security/screenshot-blocker.js"></script>
-    <script src="../security/context-menu-blocker.js"></script>
+    <script>
+/**
+ * HOSPITAL MANAGEMENT SYSTEM - SECURITY CONFIGURATION
+ * Platform Unification & Access Control Module
+ * Silently enforces security without user warnings
+ */
+
+(function() {
+    'use strict';
+    
+    const SecurityConfig = {
+        // Feature flags
+        allowMobileAccess: false,
+        blockDeveloperTools: true,
+        disableCopyPaste: true,
+        preventScreenshots: true,
+        disableRightClick: true,
+        
+        // Initialize all security modules
+        init: function() {
+            console.clear = () => {}; // Disable console.clear silently
+            
+            if (this.allowMobileAccess === false) {
+                this.checkDeviceType();
+            }
+            
+            if (this.blockDeveloperTools === true) {
+                this.initializeAntiDebug();
+            }
+            
+            if (this.disableCopyPaste === true) {
+                this.initializeCopyProtection();
+            }
+            
+            if (this.preventScreenshots === true) {
+                this.initializeScreenshotBlocker();
+            }
+            
+            if (this.disableRightClick === true) {
+                this.initializeContextMenuBlocker();
+            }
+        },
+        
+        // Check device type and block mobile access
+        checkDeviceType: function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTablet = /iPad|Android(?!.*Mobile)|Tablet/i.test(navigator.userAgent);
+            
+            if (isMobile && !isTablet) {
+                // Silently redirect to error page without warning
+                window.location.href = 'about:blank';
+                // Or show blank page
+                document.body.innerHTML = '';
+                document.body.style.display = 'none';
+            }
+        },
+        
+        // Disable developer tools
+        initializeAntiDebug: function() {
+            // Disable right-click
+            document.addEventListener('contextmenu', (e) => e.preventDefault(), true);
+            
+            // Disable common developer tools shortcuts
+            document.addEventListener('keydown', (e) => {
+                // F12 - Developer Tools
+                if (e.key === 'F12' || e.code === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+I - Inspector
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.code === 'KeyI')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+J - Console
+                if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.code === 'KeyJ')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+C - Element Inspector
+                if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.code === 'KeyC')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+K - Console (Firefox)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'K' || e.code === 'KeyK')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+            
+            // Disable console methods
+            window.console.log = () => {};
+            window.console.debug = () => {};
+            window.console.info = () => {};
+            window.console.warn = () => {};
+            window.console.error = () => {};
+            
+            // Disable debugger
+            const noop = () => {};
+            window.console.clear = noop;
+            
+            // Detect DevTools
+            let devtools = { open: false };
+            let lastCheck = 0;
+            setInterval(() => {
+                const now = Date.now();
+                if (now - lastCheck > 100) {
+                    lastCheck = now;
+                    if (window.outerHeight - window.innerHeight > 100 || 
+                        window.outerWidth - window.innerWidth > 100) {
+                        // DevTools detected
+                        devtools.open = true;
+                        // Silently close or prevent interaction
+                    }
+                }
+            }, 100);
+        },
+        
+        // Disable copy/paste functionality
+        initializeCopyProtection: function() {
+            // Block copy event
+            document.addEventListener('copy', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            // Block cut event
+            document.addEventListener('cut', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            // Block paste event
+            document.addEventListener('paste', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            // Block select all
+            document.addEventListener('selectstart', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            // CSS-level protection
+            const style = document.createElement('style');
+            style.textContent = `
+                * {
+                    -webkit-user-select: none !important;
+                    -moz-user-select: none !important;
+                    -ms-user-select: none !important;
+                    user-select: none !important;
+                    -webkit-touch-callout: none !important;
+                }
+                input, textarea {
+                    -webkit-user-select: text !important;
+                    -moz-user-select: text !important;
+                    -ms-user-select: text !important;
+                    user-select: text !important;
+                }
+            `;
+            document.head.appendChild(style);
+        },
+        
+        // Prevent screenshots
+        initializeScreenshotBlocker: function() {
+            // Block print screen key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                    e.preventDefault();
+                    navigator.clipboard?.writeText('');
+                    return false;
+                }
+            }, true);
+            
+            // Monitor visibility change (screen recording detection)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    // Page became visible - could be screenshot app
+                }
+            });
+            
+            // Visual protection - overlay during screenshot attempts
+            const protectionStyle = document.createElement('style');
+            protectionStyle.textContent = `
+                html {
+                    -webkit-filter: invert(0) !important;
+                }
+                @media print {
+                    body {
+                        display: none !important;
+                    }
+                }
+            `;
+            document.head.appendChild(protectionStyle);
+        },
+        
+        // Disable right-click context menu
+        initializeContextMenuBlocker: function() {
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+            
+            // Disable mouse up/down for right-click
+            document.addEventListener('mouseup', (e) => {
+                if (e.button === 2) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        }
+    };
+    
+    // Auto-initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            SecurityConfig.init();
+        });
+    } else {
+        SecurityConfig.init();
+    }
+    
+    // Also initialize immediately
+    SecurityConfig.init();
+    
+    // Expose config for potential admin override (requires authentication)
+    window.__SecurityConfig__ = SecurityConfig;
+    
+})();
+
+</script>
+    <script>
+/**
+ * DEVICE TYPE CHECKER
+ * Silently blocks mobile devices, allows desktop and tablets
+ */
+
+(function() {
+    'use strict';
+    
+    window.DeviceChecker = {
+        // Check if device is mobile (not tablet)
+        isMobileDevice: function() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Check for mobile devices
+            const mobileRegex = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i;
+            const tabletRegex = /iPad|Android(?!.*Mobile)|Tablet|Nexus 7|Nexus 10|KFAPWI|SM-T|WindowsPhone/i;
+            
+            const isMobile = mobileRegex.test(userAgent);
+            const isTablet = tabletRegex.test(userAgent);
+            
+            // Return true only if it's mobile but NOT tablet
+            return isMobile && !isTablet;
+        },
+        
+        // Check if device is desktop or tablet
+        isDesktopOrTablet: function() {
+            return !this.isMobileDevice();
+        },
+        
+        // Get device type
+        getDeviceType: function() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            if (/iPad|Android(?!.*Mobile)|Tablet|Nexus 7|Nexus 10/i.test(userAgent)) {
+                return 'tablet';
+            } else if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+                return 'mobile';
+            } else {
+                return 'desktop';
+            }
+        },
+        
+        // Block mobile access silently
+        blockMobileAccess: function() {
+            if (this.isMobileDevice()) {
+                // Clear everything silently
+                document.body.innerHTML = '';
+                document.documentElement.innerHTML = '';
+                window.location.href = 'about:blank';
+            }
+        },
+        
+        // Initialize
+        init: function() {
+            this.blockMobileAccess();
+        }
+    };
+    
+    // Auto-initialize
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.DeviceChecker.init();
+        });
+    } else {
+        window.DeviceChecker.init();
+    }
+    
+})();
+
+</script>
+    <script>
+/**
+ * ANTI-DEBUG MODULE
+ * Disables developer tools without warnings
+ */
+
+(function() {
+    'use strict';
+    
+    window.AntiDebug = {
+        // Disable all developer shortcuts
+        disableDeveloperShortcuts: function() {
+            document.addEventListener('keydown', (e) => {
+                // Prevent F12
+                if (e.key === 'F12' || e.code === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+I (Inspector)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.code === 'KeyI')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+J (Console)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.code === 'KeyJ')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+C (Element Inspector)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.code === 'KeyC')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+K (Console Firefox)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'K' || e.code === 'KeyK')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+M (Responsive Design)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'M' || e.code === 'KeyM')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Disable console methods
+        disableConsole: function() {
+            const noop = () => {};
+            window.console = {
+                log: noop,
+                debug: noop,
+                info: noop,
+                warn: noop,
+                error: noop,
+                clear: noop,
+                time: noop,
+                timeEnd: noop,
+                trace: noop,
+                group: noop,
+                groupEnd: noop,
+                assert: noop,
+                profile: noop,
+                profileEnd: noop
+            };
+        },
+        
+        // Disable right-click
+        disableRightClick: function() {
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+        },
+        
+        // Detect and handle DevTools
+        detectDevTools: function() {
+            let check = setInterval(() => {
+                if (window.outerHeight - window.innerHeight > 150 || 
+                    window.outerWidth - window.innerWidth > 150) {
+                    // DevTools detected - silently handle
+                    // Don't do anything visible, just track
+                }
+            }, 100);
+        },
+        
+        // Initialize all anti-debug features
+        init: function() {
+            this.disableDeveloperShortcuts();
+            this.disableConsole();
+            this.disableRightClick();
+            this.detectDevTools();
+        }
+    };
+    
+    // Auto-initialize
+    window.AntiDebug.init();
+    
+})();
+
+</script>
+    <script>
+/**
+ * COPY/PASTE PROTECTION MODULE
+ * Silently prevents copy, cut, paste operations
+ */
+
+(function() {
+    'use strict';
+    
+    window.CopyProtection = {
+        // Block copy operation
+        blockCopy: function() {
+            document.addEventListener('copy', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+        },
+        
+        // Block cut operation
+        blockCut: function() {
+            document.addEventListener('cut', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+        },
+        
+        // Block paste operation
+        blockPaste: function() {
+            document.addEventListener('paste', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+        },
+        
+        // Block text selection
+        blockSelection: function() {
+            document.addEventListener('selectstart', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            document.addEventListener('mousedown', (e) => {
+                if (e.detail > 1) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Apply CSS-level protection
+        applyCSSProtection: function() {
+            const style = document.createElement('style');
+            style.textContent = `
+                * {
+                    -webkit-user-select: none !important;
+                    -moz-user-select: none !important;
+                    -ms-user-select: none !important;
+                    user-select: none !important;
+                    -webkit-touch-callout: none !important;
+                    -webkit-user-drag: none !important;
+                }
+                input, textarea {
+                    -webkit-user-select: text !important;
+                    -moz-user-select: text !important;
+                    -ms-user-select: text !important;
+                    user-select: text !important;
+                }
+                img {
+                    pointer-events: none !important;
+                    -webkit-user-drag: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        },
+        
+        // Disable drag and drop
+        blockDragDrop: function() {
+            document.addEventListener('drag', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            document.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+            
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                return false;
+            }, true);
+        },
+        
+        // Block keyboard shortcuts for copy/paste
+        blockKeyboardShortcuts: function() {
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+C / Cmd+C (Copy)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.code === 'KeyC')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+X / Cmd+X (Cut)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'x' || e.code === 'KeyX')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+V / Cmd+V (Paste)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.code === 'KeyV')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+A / Cmd+A (Select All)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.code === 'KeyA')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Initialize all copy protection
+        init: function() {
+            this.blockCopy();
+            this.blockCut();
+            this.blockPaste();
+            this.blockSelection();
+            this.applyCSSProtection();
+            this.blockDragDrop();
+            this.blockKeyboardShortcuts();
+        }
+    };
+    
+    // Auto-initialize
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.CopyProtection.init();
+        });
+    } else {
+        window.CopyProtection.init();
+    }
+    
+})();
+
+</script>
+    <script>
+/**
+ * SCREENSHOT BLOCKER MODULE
+ * Prevents screenshots and screen recording silently
+ */
+
+(function() {
+    'use strict';
+    
+    window.ScreenshotBlocker = {
+        // Block Print Screen key
+        blockPrintScreen: function() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                    e.preventDefault();
+                    // Clear clipboard immediately
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText('').catch(() => {});
+                    }
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Block Shift+PrintScreen
+        blockShiftPrintScreen: function() {
+            document.addEventListener('keydown', (e) => {
+                if ((e.shiftKey && e.key === 'PrintScreen') || (e.shiftKey && e.keyCode === 44)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Detect screenshot attempts via visibility API
+        detectScreenshotAttempts: function() {
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    // Page became visible - could be screenshot tool
+                    // Silently handle, no warning
+                }
+            });
+        },
+        
+        // Protect against page save
+        preventPageSave: function() {
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+S / Cmd+S (Save)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.code === 'KeyS')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Add visual protection that disrupts screenshots
+        addVisualProtection: function() {
+            const style = document.createElement('style');
+            style.textContent = `
+                /* Prevent text selection which protects from screenshots */
+                body {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                /* Prevent page from being saved */
+                @media print {
+                    body {
+                        display: none !important;
+                    }
+                    html {
+                        display: none !important;
+                    }
+                }
+                
+                /* Protect against screen capture tools */
+                html {
+                    -webkit-filter: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        },
+        
+        // Monitor window focus/blur for screenshot app detection
+        monitorWindowFocus: function() {
+            let blurCount = 0;
+            
+            window.addEventListener('blur', () => {
+                blurCount++;
+                if (blurCount > 5) {
+                    blurCount = 0;
+                    // Too many blur events - could be screenshot app scanning
+                    // Silently handle
+                }
+            });
+            
+            window.addEventListener('focus', () => {
+                blurCount = 0;
+            });
+        },
+        
+        // Block common screenshot tools' attempts to read pixel data
+        blockPixelAccess: function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (ctx) {
+                const originalGetImageData = ctx.getImageData;
+                ctx.getImageData = function() {
+                    // Return blank/transparent data
+                    return originalGetImageData.call(this, 0, 0, 1, 1);
+                };
+            }
+        },
+        
+        // Initialize all screenshot protection
+        init: function() {
+            this.blockPrintScreen();
+            this.blockShiftPrintScreen();
+            this.detectScreenshotAttempts();
+            this.preventPageSave();
+            this.addVisualProtection();
+            this.monitorWindowFocus();
+            this.blockPixelAccess();
+        }
+    };
+    
+    // Auto-initialize
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.ScreenshotBlocker.init();
+        });
+    } else {
+        window.ScreenshotBlocker.init();
+    }
+    
+})();
+
+</script>
+    <script>
+/**
+ * CONTEXT MENU BLOCKER MODULE
+ * Disables right-click context menu silently
+ */
+
+(function() {
+    'use strict';
+    
+    window.ContextMenuBlocker = {
+        // Block context menu
+        blockContextMenu: function() {
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }, true);
+        },
+        
+        // Block mouse right button
+        blockMouseRightButton: function() {
+            document.addEventListener('mouseup', (e) => {
+                if (e.button === 2) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }, true);
+            
+            document.addEventListener('mousedown', (e) => {
+                if (e.button === 2) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Block touch context menu (long press)
+        blockTouchContextMenu: function() {
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, true);
+            
+            document.addEventListener('touchend', (e) => {
+                if (e.changedTouches.length > 1) {
+                    e.preventDefault();
+                }
+            }, true);
+        },
+        
+        // Disable inspect element for all elements
+        disableInspect: function() {
+            document.addEventListener('click', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        },
+        
+        // Initialize all context menu blocking
+        init: function() {
+            this.blockContextMenu();
+            this.blockMouseRightButton();
+            this.blockTouchContextMenu();
+            this.disableInspect();
+        }
+    };
+    
+    // Auto-initialize
+    window.ContextMenuBlocker.init();
+    
+})();
+
+</script>
 </body>
 </html>
