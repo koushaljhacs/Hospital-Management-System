@@ -1,22 +1,23 @@
 # HMS Hospital Management System - CSS/JS Minification Script
 # Purpose: Minify CSS and JavaScript files for production deployment
 
-$srcDir = "./planning"
-$distDir = "./planning/dist"
+$srcDir = "."
+$distDir = "./dist"
 
 # Create dist directories if they don't exist
 New-Item -ItemType Directory -Path "$distDir/css" -Force | Out-Null
 New-Item -ItemType Directory -Path "$distDir/js" -Force | Out-Null
+New-Item -ItemType Directory -Path "$distDir/architecture" -Force | Out-Null
 
 # Function to minify CSS
 function Minify-CSS {
     param([string]$inputFile, [string]$outputFile)
-    
-    $css = Get-Content $inputFile -Raw
-    
+
+    $css = [string]::Join("`n", (Get-Content $inputFile))
+
     # Remove comments
     $css = $css -replace '/\*[\s\S]*?\*/', ''
-    
+
     # Remove excess whitespace
     $css = $css -replace '\s+', ' '
     $css = $css -replace ';\s+', ';'
@@ -25,10 +26,10 @@ function Minify-CSS {
     $css = $css -replace '\s*\{\s*', '{'
     $css = $css -replace '\s*\}\s*', '}'
     $css = $css -replace '>\s+', '>'
-    
+
     # Trim leading/trailing spaces
     $css = $css.Trim()
-    
+
     Set-Content -Path $outputFile -Value $css -NoNewline
     Write-Host "Minified: $inputFile -> $outputFile"
 }
@@ -36,13 +37,13 @@ function Minify-CSS {
 # Function to minify JavaScript
 function Minify-JS {
     param([string]$inputFile, [string]$outputFile)
-    
+
     $js = Get-Content $inputFile -Raw
-    
+
     # Remove comments (single-line and multi-line)
     $js = $js -replace '//.*?(?=\n)', ''
     $js = $js -replace '/\*[\s\S]*?\*/', ''
-    
+
     # Remove excess whitespace
     $js = $js -replace '\s+', ' '
     $js = $js -replace ';\s+', ';'
@@ -50,12 +51,42 @@ function Minify-JS {
     $js = $js -replace ',\s+', ','
     $js = $js -replace '\s*\{\s*', '{'
     $js = $js -replace '\s*\}\s*', '}'
-    
+
     # Trim
     $js = $js.Trim()
-    
+
     Set-Content -Path $outputFile -Value $js -NoNewline
     Write-Host "Minified: $inputFile -> $outputFile"
+}
+
+# Function to update HTML for production
+function Update-HTML {
+    param([string]$inputFile, [string]$outputFile)
+
+    $html = [string]::Join("`n", (Get-Content $inputFile))
+
+    # Update CSS links
+    $html = $html -replace 'href="animations\.css"', 'href="css/animations.min.css"'
+    $html = $html -replace 'href="style\.css"', 'href="css/style.min.css"'
+
+    # Update JS links
+    $html = $html -replace 'src="script\.js"', 'src="js/script.min.js"'
+
+    # Update asset paths (for dist, go up one level)
+    $html = $html -replace 'src="assets/', 'src="../assets/'
+
+    # Update security script paths
+    $html = $html -replace 'src="\./security/', 'src="../security/'
+
+    # For architecture.html, update its specific links
+    if ($inputFile -like "*architecture.html") {
+        $html = $html -replace 'href="\./css/architecture\.css"', 'href="./css/architecture.css"'
+        $html = $html -replace 'src="\./js/architecture\.js"', 'src="./js/architecture.js"'
+        $html = $html -replace 'src="\.\./security/', 'src="../security/'
+    }
+
+    Set-Content -Path $outputFile -Value $html -NoNewline
+    Write-Host "Updated: $inputFile -> $outputFile"
 }
 
 # Minify CSS files
@@ -66,6 +97,15 @@ Minify-CSS "$srcDir/animations.css" "$distDir/css/animations.min.css"
 # Minify JavaScript files
 Write-Host "=== Minifying JavaScript Files ===" -ForegroundColor Cyan
 Minify-JS "$srcDir/script.js" "$distDir/js/script.min.js"
+
+# Copy and update HTML files to dist
+Write-Host "=== Processing HTML Files ===" -ForegroundColor Cyan
+Update-HTML "$srcDir/index.html" "$distDir/index.html"
+Update-HTML "$srcDir/architecture/architecture.html" "$distDir/architecture/architecture.html"
+
+# Copy additional assets if needed (e.g., architecture CSS/JS)
+Copy-Item "$srcDir/architecture/css/architecture.css" "$distDir/architecture/css/architecture.css" -Force
+Copy-Item "$srcDir/architecture/js/architecture.js" "$distDir/architecture/js/architecture.js" -Force
 
 # Display file sizes
 Write-Host "=== File Size Comparison ===" -ForegroundColor Green

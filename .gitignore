@@ -9,10 +9,26 @@ css/
 js/
 assets/
 
-# Source CSS and JS files (keep minified versions in dist/ only)
+# Development files in planning/ (ignore source files, keep production dist/)
+planning/index.html
+planning/architecture.html
+planning/architecture/architecture.html
 planning/style.css
 planning/animations.css
 planning/script.js
+
+# Keep production dist/ folder
+!planning/dist/
+
+# Keep build script and documentation
+!planning/build-minify.ps1
+!planning/README.md
+!planning/LICENSE.md
+!planning/plan.txt
+
+# Keep necessary assets and security scripts
+!planning/assets/
+!planning/security/
 
 # IDE and editor files
 .vscode/
