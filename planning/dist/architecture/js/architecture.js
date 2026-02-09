@@ -29,10 +29,18 @@ window.onload = function() {
  * Zoom control functionality for Mermaid diagram
  */
 let currentZoom = 0.4; 
-const zoomElement = document.getElementById('mermaidDiagram');
-const zoomIndicator = document.getElementById('zoomPercentage');
+
+function getZoomElement() {
+    return document.getElementById('mermaidDiagram');
+}
+
+function getZoomIndicator() {
+    return document.getElementById('zoomPercentage');
+}
 
 function updateZoomUI() {
+    const zoomElement = getZoomElement();
+    const zoomIndicator = getZoomIndicator();
     if (zoomElement) {
         zoomElement.style.transform = `scale(${currentZoom}) translate3d(0,0,0)`;
     }
@@ -54,11 +62,12 @@ function resetZoom() {
     updateZoomUI();
 }
 
+
 /**
  * Initialize Mermaid diagram with configuration
  */
 mermaid.initialize({
-    startOnLoad: true,
+    startOnLoad: false,
     theme: 'base',
     securityLevel: 'loose',
     flowchart: {
@@ -78,4 +87,12 @@ mermaid.initialize({
         fontSize: '15px',
         nodePadding: 5
     }
+});
+
+/**
+ * Render Mermaid diagram after DOM is ready
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Re-render mermaid diagrams
+    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
 });

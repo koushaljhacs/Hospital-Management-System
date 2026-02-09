@@ -271,6 +271,7 @@ body::before {
 
 .mermaid {
     width: max-content; 
+    min-width: 1400px;
     margin-left: 40px; 
     margin-right: auto;
     background: rgba(255, 255, 255, 0.8); 
@@ -281,7 +282,9 @@ body::before {
     box-shadow: 0 30px 60px -12px rgba(0,0,0,0.03); 
     border: 1px solid rgba(255, 255, 255, 0.8);
     will-change: transform;
+    overflow: visible;
 }
+
 
 .zoom-controls { 
     position: fixed; 
