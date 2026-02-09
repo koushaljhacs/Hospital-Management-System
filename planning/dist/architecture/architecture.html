@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Architecture Diagram Styles -->
-    <link rel="stylesheet" href="./css/architecture.min.css">
+    <link rel="stylesheet" href="./css/architecture.css">
+
+    <!-- Security Modules (Loaded Early) -->
+    <script src="../security/security.config.js"></script>
+    <script src="../security/device-checker.js"></script>
+    <script src="../security/anti-debug.js"></script>
+    <script src="../security/copy-protection.js"></script>
+    <script src="../security/screenshot-blocker.js"></script>
+    <script src="../security/context-menu-blocker.js"></script>
 </head>
 <body>
 <body>
@@ -64,75 +72,75 @@
     <div class="diagram-viewport">
         <div id="mermaidDiagram" class="mermaid">
             graph TD
-                CP["<b>ðŸ”„ SYSTEM ORCHESTRATOR</b><br/>Hostel OS Control Pulse"]
+                CP["<b>🔄 SYSTEM ORCHESTRATOR</b><br/>Hostel OS Control Pulse"]
                 subgraph Gov ["Governance and Command"]
-                    CH["ðŸ‘” Chancellor"]
-                    DIR["ðŸŽ¯ Director"]
-                    SA["ðŸ›¡ï¸ Super Admin"]
-                    ITA["ðŸ’» IT Admin"]
-                    BA["ðŸ’¼ Billing Admin"]
-                    HR["ðŸ‘¥ HR Manager"]
-                    AD["ðŸ“Š Analytics Dashboard"]
-                    TM["ðŸ“Š Treasury Manager"]
-                    BIO["ðŸ§¬ Biometric Data Hub"]
+                    CH["👔 Chancellor"]
+                    DIR["🎯 Director"]
+                    SA["🛡️ Super Admin"]
+                    ITA["💻 IT Admin"]
+                    BA["💼 Billing Admin"]
+                    HR["👥 HR Manager"]
+                    AD["📊 Analytics Dashboard"]
+                    TM["📊 Treasury Manager"]
+                    BIO["🧬 Biometric Data Hub"]
                 end
                 subgraph Ops ["Resident Operations"]
-                    RL["ðŸ  Resident Leads"]
-                    MS["ðŸ§¼ Maintenance Staff"]
+                    RL["🏠 Resident Leads"]
+                    MS["🧼 Maintenance Staff"]
                     SBE["Smart Booking Engine"]
-                    PCV["âœ… Policy Compliance"]
-                    BGP["ðŸ” Critical-Access"]
-                    AUL["ðŸ“‘ Forensic Audit"]
+                    PCV["✅ Policy Compliance"]
+                    BGP["🔐 Critical-Access"]
+                    AUL["📑 Forensic Audit"]
                     ACK["Feedback Acknowledgment"]
                 end
                 subgraph Sec ["Reporting and Security"]
-                    QI["ðŸ§ª Quality Inspectors"]
-                    SF["ðŸ“¸ Security Feeds"]
-                    PACS["ðŸŽžï¸ Assets Vault"]
-                    APE["ðŸ”” System Alert"]
+                    QI["🧪 Quality Inspectors"]
+                    SF["📸 Security Feeds"]
+                    PACS["🎞️ Assets Vault"]
+                    APE["🔔 System Alert"]
                 end
                 subgraph Fin ["Operational and Financial"]
-                    REC["ðŸ“ Registration Desk"]
-                    SUP["ðŸ’Š Supply Store"]
-                    BS["ðŸ’³ Front-Desk Billing"]
-                    SAP["ðŸ“¦ Smart Auto-Procure"]
+                    REC["📝 Registration Desk"]
+                    SUP["💊 Supply Store"]
+                    BS["💳 Front-Desk Billing"]
+                    SAP["📦 Smart Auto-Procure"]
                 end
                 subgraph Fac ["Facility and Logistics"]
-                    MT["ðŸ‘¨â€ðŸ’¼ Maintenance Team"]
-                    SP["ðŸš¨ Security Personnel"]
-                    BT["ðŸ”§ Biomedical Technicians"]
-                    TD["ðŸš‘ Transit Driver"]
-                    SC["ðŸ“¦ Store Controller"]
+                    MT["👨‍💼 Maintenance Team"]
+                    SP["🚨 Security Personnel"]
+                    BT["🔧 Biomedical Technicians"]
+                    TD["🚑 Transit Driver"]
+                    SC["📦 Store Controller"]
                 end
                 subgraph Ext ["External User Interface"]
-                    RWP["ðŸ‘¤ Resident Web Portal"]
-                    MOB["ðŸ“² Mobile HMS App"]
-                    GV["ðŸ‘¥ Guest Visitors"]
+                    RWP["👤 Resident Web Portal"]
+                    MOB["📲 Mobile HMS App"]
+                    GV["👥 Guest Visitors"]
                 end
                 subgraph SecurityPerimeter ["Hardware Security Perimeter"]
-                    FW["ðŸ›¡ï¸ Perimeter Firewall"]
+                    FW["🛡️ Perimeter Firewall"]
                 end
                 subgraph Infra ["Core Infrastructure Layer"]
-                    NSP["ðŸ›¡ï¸ SSL and Load Balancer"]
-                    JWT["ðŸ”‘ Token Verification"]
-                    NGX["ðŸŒ Nginx Gateway"]
-                    JI["â˜• Java Logic Engine"]
-                    NF["ðŸŸ¢ Node.js Event Layer"]
-                    PG[("ðŸ—„ï¸ PostgreSQL 16+")]
-                    RMS["ðŸ–‡ï¸ Master-Slave Sync"]
-                    WAL["ðŸ’¾ WAL Integrity"]
-                    PM2["âš™ï¸ PM2 Monitor"]
+                    NSP["🛡️ SSL and Load Balancer"]
+                    JWT["🔑 Token Verification"]
+                    NGX["🌐 Nginx Gateway"]
+                    JI["☕ Java Logic Engine"]
+                    NF["🟢 Node.js Event Layer"]
+                    PG[("🗄️ PostgreSQL 16+")]
+                    RMS["🖇️ Master-Slave Sync"]
+                    WAL["💾 WAL Integrity"]
+                    PM2["⚙️ PM2 Monitor"]
                     SMTP["Hub Notification Relay"]
-                    MSG["ðŸ“² Messaging Hub"]
+                    MSG["📲 Messaging Hub"]
                 end
                 subgraph API ["Service API Gateway Layer"]
-                    REST["ðŸŒ REST API Endpoints"]
-                    WSSG["ðŸ“² WebSocket Gateway"]
-                    GRPH["ðŸ›¡ï¸ Query Orchestrator"]
+                    REST["🌐 REST API Endpoints"]
+                    WSSG["📲 WebSocket Gateway"]
+                    GRPH["🛡️ Query Orchestrator"]
                 end
                 subgraph Services ["Third-Party Ecosystem"]
-                    PAY["ðŸ’³ Payment Gateway"]
-                    CLD["ðŸ“¦ Cloud Assets Hub"]
+                    PAY["💳 Payment Gateway"]
+                    CLD["📦 Cloud Assets Hub"]
                 end
                 subgraph CoreMainframe ["Physical Core Mainframe Cluster"]
                     CRM["<div class='isolated-server-room'><div class='room-label'><span class='label-text'>SEGMENT_01:ULTRA_WIDE_MAINFRAME_VAULT</span><div class='status-dot-pulse'></div></div><div class='rack-enclosure'><div class='rack-side-bar bar-left'></div><div class='rack-side-bar bar-right'></div><div class='blade'><div class='blade-icon'><i class='bi bi-cpu'></i></div><div class='blade-content'><span class='blade-title'>XEON_COMPUTE_U4</span><span class='blade-sub'>Java Backend Core / Distributed Event-Loop Node</span><div class='load-meter'><div class='load-fill'></div></div></div><div class='led-array'><div class='led-p active'></div><div class='led-p active'></div></div></div><div class='blade'><div class='blade-icon'><i class='bi bi-hdd-stack'></i></div><div class='blade-content'><span class='blade-title'>PGSQL_NVME_U3</span><span class='blade-sub'>ACID Transactions / Synchronous Master-Slave Replicas</span><div class='load-meter'><div class='load-fill' style='animation-delay:0.5s; background:#3b82f6;'></div></div></div><div class='led-array'><div class='led-p active' style='background:#3b82f6'></div><div class='led-p active'></div></div></div><div class='blade'><div class='blade-icon'><i class='bi bi-shield-fill-check'></i></div><div class='blade-content'><span class='blade-title'>GATEWAY_FW_U2</span><span class='blade-sub'>WAF / Load Balancing / Perimeter Ingress Guard</span><div class='load-meter'><div class='load-fill'></div></div></div><div class='led-array'><div class='led-p active'></div><div class='led-p'></div></div></div><div class='blade' style='opacity:0.8'><div class='blade-icon'><i class='bi bi-lightning-fill'></i></div><div class='blade-content'><span class='blade-title'>PWR_UNIT_U1</span><span class='blade-sub'>Offline Redundant Uninterrupted UPS Power Cluster</span><div class='load-meter'><div class='load-fill' style='width:15%; background:#f59e0b;'></div></div></div><div class='led-array'><div class='led-p active' style='background:#f59e0b'></div></div></div></div></div>"]
@@ -257,7 +265,7 @@
     </div>
 
     <!-- Architecture Diagram Scripts -->
-    <script src="./js/architecture.min.js"></script>
+    <script src="./js/architecture.js"></script>
 
     <!-- Security Modules -->
     <script src="../security/security.config.js"></script>
@@ -268,4 +276,3 @@
     <script src="../security/context-menu-blocker.js"></script>
 </body>
 </html>
-
