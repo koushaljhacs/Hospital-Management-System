@@ -1,0 +1,342 @@
+/* ====================================================================
+   HOSTEL MANAGEMENT SYSTEM - ARCHITECTURE DIAGRAM STYLES
+   Extracted from architecture.html for modular organization
+   ==================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* --- PERFORMANCE OPTIMIZED BACKGROUND --- */
+@keyframes bgCycle {
+    0%, 100% { background-color: #f8fafc; }
+    25% { background-color: #f1f5f9; }
+    50% { background-color: #ecfdf5; }
+    75% { background-color: #eef2ff; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden;
+    background-color: #f8fafc;
+    animation: bgCycle 20s infinite ease-in-out;
+    position: relative;
+    transform: translateZ(0);
+}
+
+body::before {
+    content: ""; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    background: linear-gradient(-45deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05), rgba(99, 102, 241, 0.05), rgba(100, 116, 139, 0.05));
+    background-size: 400% 400%; 
+    animation: gradientShift 15s ease infinite;
+    z-index: -1; 
+    pointer-events: none; 
+    will-change: background-position;
+}
+
+/* --- HARDWARE ACCELERATED MULTI-COLOR RAINBOW ANIMATION --- */
+@keyframes letterWave {
+    0%, 100% { 
+        transform: translateY(0); 
+        color: #3b82f6;
+        text-shadow: 0 5px 10px rgba(59, 130, 246, 0.1); 
+    }
+    25% { color: #10b981; }
+    50% { color: #f59e0b; }
+    75% { color: #ef4444; }
+    90% { 
+        color: #00f5ff; 
+        text-shadow: 0 5px 15px rgba(0, 245, 255, 0.3); 
+        transform: translateY(-8px);
+    }
+}
+
+.animated-title span {
+    display: inline-block;
+    animation: letterWave 4s infinite ease-in-out;
+    transition: color 0.3s ease;
+    will-change: transform, color;
+    backface-visibility: hidden;
+}
+
+/* --- ULTRA-WIDE ISOLATED SERVER VAULT DESIGN --- */
+.isolated-server-room {
+    background: #020617;
+    border: 4px solid #1e293b;
+    border-radius: 16px;
+    padding: 10px;
+    width: 1100px;
+    height: 520px;
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.6),
+        inset 0 0 40px rgba(59, 130, 246, 0.05);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: visible !important;
+    box-sizing: border-box;
+}
+
+.room-label {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 30px;
+}
+
+.label-text {
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+.status-dot-pulse {
+    width: 10px;
+    height: 10px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #22c55e;
+    animation: blink 2s infinite;
+}
+
+.rack-enclosure {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    width: 1000px;
+    height: 400px;
+    padding: 30px 50px;
+    position: relative;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box;
+}
+
+.rack-side-bar {
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    width: 12px;
+    background: linear-gradient(to bottom, #334155, #0f172a, #334155);
+}
+
+.bar-left { 
+    left: 0; 
+    border-radius: 12px 0 0 12px; 
+}
+
+.bar-right { 
+    right: 0; 
+    border-radius: 0 12px 12px 0; 
+}
+
+.blade {
+    background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    transition: all 0.3s ease;
+}
+
+.blade:hover {
+    border-color: #00f5ff;
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.4);
+    transform: scale(1.01);
+}
+
+.blade-icon { 
+    width: 40px; 
+    height: 40px; 
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 8px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    color: #94a3b8; 
+    font-size: 20px; 
+    border: 1px solid #1e293b;
+}
+
+.blade-content { 
+    flex-grow: 1; 
+    text-align: left; 
+}
+
+.blade-title { 
+    color: #f8fafc; 
+    font-size: 14px; 
+    font-weight: 800; 
+    font-family: 'JetBrains Mono', monospace; 
+    display: block; 
+}
+
+.blade-sub { 
+    color: #64748b; 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; 
+}
+
+.load-meter { 
+    height: 6px; 
+    background: #020617; 
+    border-radius: 3px; 
+    width: 180px; 
+    overflow: hidden; 
+    margin-top: 10px; 
+}
+
+.load-fill { 
+    height: 100%; 
+    background: #3b82f6; 
+    animation: dataFlow 2s infinite ease-in-out; 
+}
+
+.led-array { 
+    display: flex; 
+    gap: 8px; 
+    margin-left: 30px; 
+}
+
+.led-p { 
+    width: 8px; 
+    height: 8px; 
+    border-radius: 50%; 
+    background: #1e293b; 
+}
+
+.led-p.active { 
+    animation: blink 1.5s infinite; 
+    background: #22c55e; 
+    box-shadow: 0 0 10px #22c55e; 
+}
+
+@keyframes dataFlow {
+    0%, 100% { background: #3b82f6; width: 30%; }
+    50% { background: #60a5fa; width: 95%; }
+}
+
+@keyframes blink { 
+    0%, 100% { opacity: 1; } 
+    50% { opacity: 0.3; } 
+}
+
+/* --- GLOBAL UI --- */
+.diagram-header {
+    background: rgba(255, 255, 255, 0.7); 
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5); 
+    padding: 1rem 3rem;
+    position: sticky; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0 10px 40px -10px rgba(31, 38, 135, 0.08);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    transform: translateZ(0);
+}
+
+.diagram-viewport {
+    width: 100vw; 
+    height: calc(100vh - 145px); 
+    overflow: auto;
+    padding: 80px; 
+    position: relative; 
+    contain: size layout style;
+}
+
+.mermaid {
+    width: max-content; 
+    margin-left: 40px; 
+    margin-right: auto;
+    background: rgba(255, 255, 255, 0.8); 
+    padding: 4rem; 
+    border-radius: 2.5rem;
+    transform-origin: top left; 
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 30px 60px -12px rgba(0,0,0,0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    will-change: transform;
+}
+
+.zoom-controls { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    z-index: 2000; 
+}
+
+.zoom-btn {
+    width: 50px; 
+    height: 50px; 
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.2); 
+    border-radius: 16px; 
+    color: #3b82f6;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 20px;
+    cursor: pointer; 
+    transition: transform 0.2s; 
+    will-change: transform;
+}
+
+.zoom-btn:hover { 
+    background: #3b82f6; 
+    color: #ffffff; 
+    transform: scale(1.05); 
+}
+
+.zoom-indicator {
+    background: #0f172a; 
+    color: white; 
+    padding: 6px 12px; 
+    border-radius: 8px;
+    font-size: 11px; 
+    font-weight: 800; 
+    text-align: center; 
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.mermaid .edgePath path { 
+    stroke: #3b82f6 !important; 
+    stroke-width: 2.5px !important; 
+}
+
+.mermaid .nodeLabel { 
+    font-size: 14px !important; 
+    font-weight: 700 !important; 
+}
+
+.mermaid .cluster rect { 
+    fill: rgba(248, 250, 252, 0.4) !important; 
+    rx: 20; 
+}

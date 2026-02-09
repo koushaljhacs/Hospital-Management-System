@@ -107,8 +107,9 @@ Write-Host "=== Processing HTML Files ===" -ForegroundColor Cyan
 Update-HTML "$srcDir/index.html" "$distDir/index.html"
 Update-HTML "$srcDir/architecture/architecture.html" "$distDir/architecture/architecture.html"
 
-# Inline architecture CSS/JS into HTML for tight encapsulation (no external dependencies)
-# Note: CSS and JS are now inlined in architecture.html for production
+# Copy architecture CSS/JS for external linking in production
+Copy-Item "$srcDir/architecture/css/architecture.css" "$distDir/architecture/css/architecture.css" -Force
+Copy-Item "$srcDir/architecture/js/architecture.js" "$distDir/architecture/js/architecture.js" -Force
 
 # Copy assets folder to dist
 Copy-Item "$srcDir/assets" "$distDir/assets" -Recurse -Force

@@ -20,6 +20,11 @@ planning/script.js
 # Keep production dist/ folder
 !planning/dist/
 
+# Keep architecture CSS and JS in dist
+!planning/dist/architecture/css/
+!planning/dist/architecture/js/
+
+
 # Keep build script and documentation
 !planning/build-minify.ps1
 !planning/README.md
