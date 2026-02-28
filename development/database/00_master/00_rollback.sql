@@ -162,7 +162,7 @@ DROP EXTENSION IF EXISTS "uuid-ossp";
 -- =====================================================
 -- SECTION 4: VERIFICATION
 -- =====================================================
-SELECT '✅ ALL TABLES DROPPED SUCCESSFULLY' AS message;
+SELECT 'ALL TABLES DROPPED SUCCESSFULLY' AS message;
 
 SELECT 
     COUNT(*) as remaining_tables,
