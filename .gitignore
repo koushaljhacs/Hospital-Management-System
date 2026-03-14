@@ -57,3 +57,8 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+
+
+# planning
+TODO.md
+plan.txt
