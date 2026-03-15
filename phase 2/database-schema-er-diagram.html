@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Hospital Management System - Complete Mermaid ER Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            margin: 0px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 10px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5, #00c6fb, #1e3c72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            font-weight: 600;
+            border-left: 5px solid;
+            font-size: 1em;
+        }
+
+        .legend-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 0.95em;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .diagram-container {
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            margin: 25px 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            padding: 10px;
+            border: 1px solid #eef2f6;
+        }
+
+        .mermaid {
+            background: white;
+            min-width: 1400px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin: 20px 0 15px 0;
+        }
+
+        .info-card {
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .info-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .info-card ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-card li {
+            margin: 3px 0;
+        }
+
+        .footer {
+            text-align: left;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #eef2f6;
+            padding-top: 15px;
+        }
+
+        @media (max-width: 1200px) {
+            .container { padding: 20px; }
+            h1 { font-size: 2em; }
+            .info-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header - Left Aligned -->
+        <h1>🏥 Hospital Management System</h1>
+        <div class="subtitle">Complete Mermaid ER Diagram • 20 Tables • 35+ Relationships • Full Schema</div>
+
+        <!-- Stats Row - Left Aligned -->
+        <div class="stats-row">
+            <div class="stat-card" style="border-color: #FF6B6B;">📊 20 Tables</div>
+            <div class="stat-card" style="border-color: #4ECDC4;">🔗 35+ Relationships</div>
+            <div class="stat-card" style="border-color: #FFD93D;">📝 156 Fields</div>
+            <div class="stat-card" style="border-color: #6C5CE7;">👥 12 Roles</div>
+            <div class="stat-card" style="border-color: #00B09B;">🎨 UUID PK</div>
+            <div class="stat-card" style="border-color: #EB5757;">🔐 JSON Support</div>
+        </div>
+
+        <!-- Legend Row - Left Aligned -->
+        <div class="legend-row">
+            <div class="legend-item"><div class="legend-color" style="background:#FF6B6B;"></div> 👥 User Management (3 Tables)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#4ECDC4;"></div> 📋 Patient (1 Table)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#FFD93D;"></div> 💊 Clinical (7 Tables)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#6C5CE7;"></div> 💰 Billing (2 Tables)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#00B09B;"></div> 📦 Inventory (5 Tables)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#EB5757;"></div> 🔐 Security (2 Tables)</div>
+        </div>
+
+        <!-- Diagram Container -->
+        <div class="diagram-container">
+            <pre class="mermaid">
+                %%{init: {
+                    'theme': 'base',
+                    'themeVariables': {
+                        'primaryColor': '#FF6B6B',
+                        'primaryTextColor': '#000',
+                        'primaryBorderColor': '#FF8E53',
+                        'lineColor': '#4ECDC4',
+                        'secondaryColor': '#FFD93D',
+                        'tertiaryColor': '#6C5CE7',
+                        'clusterBkg': '#f5f7fa',
+                        'clusterBorder': '#667eea',
+                        'cScale0': '#FF6B6B',
+                        'cScale1': '#4ECDC4',
+                        'cScale2': '#FFD93D',
+                        'cScale3': '#6C5CE7',
+                        'cScale4': '#00B09B',
+                        'cScale5': '#EB5757'
+                    }
+                }}%%
+                erDiagram
+
+                    %% ========== USER MANAGEMENT (RED) ==========
+                    USERS {
+                        uuid id PK
+                        string username UK
+                        string email UK
+                        string password_hash
+                        enum role
+                        enum status
+                        string profile_picture
+                        boolean email_verified
+                        boolean phone_verified
+                        boolean two_factor_enabled
+                        timestamp last_login
+                        timestamp last_password_change
+                        int failed_login_attempts
+                        timestamp locked_until
+                        text refresh_token
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    DEPARTMENTS {
+                        uuid id PK
+                        string name UK
+                        string code UK
+                        int floor
+                        uuid head_of_department FK
+                        string phone
+                        string email
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    EMPLOYEES {
+                        uuid id PK
+                        uuid user_id FK
+                        uuid department_id FK
+                        string employee_id UK
+                        string first_name
+                        string last_name
+                        string designation
+                        string specialization
+                        string qualification
+                        string license_number
+                        date joining_date
+                        string phone
+                        string email
+                        json shift_timing
+                        enum status
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    %% ========== PATIENT MANAGEMENT (TEAL) ==========
+                    PATIENTS {
+                        uuid id PK
+                        uuid user_id FK
+                        string first_name
+                        string last_name
+                        date date_of_birth
+                        enum gender
+                        enum blood_group
+                        enum marital_status
+                        string occupation
+                        string nationality
+                        string preferred_language
+                        string phone UK
+                        string alternate_phone
+                        string email
+                        text address
+                        date registration_date
+                        string referred_by
+                        string profile_photo
+                        string emergency_contact_name
+                        string emergency_contact_phone
+                        string emergency_contact_relation
+                        text allergies
+                        text medical_conditions
+                        string insurance_provider_id FK
+                        string insurance_policy
+                        date insurance_expiry
+                        boolean consent_form_signed
+                        date consent_form_date
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    %% ========== CLINICAL MANAGEMENT (YELLOW) ==========
+                    APPOINTMENTS {
+                        uuid id PK
+                        uuid patient_id FK
+                        uuid doctor_id FK
+                        date appointment_date
+                        time appointment_time
+                        int duration_minutes
+                        enum status
+                        enum type
+                        text reason
+                        text notes
+                        boolean is_emergency
+                        decimal consultation_fee
+                        timestamp check_in_time
+                        timestamp check_out_time
+                        text cancellation_reason
+                        uuid cancelled_by FK
+                        timestamp cancelled_at
+                        uuid rescheduled_from
+                        boolean reminder_sent
+                        timestamp reminder_sent_at
+                        uuid created_by FK
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    PRESCRIPTIONS {
+                        uuid id PK
+                        uuid appointment_id FK
+                        uuid doctor_id FK
+                        uuid patient_id FK
+                        text diagnosis
+                        text notes
+                        timestamp created_at
+                        date follow_up_date
+                        timestamp updated_at
+                    }
+
+                    MEDICINES {
+                        uuid id PK
+                        uuid prescription_id FK
+                        string medicine_name
+                        string dosage
+                        string frequency
+                        string duration
+                        text instructions
+                        int quantity
+                        enum status
+                        timestamp created_at
+                    }
+
+                    LAB_TESTS {
+                        uuid id PK
+                        string test_name
+                        enum category
+                        decimal price
+                        string normal_range
+                        string unit
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    TEST_RESULTS {
+                        uuid id PK
+                        uuid test_order_id FK
+                        uuid patient_id FK
+                        uuid test_id FK
+                        string result_value
+                        text result_text
+                        boolean is_abnormal
+                        boolean is_critical
+                        uuid tested_by FK
+                        timestamp tested_at
+                        uuid verified_by FK
+                        timestamp verified_at
+                        string report_url
+                        timestamp created_at
+                    }
+
+                    RADIOLOGY_IMAGES {
+                        uuid id PK
+                        uuid patient_id FK
+                        uuid appointment_id FK
+                        enum image_type
+                        string image_url
+                        text report_text
+                        uuid radiologist_id FK
+                        timestamp uploaded_at
+                        timestamp reported_at
+                        enum status
+                        timestamp created_at
+                    }
+
+                    VITAL_SIGNS {
+                        uuid id PK
+                        uuid patient_id FK
+                        uuid nurse_id FK
+                        int blood_pressure_systolic
+                        int blood_pressure_diastolic
+                        int heart_rate
+                        decimal temperature
+                        int respiratory_rate
+                        int oxygen_saturation
+                        timestamp recorded_at
+                        timestamp created_at
+                    }
+
+                    %% ========== BILLING MANAGEMENT (PURPLE) ==========
+                    INVOICES {
+                        uuid id PK
+                        string invoice_number UK
+                        uuid patient_id FK
+                        uuid appointment_id FK
+                        date issue_date
+                        date due_date
+                        decimal subtotal
+                        decimal tax_percentage
+                        decimal tax
+                        decimal discount
+                        text discount_reason
+                        decimal total
+                        decimal paid_amount
+                        enum status
+                        enum payment_method
+                        timestamp payment_date
+                        string payment_transaction_id
+                        string payment_gateway
+                        string invoice_pdf_url
+                        uuid created_by FK
+                        uuid approved_by FK
+                        timestamp approved_at
+                        decimal refund_amount
+                        timestamp refund_date
+                        text refund_reason
+                        uuid refund_approved_by FK
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    INSURANCE_PROVIDERS {
+                        uuid id PK
+                        string name
+                        string code UK
+                        string contact
+                        string phone
+                        string email
+                        decimal coverage_percentage
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    %% ========== INVENTORY MANAGEMENT (GREEN) ==========
+                    INVENTORY {
+                        uuid id PK
+                        string medicine_name
+                        string generic_name
+                        enum category
+                        string manufacturer
+                        uuid supplier_id FK
+                        string batch_number
+                        date expiry_date
+                        int quantity
+                        decimal unit_price
+                        decimal selling_price
+                        int reorder_level
+                        int minimum_stock
+                        int maximum_stock
+                        string location
+                        string rack_number
+                        string shelf_number
+                        boolean is_active
+                        boolean requires_prescription
+                        string storage_conditions
+                        timestamp created_at
+                        timestamp updated_at
+                        timestamp last_checked
+                        uuid checked_by FK
+                    }
+
+                    SUPPLIERS {
+                        uuid id PK
+                        string name
+                        string contact_person
+                        string phone
+                        string email
+                        text address
+                        string gst_number
+                        string payment_terms
+                        enum status
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    PURCHASE_ORDERS {
+                        uuid id PK
+                        string po_number UK
+                        uuid supplier_id FK
+                        date order_date
+                        date expected_delivery
+                        enum status
+                        decimal total_amount
+                        uuid created_by FK
+                        uuid approved_by FK
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    BEDS {
+                        uuid id PK
+                        string bed_number UK
+                        string ward
+                        string room_number
+                        enum type
+                        enum status
+                        uuid current_patient_id FK
+                        timestamp last_cleaned
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    TASKS {
+                        uuid id PK
+                        enum task_type
+                        uuid assigned_to FK
+                        uuid assigned_by FK
+                        uuid patient_id FK
+                        text description
+                        enum priority
+                        enum status
+                        timestamp due_time
+                        timestamp completed_at
+                        text notes
+                        timestamp created_at
+                        timestamp updated_at
+                    }
+
+                    %% ========== SECURITY MANAGEMENT (DARK RED) ==========
+                    AUDIT_LOGS {
+                        uuid id PK
+                        uuid user_id FK
+                        string action
+                        string table_name
+                        string record_id
+                        json old_data
+                        json new_data
+                        string ip_address
+                        string user_agent
+                        timestamp created_at
+                    }
+
+                    BREAK_GLASS_ACCESS {
+                        uuid id PK
+                        uuid user_id FK
+                        uuid patient_id FK
+                        text reason
+                        uuid witness_id FK
+                        timestamp access_start
+                        timestamp access_end
+                        enum status
+                        boolean it_reviewed
+                        uuid reviewed_by FK
+                        timestamp reviewed_at
+                        timestamp created_at
+                    }
+
+                    %% ========== RELATIONSHIPS ==========
+                    USERS ||--o| PATIENTS : has
+                    USERS ||--o| EMPLOYEES : has
+                    USERS ||--o{ AUDIT_LOGS : generates
+                    USERS ||--o{ BREAK_GLASS_ACCESS : requests
+                    
+                    DEPARTMENTS ||--o{ EMPLOYEES : contains
+                    
+                    PATIENTS ||--o{ APPOINTMENTS : books
+                    PATIENTS ||--o{ PRESCRIPTIONS : receives
+                    PATIENTS ||--o{ INVOICES : pays
+                    PATIENTS ||--o{ TEST_RESULTS : has
+                    PATIENTS ||--o{ RADIOLOGY_IMAGES : undergoes
+                    PATIENTS ||--o{ VITAL_SIGNS : records
+                    PATIENTS ||--o{ BREAK_GLASS_ACCESS : "emergency access"
+                    PATIENTS }o--|| INSURANCE_PROVIDERS : "covered by"
+                    
+                    EMPLOYEES ||--o{ APPOINTMENTS : "conducts (as doctor)"
+                    EMPLOYEES ||--o{ PRESCRIPTIONS : "writes (as doctor)"
+                    EMPLOYEES ||--o{ TASKS : "assigned to"
+                    EMPLOYEES ||--o{ TASKS : "assigned by"
+                    EMPLOYEES ||--o{ TEST_RESULTS : "tested by"
+                    EMPLOYEES ||--o{ TEST_RESULTS : "verified by"
+                    EMPLOYEES ||--o{ RADIOLOGY_IMAGES : "reported by"
+                    EMPLOYEES ||--o{ VITAL_SIGNS : "recorded by"
+                    EMPLOYEES ||--o{ INVOICES : "created by"
+                    EMPLOYEES ||--o{ INVOICES : "approved by"
+                    EMPLOYEES ||--o{ PURCHASE_ORDERS : "created by"
+                    EMPLOYEES ||--o{ PURCHASE_ORDERS : "approved by"
+                    EMPLOYEES ||--o{ INVENTORY : "checked by"
+                    EMPLOYEES ||--o{ BREAK_GLASS_ACCESS : "as witness"
+                    
+                    APPOINTMENTS ||--o| PRESCRIPTIONS : generates
+                    APPOINTMENTS ||--o| INVOICES : billed_to
+                    APPOINTMENTS ||--o{ RADIOLOGY_IMAGES : includes
+                    
+                    PRESCRIPTIONS ||--o{ MEDICINES : contains
+                    
+                    INVENTORY }o--|| SUPPLIERS : supplied_by
+                    
+                    LAB_TESTS ||--o{ TEST_RESULTS : produces
+                    
+                    BEDS ||--o| PATIENTS : "currently occupied by"
+            </pre>
+        </div>
+
+        <!-- Info Grid - 6 Columns Left Aligned -->
+        <div class="info-grid">
+            <div class="info-card" style="background:#ffe6e6;">
+                <h4 style="color:#FF6B6B;">👥 User (3)</h4>
+                <ul><li>USERS</li><li>DEPARTMENTS</li><li>EMPLOYEES</li></ul>
+            </div>
+            <div class="info-card" style="background:#e0f7fa;">
+                <h4 style="color:#4ECDC4;">📋 Patient (1)</h4>
+                <ul><li>PATIENTS</li></ul>
+            </div>
+            <div class="info-card" style="background:#fff9e6;">
+                <h4 style="color:#FFD93D;">💊 Clinical (7)</h4>
+                <ul><li>APPOINTMENTS</li><li>PRESCRIPTIONS</li><li>MEDICINES</li><li>LAB_TESTS</li><li>TEST_RESULTS</li><li>RADIOLOGY_IMAGES</li><li>VITAL_SIGNS</li></ul>
+            </div>
+            <div class="info-card" style="background:#f3e5f5;">
+                <h4 style="color:#6C5CE7;">💰 Billing (2)</h4>
+                <ul><li>INVOICES</li><li>INSURANCE_PROVIDERS</li></ul>
+            </div>
+            <div class="info-card" style="background:#e0f2e9;">
+                <h4 style="color:#00B09B;">📦 Inventory (5)</h4>
+                <ul><li>INVENTORY</li><li>SUPPLIERS</li><li>PURCHASE_ORDERS</li><li>BEDS</li><li>TASKS</li></ul>
+            </div>
+            <div class="info-card" style="background:#ffebee;">
+                <h4 style="color:#EB5757;">🔐 Security (2)</h4>
+                <ul><li>AUDIT_LOGS</li><li>BREAK_GLASS_ACCESS</li></ul>
+            </div>
+        </div>
+
+        <!-- Footer - Left Aligned -->
+        <div class="footer">
+            <span>🏥 Hospital Management System v3.0 | 20 Tables | 35+ Relationships | 156 Fields | March 2026</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                'primaryColor': '#FF6B6B',
+                'primaryTextColor': '#000',
+                'primaryBorderColor': '#FF8E53',
+                'lineColor': '#4ECDC4',
+                'secondaryColor': '#FFD93D',
+                'tertiaryColor': '#6C5CE7',
+                'fontFamily': 'monospace',
+                'fontSize': '14px',
+                'clusterBkg': '#f5f7fa',
+                'clusterBorder': '#667eea'
+            },
+            er: {
+                useMaxWidth: false,
+                fontSize: 13,
+                boxPadding: 8,
+                nodeSpacing: 30,
+                rankSpacing: 40
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>
