@@ -1,0 +1,242 @@
+/**
+ * ======================================================================
+ * FILE: backend/server.js
+ * ======================================================================
+ * 
+ * PROJECT: Hospital Management System
+ * TEAM: OctNov
+ * LEAD ARCHITECT: Koushal Jha
+ * BACKEND DEVELOPER: Koushal Jha
+ * 
+ * DESCRIPTION:
+ * Main entry point for the backend server.
+ * 
+ * VERSION: 2.2.0
+ * CREATED: 2026-03-15
+ * UPDATED: 2026-03-15
+ * 
+ * CHANGE LOG:
+ * v1.0.0 - Initial server setup with basic routes
+ * v2.0.0 - Integrated environment configuration (env.js)
+ * v2.1.0 - Fixed dotenv loading order issue
+ * v2.2.0 - Added explicit path for .env file
+ * 
+ * DEPENDENCIES:
+ * - express v4.22.1
+ * - cors v2.8.6
+ * - helmet v7.2.0
+ * - dotenv v16.0.3
+ * ======================================================================
+ */
+
+const express = require('express');
+const path = require('path');           // ADDED: For path resolution
+const dotenv = require('dotenv');       // MOVED: Before config import
+const cors = require('cors');
+const helmet = require('helmet');
+
+// ============================================
+// LOAD ENVIRONMENT VARIABLES FIRST!
+// ============================================
+const envPath = path.resolve(__dirname, '.env');
+console.log('📁 Loading .env from:', envPath);
+const result = dotenv.config({ path: envPath });
+
+if (result.error) {
+    console.error('❌ Failed to load .env file!');
+    console.error('Error:', result.error.message);
+    console.error('💡 Make sure .env file exists at:', envPath);
+    process.exit(1);
+}
+console.log('✅ .env file loaded successfully!');
+console.log('📊 Environment:', process.env.NODE_ENV || 'development');
+console.log('📊 DB Host:', process.env.DB_HOST);
+console.log('📊 Port:', process.env.PORT);
+
+// ============================================
+// NOW import config (which uses process.env)
+// ============================================
+const config = require('./src/config/env');      
+const db = require('./src/config/database');
+const logger = require('./src/utils/logger');     
+
+const app = express();
+const PORT = config.server.port;
+
+// Middleware
+app.use(helmet());
+app.use(cors(config.cors));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Request logging
+app.use((req, res, next) => {
+    logger.http(`${req.method} ${req.url} - ${req.ip}`);
+    next();
+});
+
+// Basic test route
+app.get('/', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'Hospital Management System API',
+        version: config.server.api.version,
+        team: 'OctNov',
+        lead: 'Koushal Jha',
+        endpoints: {
+            health: '/health',
+            docs: '/api-docs',
+            testDb: '/test-db',
+            config: '/config'
+        },
+        environment: config.server.env,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Health check route
+app.get('/health', async (req, res) => {
+    try {
+        const dbHealth = await db.healthCheck();
+        res.status(200).json({
+            status: 'healthy',
+            server: {
+                uptime: process.uptime(),
+                memory: process.memoryUsage(),
+                node: process.version,
+                config: config.getSanitized()
+            },
+            database: dbHealth,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        logger.error('Health check failed', { error: error.message });
+        res.status(500).json({
+            status: 'unhealthy',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+// Test database route
+app.get('/test-db', async (req, res) => {
+    try {
+        const result = await db.query('SELECT NOW() as time, current_database() as db');
+        res.json({
+            success: true,
+            data: result.rows[0],
+            connection: {
+                host: config.database.host,
+                port: config.database.port,
+                database: config.database.name
+            },
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        logger.error('Database test failed', { error: error.message });
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Config test route (development only)
+app.get('/config', (req, res) => {
+    if (config.isDevelopment) {
+        res.json({
+            success: true,
+            config: config.getSanitized(),
+            env: {
+                port: process.env.PORT,
+                dbHost: process.env.DB_HOST,
+                nodeEnv: process.env.NODE_ENV
+            }
+        });
+    } else {
+        res.status(404).json({ success: false, error: 'Not found' });
+    }
+});
+
+// 404 handler
+app.use((req, res) => {
+    logger.warn('Route not found', { path: req.url, method: req.method });
+    res.status(404).json({
+        success: false,
+        error: 'Route not found',
+        path: req.url
+    });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    logger.error('Server error', { 
+        error: err.message,
+        stack: err.stack,
+        url: req.url,
+        method: req.method
+    });
+    res.status(500).json({
+        success: false,
+        error: config.isDevelopment ? err.message : 'Internal server error'
+    });
+});
+
+// Start server
+const server = app.listen(PORT, '0.0.0.0', () => {
+    const interfaces = require('os').networkInterfaces();
+    const addresses = [];
+    
+    Object.keys(interfaces).forEach(iface => {
+        interfaces[iface].forEach(addr => {
+            if (addr.family === 'IPv4' && !addr.internal) {
+                addresses.push(addr.address);
+            }
+        });
+    });
+
+    logger.info('\n========================================');
+    logger.info('🚀 SERVER STARTED SUCCESSFULLY!');
+    logger.info('========================================');
+    logger.info(`📍 Local:    http://localhost:${PORT}`);
+    logger.info(`📍 Network:   http://${addresses[0] || '127.0.0.1'}:${PORT}`);
+    logger.info(`📍 Tailscale: http://100.81.13.80:${PORT}`);
+    logger.info(`📍 Health:    http://localhost:${PORT}/health`);
+    logger.info(`📍 Config:    http://localhost:${PORT}/config`);
+    logger.info('========================================');
+    logger.info(`Team: OctNov`);
+    logger.info(`Lead: Koushal Jha`);
+    logger.info(`Server PID: ${process.pid}`);
+    logger.info(`Node Version: ${process.version}`);
+    logger.info(`Environment: ${config.server.env}`);
+    logger.info(`Config Version: 2.2.0`);
+    logger.info('========================================\n');
+});
+
+// Server error handling
+server.on('error', (error) => {
+    logger.error('Server error:', error);
+    if (error.code === 'EADDRINUSE') {
+        logger.error(`Port ${PORT} is already in use!`);
+    }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    logger.info('SIGTERM received. Closing server...');
+    server.close(() => {
+        logger.info('Server closed.');
+        db.shutdown();
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    logger.info('SIGINT received. Closing server...');
+    server.close(() => {
+        logger.info('Server closed.');
+        db.shutdown();
+        process.exit(0);
+    });
+});
