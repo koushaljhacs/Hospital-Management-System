@@ -1,0 +1,767 @@
+HOSPITAL-MANAGEMENT-SYSTEM/
+│
+├── .github/                                      # GitHub Configuration
+│   └── workflows/
+│       ├── ci.yml                                # Continuous Integration
+│       ├── cd-staging.yml                        # Deploy to Staging
+│       └── cd-production.yml                      # Deploy to Production
+│
+├── docs/                                          # Documentation
+│   ├── api/
+│   │   ├── README.md                              # API Overview
+│   │   └── examples/
+│   │       ├── auth-examples.json
+│   │       ├── patient-examples.json
+│   │       ├── appointment-examples.json
+│   │       └── error-examples.json
+│   ├── database/
+│   │   ├── schema-design.md                       # Database Schema Design
+│   │   ├── erd.md                                  # ER Diagrams
+│   │   └── requirements.md                          # Complete Requirements (200+)
+│   └── guides/
+│       ├── deployment.md                            # Deployment Guide
+│       ├── workflow.md                              # Team Workflow
+│       └── troubleshooting.md                        # Troubleshooting Guide
+│
+├── backend/                                         # Node.js/Express Backend
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── database.js                          # PostgreSQL Connection
+│   │   │   ├── auth.js                               # JWT Configuration
+│   │   │   ├── env.js                                # Environment Validation
+│   │   │   ├── redis.js                              # Redis Config (Future)
+│   │   │   └── rateLimit.js                          # Rate Limiting
+│   │   │
+│   │   ├── health/                                   # Health Checks
+│   │   │   ├── healthController.js
+│   │   │   ├── healthRoutes.js
+│   │   │   └── healthCheck.js
+│   │   │
+│   │   ├── exceptions/                               # Custom Exceptions
+│   │   │   ├── HttpException.js
+│   │   │   ├── NotFoundException.js
+│   │   │   ├── ValidationException.js
+│   │   │   ├── UnauthorizedException.js
+│   │   │   ├── ForbiddenException.js
+│   │   │   └── index.js
+│   │   │
+│   │   ├── models/                                   # Database Models (98 Tables)
+│   │   │   ├── User.js
+│   │   │   ├── Patient.js
+│   │   │   ├── Employee.js
+│   │   │   ├── Appointment.js
+│   │   │   ├── Prescription.js
+│   │   │   ├── Medicine.js
+│   │   │   ├── Inventory.js
+│   │   │   ├── Supplier.js
+│   │   │   ├── PurchaseOrder.js
+│   │   │   ├── Bed.js
+│   │   │   ├── Invoice.js
+│   │   │   ├── InsuranceProvider.js
+│   │   │   ├── LabTest.js
+│   │   │   ├── Equipment.js
+│   │   │   ├── TestResult.js
+│   │   │   ├── TestOrder.js
+│   │   │   ├── Lab.js
+│   │   │   ├── Specimen.js
+│   │   │   ├── Task.js
+│   │   │   ├── Shift.js
+│   │   │   ├── BreakGlassAccess.js
+│   │   │   ├── AuditLog.js
+│   │   │   ├── RadiologyImage.js
+│   │   │   └── ... (all 98 models)
+│   │   │
+│   │   ├── controllers/                              # API Controllers (685 APIs)
+│   │   │   ├── authController.js
+│   │   │   ├── publicController.js
+│   │   │   ├── patient/
+│   │   │   │   ├── profileController.js
+│   │   │   │   ├── medicalController.js
+│   │   │   │   ├── appointmentController.js
+│   │   │   │   ├── billingController.js
+│   │   │   │   └── consentController.js
+│   │   │   ├── doctor/
+│   │   │   │   ├── patientController.js
+│   │   │   │   ├── appointmentController.js
+│   │   │   │   ├── prescriptionController.js
+│   │   │   │   ├── labController.js
+│   │   │   │   └── radiologyController.js
+│   │   │   ├── nurse/
+│   │   │   │   ├── patientController.js
+│   │   │   │   ├── vitalController.js
+│   │   │   │   ├── taskController.js
+│   │   │   │   ├── medicationController.js
+│   │   │   │   └── bedController.js
+│   │   │   ├── receptionist/
+│   │   │   │   ├── patientController.js
+│   │   │   │   ├── appointmentController.js
+│   │   │   │   ├── bedController.js
+│   │   │   │   └── walkinController.js
+│   │   │   ├── pharmacist/
+│   │   │   │   ├── inventoryController.js
+│   │   │   │   ├── prescriptionController.js
+│   │   │   │   ├── supplierController.js
+│   │   │   │   ├── purchaseOrderController.js
+│   │   │   │   └── batchController.js
+│   │   │   ├── lab-technician/
+│   │   │   │   ├── orderController.js
+│   │   │   │   ├── resultController.js
+│   │   │   │   ├── specimenController.js
+│   │   │   │   └── equipmentController.js
+│   │   │   ├── radiologist/
+│   │   │   │   ├── orderController.js
+│   │   │   │   ├── imageController.js
+│   │   │   │   └── reportController.js
+│   │   │   ├── billing/
+│   │   │   │   ├── invoiceController.js
+│   │   │   │   ├── paymentController.js
+│   │   │   │   ├── refundController.js
+│   │   │   │   ├── insuranceController.js
+│   │   │   │   └── reportController.js
+│   │   │   ├── admin/
+│   │   │   │   ├── userController.js
+│   │   │   │   ├── roleController.js
+│   │   │   │   ├── departmentController.js
+│   │   │   │   ├── systemController.js
+│   │   │   │   ├── securityController.js
+│   │   │   │   ├── auditController.js
+│   │   │   │   └── configController.js
+│   │   │   ├── ground-staff/
+│   │   │   │   ├── taskController.js
+│   │   │   │   ├── transportController.js
+│   │   │   │   └── sampleController.js
+│   │   │   ├── security/
+│   │   │   │   ├── entryController.js
+│   │   │   │   ├── exitController.js
+│   │   │   │   └── visitorController.js
+│   │   │   ├── employee/
+│   │   │   │   ├── shiftController.js
+│   │   │   │   ├── attendanceController.js
+│   │   │   │   └── leaveController.js
+│   │   │   ├── dashboard/
+│   │   │   │   ├── adminDashboardController.js
+│   │   │   │   ├── doctorDashboardController.js
+│   │   │   │   ├── nurseDashboardController.js
+│   │   │   │   ├── receptionDashboardController.js
+│   │   │   │   ├── pharmacyDashboardController.js
+│   │   │   │   ├── labDashboardController.js
+│   │   │   │   └── billingDashboardController.js
+│   │   │   ├── report/
+│   │   │   │   ├── patientReportController.js
+│   │   │   │   ├── clinicalReportController.js
+│   │   │   │   ├── financialReportController.js
+│   │   │   │   ├── operationalReportController.js
+│   │   │   │   └── exportController.js
+│   │   │   └── webhook/
+│   │   │       ├── paymentWebhookController.js
+│   │   │       ├── smsWebhookController.js
+│   │   │       └── emailWebhookController.js
+│   │   │
+│   │   ├── services/                                   # Business Logic
+│   │   │   ├── auth/
+│   │   │   │   ├── rbacService.js
+│   │   │   │   ├── tokenService.js
+│   │   │   │   ├── passwordService.js
+│   │   │   │   ├── mfaService.js
+│   │   │   │   └── otpService.js
+│   │   │   ├── patient/
+│   │   │   │   ├── profileService.js
+│   │   │   │   ├── medicalService.js
+│   │   │   │   ├── appointmentService.js
+│   │   │   │   └── consentService.js
+│   │   │   ├── clinical/
+│   │   │   │   ├── prescriptionService.js
+│   │   │   │   ├── diagnosisService.js
+│   │   │   │   └── vitalService.js
+│   │   │   ├── pharmacy/
+│   │   │   │   ├── inventoryService.js
+│   │   │   │   ├── dispensingService.js
+│   │   │   │   ├── supplierService.js
+│   │   │   │   └── purchaseService.js
+│   │   │   ├── lab/
+│   │   │   │   ├── testService.js
+│   │   │   │   ├── resultService.js
+│   │   │   │   ├── specimenService.js
+│   │   │   │   └── equipmentService.js
+│   │   │   ├── radiology/
+│   │   │   │   ├── imageService.js
+│   │   │   │   └── reportService.js
+│   │   │   ├── billing/
+│   │   │   │   ├── invoiceService.js
+│   │   │   │   ├── paymentService.js
+│   │   │   │   ├── refundService.js
+│   │   │   │   └── insuranceService.js
+│   │   │   ├── facility/
+│   │   │   │   ├── bedService.js
+│   │   │   │   ├── taskService.js
+│   │   │   │   └── equipmentService.js
+│   │   │   ├── admin/
+│   │   │   │   ├── userService.js
+│   │   │   │   ├── roleService.js
+│   │   │   │   ├── auditService.js
+│   │   │   │   ├── securityService.js
+│   │   │   │   └── configService.js
+│   │   │   ├── notification/
+│   │   │   │   ├── emailService.js
+│   │   │   │   ├── smsService.js
+│   │   │   │   ├── pushService.js
+│   │   │   │   └── whatsappService.js
+│   │   │   ├── integration/
+│   │   │   │   ├── paymentGatewayService.js
+│   │   │   │   ├── cloudStorageService.js
+│   │   │   │   └── insuranceApiService.js
+│   │   │   ├── report/
+│   │   │   │   ├── reportGeneratorService.js
+│   │   │   │   └── exportService.js
+│   │   │   └── performance/
+│   │   │       ├── monitoringService.js
+│   │   │       ├── alertService.js
+│   │   │       └── recommendationService.js
+│   │   │
+│   │   ├── middlewares/                                 # Express Middlewares
+│   │   │   ├── auth.js
+│   │   │   ├── rbac.js
+│   │   │   ├── validator.js
+│   │   │   ├── errorHandler.js
+│   │   │   ├── rateLimiter.js
+│   │   │   ├── auditLogger.js
+│   │   │   ├── requestLogger.js
+│   │   │   └── transaction.js
+│   │   │
+│   │   ├── validators/                                  # Request Validators
+│   │   │   ├── authValidators.js
+│   │   │   ├── patientValidators.js
+│   │   │   ├── clinicalValidators.js
+│   │   │   ├── pharmacyValidators.js
+│   │   │   ├── labValidators.js
+│   │   │   ├── billingValidators.js
+│   │   │   ├── adminValidators.js
+│   │   │   └── .gitkeep
+│   │   │
+│   │   ├── routes/                                       # API Routes
+│   │   │   ├── v1/
+│   │   │   │   ├── authRoutes.js
+│   │   │   │   ├── publicRoutes.js
+│   │   │   │   ├── patientRoutes.js
+│   │   │   │   ├── doctorRoutes.js
+│   │   │   │   ├── nurseRoutes.js
+│   │   │   │   ├── receptionistRoutes.js
+│   │   │   │   ├── pharmacistRoutes.js
+│   │   │   │   ├── labTechnicianRoutes.js
+│   │   │   │   ├── radiologistRoutes.js
+│   │   │   │   ├── billingRoutes.js
+│   │   │   │   ├── adminRoutes.js
+│   │   │   │   ├── groundStaffRoutes.js
+│   │   │   │   ├── securityRoutes.js
+│   │   │   │   ├── employeeRoutes.js
+│   │   │   │   ├── dashboardRoutes.js
+│   │   │   │   ├── reportRoutes.js
+│   │   │   │   ├── webhookRoutes.js
+│   │   │   │   └── healthRoutes.js
+│   │   │   └── index.js
+│   │   │
+│   │   ├── jobs/                                         # Background Jobs
+│   │   │   ├── emailQueue.js
+│   │   │   ├── smsQueue.js
+│   │   │   ├── reportQueue.js
+│   │   │   ├── backupJob.js
+│   │   │   ├── cleanupJob.js
+│   │   │   ├── reminderJob.js
+│   │   │   ├── expiryAlertJob.js
+│   │   │   └── performanceMonitorJob.js
+│   │   │
+│   │   ├── sockets/                                      # WebSocket (Real-time)
+│   │   │   ├── index.js
+│   │   │   ├── clinicalAlerts.js
+│   │   │   ├── bedUpdates.js
+│   │   │   ├── taskTracking.js
+│   │   │   ├── notificationHandler.js
+│   │   │   └── dashboardUpdates.js
+│   │   │
+│   │   ├── types/                                        # TypeScript Definitions
+│   │   │   ├── userTypes.js
+│   │   │   ├── apiTypes.js
+│   │   │   ├── modelTypes.js
+│   │   │   └── index.js
+│   │   │
+│   │   ├── utils/                                        # Utility Functions
+│   │   │   ├── logger.js
+│   │   │   ├── constants.js
+│   │   │   ├── encryption.js
+│   │   │   ├── pagination.js
+│   │   │   ├── helpers/
+│   │   │   │   ├── dateFormatter.js
+│   │   │   │   ├── idGenerator.js
+│   │   │   │   ├── numberFormatter.js
+│   │   │   │   └── stringUtils.js
+│   │   │   └── validators/
+│   │   │       ├── customValidators.js
+│   │   │       └── regexPatterns.js
+│   │   │
+│   │   └── app.js                                        # Express App Setup
+│   │
+│   ├── tests/                                            # Testing
+│   │   ├── unit/
+│   │   │   ├── services/
+│   │   │   │   ├── auth.test.js
+│   │   │   │   ├── patient.test.js
+│   │   │   │   ├── prescription.test.js
+│   │   │   │   └── billing.test.js
+│   │   │   └── utils/
+│   │   │       ├── dateFormatter.test.js
+│   │   │       └── encryption.test.js
+│   │   ├── integration/
+│   │   │   ├── auth-flow.test.js
+│   │   │   ├── patient-flow.test.js
+│   │   │   ├── appointment-flow.test.js
+│   │   │   ├── prescription-flow.test.js
+│   │   │   ├── billing-flow.test.js
+│   │   │   └── lab-flow.test.js
+│   │   ├── e2e/
+│   │   │   ├── patient-journey.test.js
+│   │   │   ├── doctor-journey.test.js
+│   │   │   └── critical-paths.test.js
+│   │   └── load/
+│   │       ├── artillery/
+│   │       │   └── load-test.yml
+│   │       ├── k6/
+│   │       │   ├── stress-test.js
+│   │       │   └── soak-test.js
+│   │       └── reports/
+│   │           └── .gitkeep
+│   │
+│   ├── environments/                                     # Environment Configs
+│   │   ├── development.env
+│   │   ├── staging.env
+│   │   ├── production.env
+│   │   └── test.env
+│   │
+│   ├── .env                                              # Local Environment
+│   ├── .env.example
+│   ├── .dockerignore
+│   ├── .gitignore
+│   ├── .eslintrc.js
+│   ├── .prettierrc
+│   ├── package.json
+│   ├── Dockerfile
+│   └── server.js
+│
+├── frontend/                                             # Responsive Web UI
+│   ├── public/
+│   │   ├── assets/
+│   │   │   ├── css/
+│   │   │   │   └── style.css
+│   │   │   ├── js/
+│   │   │   │   └── main.js
+│   │   │   └── icons/
+│   │   │       └── favicon.ico
+│   │   └── index.html
+│   │
+│   ├── src/
+│   │   ├── assets/
+│   │   │   ├── images/
+│   │   │   │   ├── logo.png
+│   │   │   │   ├── doctor-placeholder.jpg
+│   │   │   │   └── hospital-bg.jpg
+│   │   │   └── fonts/
+│   │   │       └── .gitkeep
+│   │   │
+│   │   ├── pages/                                        # All Role Pages
+│   │   │   ├── auth/
+│   │   │   │   ├── login.html
+│   │   │   │   ├── register.html
+│   │   │   │   ├── forgot-password.html
+│   │   │   │   └── reset-password.html
+│   │   │   ├── public/
+│   │   │   │   ├── home.html
+│   │   │   │   ├── doctors.html
+│   │   │   │   ├── services.html
+│   │   │   │   └── contact.html
+│   │   │   ├── patient/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── profile.html
+│   │   │   │   ├── medical-records.html
+│   │   │   │   ├── appointments.html
+│   │   │   │   ├── prescriptions.html
+│   │   │   │   ├── lab-results.html
+│   │   │   │   ├── billing.html
+│   │   │   │   └── consents.html
+│   │   │   ├── doctor/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── patients.html
+│   │   │   │   ├── appointments.html
+│   │   │   │   ├── prescriptions.html
+│   │   │   │   ├── lab-orders.html
+│   │   │   │   └── schedule.html
+│   │   │   ├── nurse/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── patients.html
+│   │   │   │   ├── vitals.html
+│   │   │   │   ├── tasks.html
+│   │   │   │   ├── medications.html
+│   │   │   │   └── beds.html
+│   │   │   ├── receptionist/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── registration.html
+│   │   │   │   ├── appointments.html
+│   │   │   │   ├── beds.html
+│   │   │   │   └── walkin.html
+│   │   │   ├── pharmacist/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── inventory.html
+│   │   │   │   ├── prescriptions.html
+│   │   │   │   ├── suppliers.html
+│   │   │   │   ├── purchase-orders.html
+│   │   │   │   └── batches.html
+│   │   │   ├── lab-technician/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── orders.html
+│   │   │   │   ├── results.html
+│   │   │   │   ├── specimens.html
+│   │   │   │   └── equipment.html
+│   │   │   ├── radiologist/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── orders.html
+│   │   │   │   ├── images.html
+│   │   │   │   └── reports.html
+│   │   │   ├── billing/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── invoices.html
+│   │   │   │   ├── payments.html
+│   │   │   │   ├── refunds.html
+│   │   │   │   ├── insurance.html
+│   │   │   │   └── reports.html
+│   │   │   ├── admin/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── users.html
+│   │   │   │   ├── roles.html
+│   │   │   │   ├── departments.html
+│   │   │   │   ├── system.html
+│   │   │   │   ├── security.html
+│   │   │   │   ├── audit.html
+│   │   │   │   └── config.html
+│   │   │   ├── ground-staff/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── tasks.html
+│   │   │   │   └── transport.html
+│   │   │   ├── security/
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── entries.html
+│   │   │   │   └── visitors.html
+│   │   │   ├── employee/
+│   │   │   │   ├── profile.html
+│   │   │   │   ├── attendance.html
+│   │   │   │   └── leaves.html
+│   │   │   └── error/
+│   │   │       ├── 404.html
+│   │   │       ├── 403.html
+│   │   │       ├── 500.html
+│   │   │       └── .gitkeep
+│   │   │
+│   │   ├── components/                                   # Reusable Components
+│   │   │   ├── layout/
+│   │   │   │   ├── Header.js
+│   │   │   │   ├── Sidebar.js
+│   │   │   │   ├── Footer.js
+│   │   │   │   └── Navbar.js
+│   │   │   ├── common/
+│   │   │   │   ├── Alert.js
+│   │   │   │   ├── Modal.js
+│   │   │   │   ├── Button.js
+│   │   │   │   ├── Loader.js
+│   │   │   │   ├── Input.js
+│   │   │   │   ├── Select.js
+│   │   │   │   ├── Table.js
+│   │   │   │   └── Pagination.js
+│   │   │   ├── ui/
+│   │   │   │   ├── PatientCard.js
+│   │   │   │   ├── AppointmentCard.js
+│   │   │   │   ├── PrescriptionCard.js
+│   │   │   │   ├── MedicineCard.js
+│   │   │   │   ├── BedCard.js
+│   │   │   │   ├── InvoiceCard.js
+│   │   │   │   ├── TaskItem.js
+│   │   │   │   └── NotificationItem.js
+│   │   │   └── charts/
+│   │   │       ├── LineChart.js
+│   │   │       ├── BarChart.js
+│   │   │       ├── PieChart.js
+│   │   │       └── DashboardStats.js
+│   │   │
+│   │   ├── services/                                     # API Services
+│   │   │   ├── api.js
+│   │   │   ├── auth.js
+│   │   │   ├── patient.js
+│   │   │   ├── doctor.js
+│   │   │   ├── nurse.js
+│   │   │   ├── pharmacist.js
+│   │   │   ├── lab.js
+│   │   │   ├── billing.js
+│   │   │   ├── admin.js
+│   │   │   └── websocket.js
+│   │   │
+│   │   ├── utils/                                        # Frontend Utilities
+│   │   │   ├── formatters.js
+│   │   │   ├── validators.js
+│   │   │   ├── constants.js
+│   │   │   └── helpers.js
+│   │   │
+│   │   ├── hooks/                                        # Custom Hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useForm.js
+│   │   │   ├── useWebSocket.js
+│   │   │   └── usePermissions.js
+│   │   │
+│   │   ├── store/                                        # State Management
+│   │   │   ├── authStore.js
+│   │   │   ├── patientStore.js
+│   │   │   ├── notificationStore.js
+│   │   │   └── uiStore.js
+│   │   │
+│   │   └── app.js                                        # Main App Entry
+│   │
+│   ├── environments/                                     # Frontend Env
+│   │   ├── development.js
+│   │   ├── staging.js
+│   │   ├── production.js
+│   │   └── test.js
+│   │
+│   ├── .env
+│   ├── .env.example
+│   ├── .dockerignore
+│   ├── .gitignore
+│   ├── .eslintrc.js
+│   ├── .prettierrc
+│   ├── package.json
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── README.md
+│
+├── database/                                              # Database
+│   ├── migrations/
+│   │   ├── development/
+│   │   │   ├── 001_create_users.sql
+│   │   │   ├── 002_create_patients.sql
+│   │   │   ├── 003_create_employees.sql
+│   │   │   ├── ... (upto 026)
+│   │   │   └── 026_performance_tables.sql
+│   │   ├── staging/
+│   │   │   └── (same as development)
+│   │   └── production/
+│   │       └── (same as development)
+│   │
+│   ├── seeds/
+│   │   ├── development/
+│   │   │   ├── 01_admin.sql
+│   │   │   ├── 02_employees.sql
+│   │   │   ├── 03_patients.sql
+│   │   │   ├── 04_doctors.sql
+│   │   │   ├── 05_nurses.sql
+│   │   │   ├── 06_pharmacists.sql
+│   │   │   ├── 07_beds.sql
+│   │   │   ├── 08_inventory.sql
+│   │   │   ├── 09_lab_tests.sql
+│   │   │   ├── 10_suppliers.sql
+│   │   │   ├── 11_equipment.sql
+│   │   │   ├── 12_labs.sql
+│   │   │   ├── 13_shifts.sql
+│   │   │   ├── 14_roles_permissions.sql
+│   │   │   └── 15_integration_config.sql
+│   │   ├── staging/
+│   │   │   └── (same as development)
+│   │   └── production/
+│   │       └── (same as development)
+│   │
+│   ├── indexes/
+│   │   ├── users_indexes.sql
+│   │   ├── patients_indexes.sql
+│   │   ├── employees_indexes.sql
+│   │   ├── appointments_indexes.sql
+│   │   ├── inventory_indexes.sql
+│   │   ├── billing_indexes.sql
+│   │   ├── lab_indexes.sql
+│   │   ├── performance_indexes.sql
+│   │   ├── search_indexes.sql
+│   │   └── fk_indexes.sql
+│   │
+│   ├── triggers/
+│   │   ├── business_rules.sql
+│   │   ├── audit_triggers.sql
+│   │   ├── inventory_triggers.sql
+│   │   ├── billing_triggers.sql
+│   │   ├── lab_triggers.sql
+│   │   ├── security_triggers.sql
+│   │   └── .gitkeep
+│   │
+│   ├── functions/
+│   │   ├── calculate_invoice.sql
+│   │   ├── check_inventory.sql
+│   │   ├── generate_report.sql
+│   │   ├── validate_data.sql
+│   │   ├── encryption_helpers.sql
+│   │   └── .gitkeep
+│   │
+│   ├── procedures/
+│   │   ├── daily_report.sql
+│   │   ├── monthly_stats.sql
+│   │   ├── backup_procedure.sql
+│   │   ├── maintenance_procedure.sql
+│   │   └── .gitkeep
+│   │
+│   ├── views/
+│   │   ├── patient_summary.sql
+│   │   ├── doctor_dashboard.sql
+│   │   ├── revenue_daily.sql
+│   │   ├── bed_occupancy.sql
+│   │   ├── inventory_status.sql
+│   │   ├── lab_pending.sql
+│   │   └── .gitkeep
+│   │
+│   ├── logs/
+│   │   ├── migration_logs/
+│   │   ├── query_logs/
+│   │   ├── performance_logs/
+│   │   └── .gitkeep
+│   │
+│   ├── init/
+│   │   ├── 01-init.sql
+│   │   ├── 02-roles.sql
+│   │   ├── 03-permissions.sql
+│   │   ├── 04-users.sql
+│   │   └── 05-config.sql
+│   │
+│   └── schema.sql
+│
+├── infrastructure/                                        # DevOps
+│   ├── nginx/
+│   │   ├── development/
+│   │   │   └── default.conf
+│   │   ├── staging/
+│   │   │   └── default.conf
+│   │   └── production/
+│   │       ├── default.conf
+│   │       ├── load-balancer.conf
+│   │       └── ssl.conf
+│   │
+│   ├── ssl/
+│   │   ├── production/
+│   │   │   ├── fullchain.pem
+│   │   │   ├── privkey.pem
+│   │   │   ├── dhparam.pem
+│   │   │   └── ssl-renew.sh
+│   │   ├── staging/
+│   │   │   └── self-signed/
+│   │   └── development/
+│   │       └── self-signed/
+│   │
+│   ├── pm2/
+│   │   ├── development/
+│   │   │   └── ecosystem.config.js
+│   │   ├── staging/
+│   │   │   └── ecosystem.config.js
+│   │   └── production/
+│   │       ├── ecosystem.config.js
+│   │       ├── cluster-config.js
+│   │       └── metrics.js
+│   │
+│   ├── cloudflare/
+│   │   └── production/
+│   │       ├── wrangler.toml
+│   │       ├── rules.toml
+│   │       ├── firewall-rules.json
+│   │       └── cache-rules.json
+│   │
+│   ├── scripts/
+│   │   ├── deploy/
+│   │   │   ├── deploy-dev.sh
+│   │   │   ├── deploy-staging.sh
+│   │   │   ├── deploy-prod.sh
+│   │   │   ├── rollback.sh
+│   │   │   └── health-check.sh
+│   │   ├── backup/
+│   │   │   ├── backup-dev.sh
+│   │   │   ├── backup-staging.sh
+│   │   │   ├── backup-prod.sh
+│   │   │   ├── backup-full.sh
+│   │   │   └── backup-incremental.sh
+│   │   ├── verify/
+│   │   │   ├── verify-backup.sh
+│   │   │   ├── restore-test.sh
+│   │   │   ├── backup-report.sh
+│   │   │   └── integrity-check.sh
+│   │   ├── monitoring/
+│   │   │   ├── health-check.sh
+│   │   │   ├── alerts.sh
+│   │   │   ├── disk-check.sh
+│   │   │   └── performance-check.sh
+│   │   └── maintenance/
+│   │       ├── cleanup.sh
+│   │       ├── log-rotate.sh
+│   │       └── update-ssl.sh
+│   │
+│   └── monitoring/
+│       ├── prometheus/
+│       │   ├── prometheus.yml
+│       │   ├── rules/
+│       │   │   ├── cpu-alerts.yml
+│       │   │   ├── memory-alerts.yml
+│       │   │   ├── disk-alerts.yml
+│       │   │   └── database-alerts.yml
+│       │   └── targets/
+│       │       ├── backend.json
+│       │       ├── database.json
+│       │       └── .gitkeep
+│       ├── grafana/
+│       │   ├── dashboards/
+│       │   │   ├── system-metrics.json
+│       │   │   ├── database-metrics.json
+│       │   │   ├── business-metrics.json
+│       │   │   └── .gitkeep
+│       │   ├── datasources/
+│       │   │   └── prometheus.yml
+│       │   └── notifications/
+│       │       └── slack.yml
+│       ├── alerts/
+│       │   ├── cpu-alerts.yml
+│       │   ├── memory-alerts.yml
+│       │   ├── disk-alerts.yml
+│       │   ├── database-alerts.yml
+│       │   └── .gitkeep
+│       └── logs/
+│           ├── elasticsearch/
+│           └── filebeat/
+│
+├── docker/                                                # Docker Configs
+│   ├── development/
+│   │   ├── docker-compose.yml
+│   │   ├── .env
+│   │   └── Dockerfile.dev
+│   ├── staging/
+│   │   ├── docker-compose.yml
+│   │   ├── .env
+│   │   └── Dockerfile.staging
+│   └── production/
+│       ├── docker-compose.yml
+│       ├── .env
+│       ├── Dockerfile.prod
+│       └── docker-compose.override.yml
+│
+├── kubernetes/                                            # Future Scaling
+│   ├── development/
+│   ├── staging/
+│   ├── production/
+│   └── helm/
+│
+├── .gitignore
+├── .gitattributes
+├── .editorconfig
+├── .dockerignore
+├── .eslintignore
+├── .prettierignore
+├── LICENSE.md
+├── CONTRIBUTING.md
+├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+├── SECURITY.md
+├── README.md
+└── TODO.md
