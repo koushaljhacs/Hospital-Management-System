@@ -1,66 +1,221 @@
-# Build artifacts (keep dist/ for deployment)
-node_modules/
-build/
-temp/
+# ======================================================================
+# HOSPITAL MANAGEMENT SYSTEM - .gitignore
+# ======================================================================
+# Team: OctNov
+# Lead: Koushal Jha
+# Version: 2.0.0
+# Date: 2026-03-15
+# ======================================================================
 
-# Root level files - keep everything in planning/ folder only
-index.html
-css/
-js/
-assets/
+# ======================================================================
+# BACKEND - DO NOT COMMIT
+# ======================================================================
+backend/node_modules/
+backend/build/
+backend/temp/
+backend/coverage/
+backend/.env
+backend/.env.local
+backend/.env.*.local
+backend/logs/
+backend/*.log
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+backend/package-lock.json
+backend/yarn.lock
 
-# Development files in planning/ (ignore source files, keep production dist/)
+# Keep backend source (these SHOULD be committed)
+!backend/src/
+!backend/server.js
+!backend/package.json
+!backend/nodemon.json
+!backend/tests/
+
+# ======================================================================
+# DATABASE - DO NOT COMMIT
+# ======================================================================
+database/*.sql
+database/development/*.sql
+database/migrations/development/*.sql
+database/seeds/development/*.sql
+database/logs/
+database/*.log
+
+# Keep database structure (these SHOULD be committed)
+!database/migrations/development/001_create_users.sql
+!database/migrations/development/002_create_patients.sql
+!database/migrations/development/003_create_employees.sql
+!database/migrations/development/004_create_appointments.sql
+!database/migrations/development/005_create_prescriptions.sql
+!database/migrations/development/006_create_medicines.sql
+!database/migrations/development/007_create_inventory.sql
+!database/migrations/development/008_create_suppliers.sql
+!database/migrations/development/009_create_purchase_orders.sql
+!database/migrations/development/010_create_beds.sql
+!database/migrations/development/011_create_invoices.sql
+!database/migrations/development/012_create_insurance_providers.sql
+!database/migrations/development/013_create_lab_tests.sql
+!database/migrations/development/014_create_equipment.sql
+!database/migrations/development/015_create_test_results.sql
+!database/migrations/development/016_create_test_orders.sql
+!database/migrations/development/017_create_labs.sql
+!database/migrations/development/018_create_specimens.sql
+!database/migrations/development/019_create_tasks.sql
+!database/migrations/development/020_create_shifts.sql
+!database/migrations/development/021_create_break_glass_access.sql
+!database/migrations/development/022_create_audit_logs.sql
+!database/migrations/development/023_create_radiology_images.sql
+!database/migrations/development/024_integration_tables.sql
+!database/migrations/development/025_security_tables.sql
+!database/migrations/development/026_performance_tables.sql
+!database/triggers/business_rules.sql
+!database/schema.sql
+
+# ======================================================================
+# FRONTEND - DO NOT COMMIT
+# ======================================================================
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/temp/
+frontend/.env
+frontend/.env.local
+
+# ======================================================================
+# INFRASTRUCTURE - DO NOT COMMIT
+# ======================================================================
+infrastructure/ssl/development/
+infrastructure/ssl/staging/
+infrastructure/ssl/production/fullchain.pem
+infrastructure/ssl/production/privkey.pem
+infrastructure/ssl/production/dhparam.pem
+infrastructure/logs/
+infrastructure/*.log
+
+# Keep infrastructure configs (these SHOULD be committed)
+!infrastructure/nginx/development/
+!infrastructure/nginx/staging/
+!infrastructure/nginx/production/default.conf
+!infrastructure/nginx/snippets/
+!infrastructure/pm2/development/
+!infrastructure/pm2/staging/
+!infrastructure/pm2/production/ecosystem.config.js
+!infrastructure/cloudflare/production/
+!infrastructure/scripts/deploy/
+!infrastructure/scripts/backup/
+!infrastructure/scripts/verify/
+!infrastructure/monitoring/
+
+# ======================================================================
+# DOCKER - DO NOT COMMIT
+# ======================================================================
+docker/development/.env
+docker/staging/.env
+docker/production/.env
+docker/development/*.log
+docker/staging/*.log
+docker/production/*.log
+
+# Keep Docker configs (these SHOULD be committed)
+!docker/development/docker-compose.yml
+!docker/development/Dockerfile.dev
+!docker/staging/docker-compose.yml
+!docker/staging/Dockerfile.staging
+!docker/production/docker-compose.yml
+!docker/production/Dockerfile.prod
+
+# ======================================================================
+# DOCUMENTATION - KEEP ALL (COMMIT)
+# ======================================================================
+docs/
+!docs/api/
+!docs/database/
+!docs/guides/
+
+# ======================================================================
+# PLANNING FOLDER - PRODUCTION DIST ONLY
+# ======================================================================
+# Ignore source files in planning
 planning/index.html
 planning/architecture.html
 planning/architecture/architecture.html
 planning/style.css
 planning/animations.css
 planning/script.js
+planning/architecture/css/architecture.css
+planning/architecture/js/architecture.js
 
-# Keep production dist/ folder
+# Keep production dist folder
 !planning/dist/
+!planning/dist/index.html
+!planning/dist/css/style.min.css
+!planning/dist/css/animations.min.css
+!planning/dist/js/script.min.js
+!planning/dist/architecture/architecture.html
+!planning/dist/architecture/css/architecture.min.css
+!planning/dist/architecture/js/architecture.min.js
+!planning/dist/assets/
 
-# Keep architecture CSS and JS in dist
-!planning/dist/architecture/css/
-!planning/dist/architecture/js/
-
-
-# Keep build script and documentation
+# Keep build scripts and documentation
 !planning/build-minify.ps1
 !planning/README.md
 !planning/LICENSE.md
 !planning/plan.txt
+!planning/todo.md
+!planning/database-requirement.txt
+!planning/tech-stack.md
+!planning/api-requirement.txt
 
-# Keep necessary assets and security scripts
+# Keep necessary assets
 !planning/assets/
-!planning/security/
+!planning/assets/background.png
+!planning/assets/health monitor.png
+!planning/assets/monitoring.png
+!planning/assets/reception.png
 
-# IDE and editor files
+# ======================================================================
+# IDE AND EDITOR FILES
+# ======================================================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
 
-# OS files
+# ======================================================================
+# OS FILES
+# ======================================================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
 
-# Dependencies
-package-lock.json
-yarn.lock
+# ======================================================================
+# TEST COVERAGE
+# ======================================================================
+coverage/
+.nyc_output/
+*.lcov
 
-# Logs
-*.log
-npm-debug.log*
+# ======================================================================
+# TEMPORARY FILES
+# ======================================================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.log.*
+*-backup/
 
-# Environment
-.env
-.env.local
-
-
-# planning
-TODO.md
-plan.txt
-database-requirement.txt
-tech-stack.md
+# ======================================================================
+# END OF .gitignore
+# ======================================================================
