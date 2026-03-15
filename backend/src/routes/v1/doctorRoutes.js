@@ -22,9 +22,8 @@ const express = require('express');
 const router = express.Router();
 
 // Import middlewares
-const authenticate = require('../../middlewares/auth');
-const authorize = require('../../middlewares/rbac');
-const rateLimiter = require('../../middlewares/rateLimiter');
+const { authenticate, authorize } = require('../../middlewares/auth');
+const { createRateLimiter } = require('../../middlewares/rateLimiter');
 const auditLogger = require('../../middlewares/auditLogger');
 
 // Import controllers (will create next)
@@ -48,8 +47,8 @@ const {
 // ============================================
 // RATE LIMITING
 // ============================================
-const standardLimiter = rateLimiter({ windowMs: 60 * 1000, max: 100 });
-const sensitiveLimiter = rateLimiter({ windowMs: 60 * 1000, max: 30 });
+const standardLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 100 });
+const sensitiveLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 30 });
 
 // ============================================
 // DOCTOR PATIENT ROUTES

@@ -31,8 +31,8 @@ const router = express.Router();
 // ============================================
 // IMPORT MIDDLEWARES
 // ============================================
-const authenticate = require('../../middlewares/auth');
-const rateLimiter = require('../../middlewares/rateLimiter');
+const { authenticate } = require('../../middlewares/auth');
+const { createRateLimiter } = require('../../middlewares/rateLimiter');
 const auditLogger = require('../../middlewares/auditLogger');
 const { validate } = require('../../validators/patientValidators');
 
@@ -91,9 +91,9 @@ const {
 // ============================================
 // RATE LIMITING CONFIGURATION
 // ============================================
-const standardLimiter = rateLimiter({ windowMs: 60 * 1000, max: 60 }); // 60 requests per minute
-const sensitiveLimiter = rateLimiter({ windowMs: 60 * 1000, max: 10 }); // 10 requests per minute (for sensitive ops)
-const exportLimiter = rateLimiter({ windowMs: 60 * 60 * 1000, max: 5 }); // 5 requests per hour (for exports)
+const standardLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 60 }); // 60 requests per minute
+const sensitiveLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 10 }); // 10 requests per minute (for sensitive ops)
+const exportLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5 }); // 5 requests per hour (for exports)
 
 // ============================================
 // ============================================

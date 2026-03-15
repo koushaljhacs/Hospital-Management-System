@@ -11,7 +11,7 @@
  * DESCRIPTION:
  * Main entry point for the backend server.
  * 
- * VERSION: 2.4.0
+ * VERSION: 2.5.0
  * CREATED: 2026-03-15
  * UPDATED: 2026-03-15
  * 
@@ -22,6 +22,7 @@
  * v2.2.0 - Added explicit path for .env file
  * v2.3.0 - Added authentication routes and rate limiting
  * v2.4.0 - Added admin routes for user management
+ * v2.5.0 - Added patient and doctor module routes
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -100,13 +101,17 @@ app.use((req, res, next) => {
 // IMPORT ROUTES
 // ============================================
 const authRoutes = require('./src/routes/v1/authRoutes');
-const adminRoutes = require('./src/routes/v1/adminRoutes'); // ✅ ADDED: Admin routes
+const adminRoutes = require('./src/routes/v1/adminRoutes');
+const patientRoutes = require('./src/routes/v1/patientRoutes'); // ADDED: Patient routes
+const doctorRoutes = require('./src/routes/v1/doctorRoutes');   // ADDED: Doctor routes
 
 // ============================================
 // API ROUTES
 // ============================================
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/admin', adminRoutes); // ✅ ADDED: Mount admin routes
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/patient', patientRoutes); // ADDED: Mount patient routes
+app.use('/api/v1/doctor', doctorRoutes);   // ADDED: Mount doctor routes
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -118,7 +123,9 @@ app.get('/', (req, res) => {
         lead: 'Koushal Jha',
         endpoints: {
             auth: '/api/v1/auth',
-            admin: '/api/v1/admin', // ✅ ADDED: Show admin endpoints
+            admin: '/api/v1/admin',
+            patient: '/api/v1/patient', // ADDED: Show patient endpoints
+            doctor: '/api/v1/doctor',     // ADDED: Show doctor endpoints
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -203,7 +210,9 @@ app.get('/api', (req, res) => {
         basePath: '/api/v1',
         availableRoutes: [
             '/api/v1/auth',
-            '/api/v1/admin', // ✅ ADDED: Show in available routes
+            '/api/v1/admin',
+            '/api/v1/patient', // ADDED: Show in available routes
+            '/api/v1/doctor',   // ADDED: Show in available routes
             '/health',
             '/test-db',
             '/config'
@@ -258,14 +267,16 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`📍 Health:    http://localhost:${PORT}/health`);
     logger.info(`📍 Config:    http://localhost:${PORT}/config`);
     logger.info(`📍 Auth API:  http://localhost:${PORT}/api/v1/auth`);
-    logger.info(`📍 Admin API: http://localhost:${PORT}/api/v1/admin`); // ✅ ADDED: Show admin API
+    logger.info(`📍 Admin API: http://localhost:${PORT}/api/v1/admin`);
+    logger.info(`📍 Patient API: http://localhost:${PORT}/api/v1/patient`); // ADDED: Show patient API
+    logger.info(`📍 Doctor API: http://localhost:${PORT}/api/v1/doctor`);   // ADDED: Show doctor API
     logger.info('========================================');
     logger.info(`Team: OctNov`);
     logger.info(`Lead: Koushal Jha`);
     logger.info(`Server PID: ${process.pid}`);
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
-    logger.info(`Config Version: 2.4.0`); // ✅ UPDATED: Version
+    logger.info(`Config Version: 2.5.0`); // UPDATED: Version
     logger.info('========================================\n');
 });
 
