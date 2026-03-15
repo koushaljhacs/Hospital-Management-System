@@ -11,7 +11,7 @@
  * DESCRIPTION:
  * Main entry point for the backend server.
  * 
- * VERSION: 2.2.0
+ * VERSION: 2.3.0
  * CREATED: 2026-03-15
  * UPDATED: 2026-03-15
  * 
@@ -20,20 +20,23 @@
  * v2.0.0 - Integrated environment configuration (env.js)
  * v2.1.0 - Fixed dotenv loading order issue
  * v2.2.0 - Added explicit path for .env file
+ * v2.3.0 - Added authentication routes and rate limiting
  * 
  * DEPENDENCIES:
  * - express v4.22.1
  * - cors v2.8.6
  * - helmet v7.2.0
  * - dotenv v16.0.3
+ * - express-rate-limit (for auth endpoints)
  * ======================================================================
  */
 
 const express = require('express');
-const path = require('path');           // ADDED: For path resolution
-const dotenv = require('dotenv');       // MOVED: Before config import
+const path = require('path');           
+const dotenv = require('dotenv');       
 const cors = require('cors');
 const helmet = require('helmet');
+const rateLimit = require('express-rate-limit'); // ADDED: For rate limiting
 
 // ============================================
 // LOAD ENVIRONMENT VARIABLES FIRST!
@@ -63,6 +66,23 @@ const logger = require('./src/utils/logger');
 const app = express();
 const PORT = config.server.port;
 
+// ============================================
+// GLOBAL RATE LIMITING
+// ============================================
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: {
+        success: false,
+        error: 'Too many requests. Please try again later.'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply global rate limiting to all requests
+app.use(globalLimiter);
+
 // Middleware
 app.use(helmet());
 app.use(cors(config.cors));
@@ -75,6 +95,16 @@ app.use((req, res, next) => {
     next();
 });
 
+// ============================================
+// IMPORT ROUTES
+// ============================================
+const authRoutes = require('./src/routes/v1/authRoutes'); // ADDED: Auth routes
+
+// ============================================
+// API ROUTES
+// ============================================
+app.use('/api/v1/auth', authRoutes); // ADDED: Mount auth routes
+
 // Basic test route
 app.get('/', (req, res) => {
     res.status(200).json({
@@ -84,6 +114,7 @@ app.get('/', (req, res) => {
         team: 'OctNov',
         lead: 'Koushal Jha',
         endpoints: {
+            auth: '/api/v1/auth',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -159,6 +190,23 @@ app.get('/config', (req, res) => {
     }
 });
 
+// API Routes listing (helpful for developers)
+app.get('/api', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Hospital Management System API',
+        version: config.server.api.version,
+        basePath: '/api/v1',
+        availableRoutes: [
+            '/api/v1/auth',
+            '/health',
+            '/test-db',
+            '/config'
+        ],
+        documentation: 'See individual route endpoints for details'
+    });
+});
+
 // 404 handler
 app.use((req, res) => {
     logger.warn('Route not found', { path: req.url, method: req.method });
@@ -204,13 +252,14 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`📍 Tailscale: http://100.81.13.80:${PORT}`);
     logger.info(`📍 Health:    http://localhost:${PORT}/health`);
     logger.info(`📍 Config:    http://localhost:${PORT}/config`);
+    logger.info(`📍 Auth API:  http://localhost:${PORT}/api/v1/auth`);
     logger.info('========================================');
     logger.info(`Team: OctNov`);
     logger.info(`Lead: Koushal Jha`);
     logger.info(`Server PID: ${process.pid}`);
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
-    logger.info(`Config Version: 2.2.0`);
+    logger.info(`Config Version: 2.3.0`);
     logger.info('========================================\n');
 });
 
