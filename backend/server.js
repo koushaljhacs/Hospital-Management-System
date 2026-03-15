@@ -11,7 +11,7 @@
  * DESCRIPTION:
  * Main entry point for the backend server.
  * 
- * VERSION: 2.3.0
+ * VERSION: 2.4.0
  * CREATED: 2026-03-15
  * UPDATED: 2026-03-15
  * 
@@ -21,6 +21,7 @@
  * v2.1.0 - Fixed dotenv loading order issue
  * v2.2.0 - Added explicit path for .env file
  * v2.3.0 - Added authentication routes and rate limiting
+ * v2.4.0 - Added admin routes for user management
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -36,7 +37,7 @@ const path = require('path');
 const dotenv = require('dotenv');       
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit'); // ADDED: For rate limiting
+const rateLimit = require('express-rate-limit');
 
 // ============================================
 // LOAD ENVIRONMENT VARIABLES FIRST!
@@ -98,12 +99,14 @@ app.use((req, res, next) => {
 // ============================================
 // IMPORT ROUTES
 // ============================================
-const authRoutes = require('./src/routes/v1/authRoutes'); // ADDED: Auth routes
+const authRoutes = require('./src/routes/v1/authRoutes');
+const adminRoutes = require('./src/routes/v1/adminRoutes'); // ✅ ADDED: Admin routes
 
 // ============================================
 // API ROUTES
 // ============================================
-app.use('/api/v1/auth', authRoutes); // ADDED: Mount auth routes
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/admin', adminRoutes); // ✅ ADDED: Mount admin routes
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -115,6 +118,7 @@ app.get('/', (req, res) => {
         lead: 'Koushal Jha',
         endpoints: {
             auth: '/api/v1/auth',
+            admin: '/api/v1/admin', // ✅ ADDED: Show admin endpoints
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -199,6 +203,7 @@ app.get('/api', (req, res) => {
         basePath: '/api/v1',
         availableRoutes: [
             '/api/v1/auth',
+            '/api/v1/admin', // ✅ ADDED: Show in available routes
             '/health',
             '/test-db',
             '/config'
@@ -253,13 +258,14 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`📍 Health:    http://localhost:${PORT}/health`);
     logger.info(`📍 Config:    http://localhost:${PORT}/config`);
     logger.info(`📍 Auth API:  http://localhost:${PORT}/api/v1/auth`);
+    logger.info(`📍 Admin API: http://localhost:${PORT}/api/v1/admin`); // ✅ ADDED: Show admin API
     logger.info('========================================');
     logger.info(`Team: OctNov`);
     logger.info(`Lead: Koushal Jha`);
     logger.info(`Server PID: ${process.pid}`);
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
-    logger.info(`Config Version: 2.3.0`);
+    logger.info(`Config Version: 2.4.0`); // ✅ UPDATED: Version
     logger.info('========================================\n');
 });
 
