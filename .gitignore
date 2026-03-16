@@ -3,8 +3,8 @@
 # ======================================================================
 # Team: OctNov
 # Lead: Koushal Jha
-# Version: 2.0.0
-# Date: 2026-03-15
+# Version: 2.1.0
+# Date: 2026-03-16
 # ======================================================================
 
 # ======================================================================
@@ -30,7 +30,9 @@ backend/yarn.lock
 !backend/server.js
 !backend/package.json
 !backend/nodemon.json
-!backend/tests/
+
+# Tests - Will be added later in testing phase
+backend/tests/
 
 # ======================================================================
 # DATABASE - DO NOT COMMIT
@@ -134,7 +136,7 @@ docs/
 !docs/guides/
 
 # ======================================================================
-# PLANNING FOLDER - PRODUCTION DIST ONLY
+# PLANNING FOLDER - SOURCE FILES IGNORE, DIST KEEP
 # ======================================================================
 # Ignore source files in planning
 planning/index.html
@@ -173,6 +175,18 @@ planning/architecture/js/architecture.js
 !planning/assets/health monitor.png
 !planning/assets/monitoring.png
 !planning/assets/reception.png
+
+# ======================================================================
+# DEVELOPMENT FOLDER - IGNORE (Only for local dev)
+# ======================================================================
+development/
+development/**/*
+
+# ======================================================================
+# PHASE 2 FOLDER - IGNORE (Planning documents)
+# ======================================================================
+phase 2/
+phase 2/**/*
 
 # ======================================================================
 # IDE AND EDITOR FILES
