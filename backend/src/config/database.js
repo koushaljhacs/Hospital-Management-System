@@ -501,7 +501,8 @@ module.exports = {
     buildWhereClause,
     buildPagination,
     getPoolMetrics,
-    dbConfig
+    dbConfig,
+    shutdown
 };
 
 /**

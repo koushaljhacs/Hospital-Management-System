@@ -679,6 +679,19 @@ router.get('/dashboard/revenue',
 // ============================================
 // HEALTH CHECK
 // ============================================
+
+/**
+ * Health check for doctor module
+ * GET /api/v1/doctor
+ */
+router.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Doctor module is healthy',
+        timestamp: new Date().toISOString()
+    });
+});
+
 router.get('/health', 
     authenticate, 
     authorize('doctor'),

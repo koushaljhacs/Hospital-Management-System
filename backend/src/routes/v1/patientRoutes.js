@@ -909,6 +909,14 @@ router.get('/dashboard',
 /**
  * Health Check for Patient Module
  */
+router.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Patient module is healthy',
+        timestamp: new Date().toISOString()
+    });
+});
+
 router.get('/health', 
     authenticate, 
     standardLimiter,

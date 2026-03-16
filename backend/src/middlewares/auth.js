@@ -296,7 +296,7 @@ const optionalAuth = async (req, res, next) => {
  * Authorization middleware - role based
  * @param {string|string[]} allowedRoles - Single role or array of allowed roles
  */
-const authorize = (allowedRoles) => {
+const authorize = (allowedRoles, requiredPermission) => {
     return (req, res, next) => {
         try {
             if (!req.user) {
@@ -313,48 +313,92 @@ const authorize = (allowedRoles) => {
             const userRole = req.user.role;
             const userRoleLevel = ROLE_HIERARCHY[userRole] || 0;
 
-            // Convert single role to array
             const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
 
-            // Check if user role is in allowed roles
-            if (roles.includes(userRole)) {
-                logger.debug('Authorization successful - role match', {
-                    userId: req.user.id,
-                    userRole,
-                    requiredRole: roles
-                });
-                return next();
+            let hasRole = roles.includes(userRole);
+
+            if (!hasRole) {
+                const minRequiredLevel = Math.min(
+                    ...roles.map(role => ROLE_HIERARCHY[role] || 0)
+                );
+                if (userRoleLevel >= minRequiredLevel) {
+                    hasRole = true;
+                }
             }
 
-            // Check hierarchy (higher level roles can access lower level)
-            const minRequiredLevel = Math.min(
-                ...roles.map(role => ROLE_HIERARCHY[role] || 0)
-            );
-
-            if (userRoleLevel >= minRequiredLevel) {
-                logger.debug('Authorization successful - hierarchy match', {
+            if (!hasRole) {
+                logger.warn('Authorization failed - insufficient role', {
                     userId: req.user.id,
                     userRole,
-                    userLevel: userRoleLevel,
-                    minRequiredLevel
+                    requiredRoles: roles,
+                    path: req.path,
+                    method: req.method,
                 });
-                return next();
+                return res.status(403).json({
+                    success: false,
+                    error: 'Access denied. Insufficient role permissions.',
+                });
             }
 
-            logger.warn('Authorization failed - insufficient role', {
+            if (requiredPermission) {
+                const allowedRolesForPermission = PERMISSIONS[requiredPermission];
+
+                if (!allowedRolesForPermission) {
+                    logger.warn('Permission check failed - unknown permission', {
+                        userId: req.user.id,
+                        userRole,
+                        permission: requiredPermission,
+                        path: req.path,
+                    });
+                    return res.status(403).json({
+                        success: false,
+                        error: 'Access denied. Unknown permission.',
+                    });
+                }
+
+                let hasPermission = allowedRolesForPermission.includes(userRole);
+
+                if(!hasPermission) {
+                    const minRequiredLevelForPermission = Math.min(
+                        ...allowedRolesForPermission.map(role => ROLE_HIERARCHY[role] || 0)
+                    );
+                    if (userRoleLevel >= minRequiredLevelForPermission) {
+                        hasPermission = true;
+                    }
+                }
+
+                if (!hasPermission) {
+                    db.query(
+                        `INSERT INTO phi_access_logs (user_id, access_type, table_name, record_id, ip_address, user_agent, is_authorized, justification)
+                         VALUES ($1, 'unauthorized_access', 'permission_check', $2, $3, $4, false, $5)`,
+                        [req.user.id, requiredPermission, req.ip, req.headers['user-agent'], 'Insufficient permissions']
+                    ).catch(err => logger.error('Audit log failed', { error: err.message }));
+
+                  logger.warn(
+                    'Permission check failed - insufficient permissions',
+                    {
+                      userId: req.user.id,
+                      userRole,
+                      permission: requiredPermission,
+                      requiredRoles: allowedRolesForPermission,
+                      path: req.path,
+                      method: req.method,
+                    }
+                  );
+                  return res.status(403).json({
+                    success: false,
+                    error: 'Access denied. Insufficient permissions for this action.',
+                  });
+                }
+            }
+            
+            logger.debug('Authorization successful', {
                 userId: req.user.id,
                 userRole,
-                requiredRoles: roles,
-                userLevel: userRoleLevel,
-                requiredLevel: minRequiredLevel,
-                path: req.path,
-                method: req.method
+                requiredRole: roles,
+                requiredPermission,
             });
-
-            return res.status(403).json({
-                success: false,
-                error: 'Access denied. Insufficient permissions.'
-            });
+            return next();
 
         } catch (error) {
             logger.error('Authorization error', {

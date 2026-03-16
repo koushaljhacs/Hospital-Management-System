@@ -138,39 +138,7 @@ const standardLimiter = rateLimit({
 router.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Authentication API - Hospital Management System',
-        version: '1.0.0',
-        team: 'OctNov',
-        lead: 'Koushal Jha',
-        endpoints: {
-            // Public endpoints (no auth required)
-            public: {
-                register: { method: 'POST', path: '/register', description: 'Register new user' },
-                login: { method: 'POST', path: '/login', description: 'User login' },
-                logout: { method: 'POST', path: '/logout', description: 'User logout' },
-                refresh: { method: 'POST', path: '/refresh', description: 'Refresh access token' },
-                'forgot-password': { method: 'POST', path: '/forgot-password', description: 'Request password reset' },
-                'reset-password': { method: 'POST', path: '/reset-password', description: 'Reset password with token' },
-                'verify-email': { method: 'POST', path: '/verify-email', description: 'Verify email address' },
-                'send-otp': { method: 'POST', path: '/send-otp', description: 'Send OTP' },
-                'verify-otp': { method: 'POST', path: '/verify-otp', description: 'Verify OTP' },
-                health: { method: 'GET', path: '/health', description: 'Auth service health check' },
-                'public-key': { method: 'GET', path: '/public-key', description: 'Get public key (JWT)' },
-                routes: { method: 'GET', path: '/routes', description: 'List all routes' }
-            },
-            // Protected endpoints (require authentication)
-            protected: {
-                'change-password': { method: 'POST', path: '/change-password', description: 'Change password' },
-                me: { method: 'GET', path: '/me', description: 'Get current user profile' },
-                profile: { method: 'PUT', path: '/profile', description: 'Update user profile' },
-                'two-factor': { method: 'POST', path: '/two-factor', description: 'Enable/disable 2FA' },
-                sessions: { method: 'GET', path: '/sessions', description: 'Get active sessions' },
-                'sessions/:id': { method: 'DELETE', path: '/sessions/:id', description: 'Terminate specific session' },
-                'sessions/terminate-others': { method: 'POST', path: '/sessions/terminate-others', description: 'Terminate all other sessions' }
-            }
-        },
-        basePath: '/api/v1/auth',
-        documentation: 'Use /routes endpoint for detailed route information',
+        message: 'Auth module is healthy',
         timestamp: new Date().toISOString()
     });
 });

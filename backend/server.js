@@ -11,9 +11,9 @@
  * DESCRIPTION:
  * Main entry point for the backend server.
  * 
- * VERSION: 2.5.0
+ * VERSION: 2.6.0
  * CREATED: 2026-03-15
- * UPDATED: 2026-03-15
+ * UPDATED: 2026-03-16
  * 
  * CHANGE LOG:
  * v1.0.0 - Initial server setup with basic routes
@@ -23,6 +23,7 @@
  * v2.3.0 - Added authentication routes and rate limiting
  * v2.4.0 - Added admin routes for user management
  * v2.5.0 - Added patient and doctor module routes
+ * v2.6.0 - Added public and nurse module routes
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -102,16 +103,20 @@ app.use((req, res, next) => {
 // ============================================
 const authRoutes = require('./src/routes/v1/authRoutes');
 const adminRoutes = require('./src/routes/v1/adminRoutes');
-const patientRoutes = require('./src/routes/v1/patientRoutes'); // ADDED: Patient routes
-const doctorRoutes = require('./src/routes/v1/doctorRoutes');   // ADDED: Doctor routes
+const patientRoutes = require('./src/routes/v1/patientRoutes');
+const doctorRoutes = require('./src/routes/v1/doctorRoutes');
+const publicRoutes = require('./src/routes/v1/publicRoutes'); // ADDED: Public routes
+const nurseRoutes = require('./src/routes/v1/nurseRoutes');   // ADDED: Nurse routes
 
 // ============================================
 // API ROUTES
 // ============================================
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/patient', patientRoutes); // ADDED: Mount patient routes
-app.use('/api/v1/doctor', doctorRoutes);   // ADDED: Mount doctor routes
+app.use('/api/v1/patient', patientRoutes);
+app.use('/api/v1/doctor', doctorRoutes);
+app.use('/api/v1/public', publicRoutes); // ADDED: Mount public routes
+app.use('/api/v1/nurse', nurseRoutes);   // ADDED: Mount nurse routes
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -124,8 +129,10 @@ app.get('/', (req, res) => {
         endpoints: {
             auth: '/api/v1/auth',
             admin: '/api/v1/admin',
-            patient: '/api/v1/patient', // ADDED: Show patient endpoints
-            doctor: '/api/v1/doctor',     // ADDED: Show doctor endpoints
+            patient: '/api/v1/patient',
+            doctor: '/api/v1/doctor',
+            nurse: '/api/v1/nurse',      // ADDED: Show nurse endpoints
+            public: '/api/v1/public',     // ADDED: Show public endpoints
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -211,8 +218,10 @@ app.get('/api', (req, res) => {
         availableRoutes: [
             '/api/v1/auth',
             '/api/v1/admin',
-            '/api/v1/patient', // ADDED: Show in available routes
-            '/api/v1/doctor',   // ADDED: Show in available routes
+            '/api/v1/patient',
+            '/api/v1/doctor',
+            '/api/v1/nurse',      // ADDED: Show in available routes
+            '/api/v1/public',     // ADDED: Show in available routes
             '/health',
             '/test-db',
             '/config'
@@ -268,15 +277,17 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`📍 Config:    http://localhost:${PORT}/config`);
     logger.info(`📍 Auth API:  http://localhost:${PORT}/api/v1/auth`);
     logger.info(`📍 Admin API: http://localhost:${PORT}/api/v1/admin`);
-    logger.info(`📍 Patient API: http://localhost:${PORT}/api/v1/patient`); // ADDED: Show patient API
-    logger.info(`📍 Doctor API: http://localhost:${PORT}/api/v1/doctor`);   // ADDED: Show doctor API
+    logger.info(`📍 Patient API: http://localhost:${PORT}/api/v1/patient`);
+    logger.info(`📍 Doctor API: http://localhost:${PORT}/api/v1/doctor`);
+    logger.info(`📍 Nurse API:  http://localhost:${PORT}/api/v1/nurse`);   // ADDED: Show nurse API
+    logger.info(`📍 Public API: http://localhost:${PORT}/api/v1/public`);  // ADDED: Show public API
     logger.info('========================================');
     logger.info(`Team: OctNov`);
     logger.info(`Lead: Koushal Jha`);
     logger.info(`Server PID: ${process.pid}`);
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
-    logger.info(`Config Version: 2.5.0`); // UPDATED: Version
+    logger.info(`Config Version: 2.6.0`); // UPDATED: Version
     logger.info('========================================\n');
 });
 

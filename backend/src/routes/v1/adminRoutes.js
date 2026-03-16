@@ -103,18 +103,7 @@ router.use(adminLimiter);
 router.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Admin API - Hospital Management System',
-        version: '1.0.0',
-        team: 'OctNov',
-        lead: 'Koushal Jha',
-        sections: {
-            users: '/users - User management',
-            roles: '/roles - Role management',
-            permissions: '/permissions - Permission management',
-            system: '/system - System administration',
-            audit: '/audit - Audit logs'
-        },
-        documentation: 'See individual endpoints for details',
+        message: 'Admin module is healthy',
         timestamp: new Date().toISOString()
     });
 });
