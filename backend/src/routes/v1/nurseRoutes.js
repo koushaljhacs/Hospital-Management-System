@@ -10,10 +10,20 @@
  * 
  * DESCRIPTION:
  * Nurse module routes - All nurse-facing endpoints.
- * Total Endpoints: 50 (as per API blueprint)
+ * Total Endpoints: 51 (including root endpoint)
  * 
- * VERSION: 1.0.0
+ * VERSION: 1.0.1
  * CREATED: 2026-03-16
+ * UPDATED: 2026-03-19
+ * 
+ * CHANGE LOG:
+ * v1.0.0 - Initial implementation with all nurse endpoints
+ * v1.0.1 - HYBRID APPROACH: Added public root endpoint with module information
+ *         - Enhanced health endpoint with module name and version
+ *         - Fixed authenticate import destructuring
+ *         - Added version tracking to all info endpoints
+ *         - Maintained protected status for all data endpoints
+ *         - Added route summary with authentication categories
  * 
  * BUSINESS RULES COVERED:
  * - [BR-24] Bed status workflow
@@ -21,6 +31,7 @@
  * - [BR-26] Cleaning required between patients
  * - [BR-27] Max occupancy time 30 days
  * - [BR-28] ICU beds require special authorization
+ * - [BR-36] Critical values require immediate notification
  * 
  * ======================================================================
  */
@@ -31,12 +42,13 @@ const router = express.Router();
 // ============================================
 // IMPORT MIDDLEWARES
 // ============================================
-const { authenticate, authorize } = require('../../middlewares/auth');
+const { authenticate } = require('../../middlewares/auth');
+const authorize = require('../../middlewares/rbac');
 const { standard, sensitive } = require('../../middlewares/rateLimiter');
 const auditLogger = require('../../middlewares/auditLogger');
 
 // ============================================
-// IMPORT CONTROLLERS (will create next)
+// IMPORT CONTROLLERS
 // ============================================
 const patientCareController = require('../../controllers/nurse/patientCareController');
 const vitalController = require('../../controllers/nurse/vitalController');
@@ -46,7 +58,7 @@ const bedController = require('../../controllers/nurse/bedController');
 const dashboardController = require('../../controllers/nurse/dashboardController');
 
 // ============================================
-// IMPORT VALIDATORS (will create next)
+// IMPORT VALIDATORS
 // ============================================
 const {
     validatePatientSearch,
@@ -60,6 +72,27 @@ const {
     validatePagination,
     validateDateRange
 } = require('../../validators/nurseValidators');
+
+// ============================================
+// PUBLIC ROOT ENDPOINT - Nurse API Information
+// GET /api/v1/nurse
+// ============================================
+// v1.0.1 - Added public root endpoint with module information
+// No authentication required - provides basic module information
+router.get('/', (req, res) => {
+    res.json({
+        success: true,
+        module: 'Nurse API',
+        version: '1.0.1',
+        status: 'operational',
+        documentation: '/api/v1/nurse/health',
+        authentication: 'Bearer token required for all nurse endpoints',
+        available: {
+            health: '/api/v1/nurse/health'
+        },
+        timestamp: new Date().toISOString()
+    });
+});
 
 // ============================================
 // ============================================
@@ -736,25 +769,15 @@ router.get('/dashboard/beds',
 
 // ============================================
 // ============================================
-// HEALTH CHECK
+// PROTECTED HEALTH CHECK
 // ============================================
 // ============================================
-
-/**
- * Health check for nurse module
- * GET /api/v1/nurse
- */
-router.get('/', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Nurse module is healthy',
-        timestamp: new Date().toISOString()
-    });
-});
+// v1.0.1 - Enhanced with module name and version
 
 /**
  * Health check for nurse module
  * GET /api/v1/nurse/health
+ * Authentication required - provides detailed module status and endpoint list
  */
 router.get('/health',
     authenticate,
@@ -762,11 +785,14 @@ router.get('/health',
     (req, res) => {
         res.json({
             success: true,
-            message: 'Nurse module is healthy',
+            module: 'Nurse API',
+            version: '1.0.1',
+            status: 'healthy',
             timestamp: new Date().toISOString(),
             nurseId: req.user.id,
             endpoints: {
-                total: 50,
+                total: 51,
+                root: 1,
                 patient_care: 6,
                 vitals: 9,
                 tasks: 11,
@@ -786,17 +812,24 @@ module.exports = router;
  * ROUTE SUMMARY:
  * ======================================================================
  * 
- * Category          | Count | Business Rules
- * ------------------|-------|----------------------
- * Patient Care      | 6     | Patient access
- * Vital Signs       | 9     | [BR-36] Critical alerts
- * Tasks             | 11    | Task workflow
- * Medications       | 7     | Med administration
- * Bed Management    | 8     | [BR-24][BR-25][BR-26][BR-27][BR-28]
- * Shift & Handover  | 4     | Shift management
- * Dashboard         | 5     | Overview
- * ------------------|-------|----------------------
- * TOTAL             | 50    | Complete Nurse Module
+ * Category          | Count | Business Rules | Authentication
+ * ------------------|-------|----------------|----------------
+ * Root              | 1     | Base URL info  | 🔓 Public
+ * Patient Care      | 6     | Patient access | 🔒 Protected
+ * Vital Signs       | 9     | [BR-36] Critical alerts | 🔒 Protected
+ * Tasks             | 11    | Task workflow  | 🔒 Protected
+ * Medications       | 7     | Med administration | 🔒 Protected
+ * Bed Management    | 8     | [BR-24][BR-25][BR-26][BR-27][BR-28] | 🔒 Protected
+ * Shift & Handover  | 4     | Shift management | 🔒 Protected
+ * Dashboard         | 5     | Overview       | 🔒 Protected
+ * Health            | 1     | Status & endpoints | 🔒 Protected
+ * ------------------|-------|----------------|----------------
+ * TOTAL             | 52    | Complete Nurse Module
+ * 
+ * HYBRID SECURITY APPROACH:
+ * - Public root: Basic module info only (no internal endpoints)
+ * - Protected health: Detailed status for authenticated users
+ * - All data endpoints: Require valid authentication
  * 
  * ======================================================================
  */

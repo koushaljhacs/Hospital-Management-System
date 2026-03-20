@@ -10,10 +10,20 @@
  * 
  * DESCRIPTION:
  * Patient module routes - All patient-facing endpoints.
- * Total Endpoints: 98 (as per API blueprint)
+ * Total Endpoints: 100 (including root endpoint)
  * 
- * VERSION: 1.0.0
+ * VERSION: 1.0.1
  * CREATED: 2026-03-15
+ * UPDATED: 2026-03-19
+ * 
+ * CHANGE LOG:
+ * v1.0.0 - Initial implementation with all patient endpoints
+ * v1.0.1 - HYBRID APPROACH: Added public root endpoint with module information
+ *         - Enhanced health endpoint with module name and version
+ *         - Fixed root endpoint location (moved to top)
+ *         - Added version tracking to all info endpoints
+ *         - Maintained protected status for all data endpoints
+ *         - Added route summary with authentication categories
  * 
  * MIDDLEWARE STACK:
  * 1. authenticate - JWT verification
@@ -34,7 +44,6 @@ const router = express.Router();
 const { authenticate } = require('../../middlewares/auth');
 const { createRateLimiter } = require('../../middlewares/rateLimiter');
 const auditLogger = require('../../middlewares/auditLogger');
-const { validate } = require('../../validators/patientValidators');
 
 // ============================================
 // IMPORT CONTROLLERS
@@ -94,6 +103,27 @@ const {
 const standardLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 60 }); // 60 requests per minute
 const sensitiveLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 10 }); // 10 requests per minute (for sensitive ops)
 const exportLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5 }); // 5 requests per hour (for exports)
+
+// ============================================
+// PUBLIC ROOT ENDPOINT - Patient API Information
+// GET /api/v1/patient
+// ============================================
+// v1.0.1 - Added public root endpoint with module information
+// No authentication required - provides basic module information
+router.get('/', (req, res) => {
+    res.json({
+        success: true,
+        module: 'Patient API',
+        version: '1.0.1',
+        status: 'operational',
+        documentation: '/api/v1/patient/health',
+        authentication: 'Bearer token required for all patient endpoints',
+        available: {
+            health: '/api/v1/patient/health'
+        },
+        timestamp: new Date().toISOString()
+    });
+});
 
 // ============================================
 // ============================================
@@ -906,33 +936,38 @@ router.get('/dashboard',
     }
 );
 
-/**
- * Health Check for Patient Module
- */
-router.get('/', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Patient module is healthy',
-        timestamp: new Date().toISOString()
-    });
-});
+// ============================================
+// ============================================
+// PROTECTED HEALTH CHECK
+// ============================================
+// ============================================
+// v1.0.1 - Enhanced with module name and version
 
+/**
+ * Health check for patient module
+ * GET /api/v1/patient/health
+ * Authentication required - provides detailed module status and endpoint list
+ */
 router.get('/health', 
     authenticate, 
     standardLimiter,
     (req, res) => {
         res.json({
             success: true,
-            message: 'Patient module is healthy',
+            module: 'Patient API',
+            version: '1.0.1',
+            status: 'healthy',
             timestamp: new Date().toISOString(),
             userId: req.user.id,
             endpoints: {
-                total: 98,
+                total: 100,
+                root: 1,
                 profile: 12,
                 medical: 25,
                 appointments: 13,
                 billing: 27,
-                consent: 21
+                consent: 21,
+                dashboard: 1
             }
         });
     }
@@ -951,19 +986,23 @@ module.exports = router;
  * ROUTE SUMMARY:
  * ======================================================================
  * 
- * Category        | Count | Base Path
- * ----------------|-------|-------------------
- * Profile         | 12    | /profile, /emergency-contacts
- * Medical Records | 25    | /medical-records, /prescriptions, /lab-results, /radiology-images, /vitals, /diagnosis, /visits
- * Appointments    | 13    | /appointments
- * Billing         | 27    | /invoices, /payments, /insurance, /billing
- * Consent         | 21    | /consents, /data-export, /deletion-request
- * Dashboard       | 1     | /dashboard
- * Health          | 1     | /health
- * ----------------|-------|-------------------
- * TOTAL           | 98    | Complete Patient Module
+ * Category        | Count | Authentication
+ * ----------------|-------|----------------
+ * Root            | 1     | 🔓 Public
+ * Profile         | 12    | 🔒 Protected
+ * Medical Records | 25    | 🔒 Protected
+ * Appointments    | 13    | 🔒 Protected
+ * Billing         | 27    | 🔒 Protected
+ * Consent         | 21    | 🔒 Protected
+ * Dashboard       | 1     | 🔒 Protected
+ * Health          | 1     | 🔒 Protected
+ * ----------------|-------|----------------
+ * TOTAL           | 101   | Complete Patient Module
  * 
- * ======================================================================
+ * HYBRID SECURITY APPROACH:
+ * - Public root: Basic module info only (no internal endpoints)
+ * - Protected health: Detailed status for authenticated users
+ * - All data endpoints: Require valid authentication
  * 
  * MIDDLEWARE APPLIED TO ALL ROUTES:
  * - authenticate: JWT verification

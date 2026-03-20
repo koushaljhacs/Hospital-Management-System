@@ -12,14 +12,20 @@
  * Authentication routes for user registration, login, token management.
  * Implements comprehensive security measures and rate limiting.
  * 
- * VERSION: 1.0.0
+ * VERSION: 1.0.2
  * CREATED: 2026-03-15
- * UPDATED: 2026-03-15
+ * UPDATED: 2026-03-19
  * 
  * CHANGE LOG:
  * v1.0.0 - Initial implementation
  * v1.0.1 - Fixed middleware import path (middleware → middlewares)
  *         - Added root route handler (GET /)
+ * v1.0.2 - HYBRID APPROACH: Enhanced root endpoint with module information
+ *         - Added version tracking to root endpoint
+ *         - Enhanced health endpoint with module name and version
+ *         - Added route summary with authentication requirements
+ *         - Maintained public access for auth endpoints (already correct)
+ *         - All protected routes remain properly secured
  * 
  * DEPENDENCIES:
  * - express: Router
@@ -29,7 +35,7 @@
  * - rateLimit: Rate limiting middleware
  * 
  * ENDPOINTS:
- * GET    /auth/                     - List all available endpoints
+ * GET    /auth/                     - Auth module information
  * POST   /auth/register              - Register new user
  * POST   /auth/login                 - User login
  * POST   /auth/logout                - User logout
@@ -58,6 +64,11 @@
  * - Account lockout on failed attempts
  * - Audit logging for all auth events
  * 
+ * HYBRID SECURITY APPROACH:
+ * - Public endpoints: Registration, login, password reset, health checks
+ * - Protected endpoints: Profile management, session management, password change
+ * - All authentication required endpoints properly secured
+ * 
  * ======================================================================
  */
 
@@ -79,7 +90,7 @@ const {
     validateLogout
 } = require('../../validators/authValidators');
 
-// ✅ FIXED: Correct path - 'middlewares' (plural) not 'middleware'
+// FIXED: Correct path - 'middlewares' (plural) not 'middleware'
 const { authenticate, optionalAuth } = require('../../middlewares/auth');
 const logger = require('../../utils/logger');
 
@@ -131,14 +142,24 @@ const standardLimiter = rateLimit({
 
 /**
  * ======================================================================
- * ROOT ROUTE - Show all available endpoints
+ * PUBLIC ROOT ENDPOINT - Auth API Information
  * GET /api/v1/auth/
  * ======================================================================
+ * v1.0.2 - Enhanced with module information and version
+ * No authentication required - provides basic module information
  */
 router.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Auth module is healthy',
+        module: 'Auth API',
+        version: '1.0.2',
+        status: 'operational',
+        documentation: '/api/v1/auth/health',
+        authentication: 'Bearer token required for protected endpoints',
+        available: {
+            health: '/api/v1/auth/health',
+            routes: '/api/v1/auth/routes'
+        },
         timestamp: new Date().toISOString()
     });
 });
@@ -492,11 +513,14 @@ router.post('/sessions/terminate-others',
 /**
  * Check if authentication service is healthy
  * GET /api/v1/auth/health
+ * v1.0.2 - Enhanced with module name and version
  */
 router.get('/health',
     async (req, res) => {
         res.json({
             success: true,
+            module: 'Auth API',
+            version: '1.0.2',
             service: 'auth',
             status: 'healthy',
             timestamp: new Date().toISOString()
@@ -514,6 +538,8 @@ router.get('/public-key',
         // Only if using asymmetric encryption
         res.json({
             success: true,
+            module: 'Auth API',
+            version: '1.0.2',
             message: 'Public key endpoint - implement as needed'
         });
     }
@@ -523,6 +549,7 @@ router.get('/public-key',
  * ======================================================================
  * ROUTE SUMMARY (for documentation)
  * ======================================================================
+ * v1.0.2 - Added version information
  */
 router.get('/routes', (req, res) => {
     const routes = [
@@ -549,6 +576,8 @@ router.get('/routes', (req, res) => {
     
     res.json({
         success: true,
+        module: 'Auth API',
+        version: '1.0.2',
         basePath: '/api/v1/auth',
         totalRoutes: routes.length,
         routes
@@ -565,6 +594,25 @@ module.exports = router;
  * // In server.js or app.js:
  * const authRoutes = require('./src/routes/v1/authRoutes');
  * app.use('/api/v1/auth', authRoutes);
+ * 
+ * ======================================================================
+ * 
+ * ROUTE SUMMARY:
+ * ======================================================================
+ * 
+ * Category                | Count | Authentication
+ * ------------------------|-------|----------------
+ * Public Authentication   | 9     | 🔓 Public
+ * Protected Authentication| 7     | 🔒 Protected
+ * Utility & Health        | 3     | 🔓 Public
+ * ------------------------|-------|----------------
+ * TOTAL                   | 19    | Complete Auth Module
+ * 
+ * HYBRID SECURITY APPROACH:
+ * - Public endpoints: Registration, login, password reset, health checks
+ * - Protected endpoints: Profile, sessions, password change
+ * - Rate limiting applied to all endpoints
+ * - Input validation on all requests
  * 
  * ======================================================================
  */

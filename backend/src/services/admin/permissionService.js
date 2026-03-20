@@ -250,7 +250,7 @@ const permissionService = {
                     gen_random_uuid()::varchar(50), 'create', $1, 'permission_create',
                     'permissions', $2, $3, $4, $5
                 )
-            `, [createdBy, permission.id, JSON.stringify(permissionData), 
+            `, [createdBy.id, permission.id, JSON.stringify(permissionData),
                 createdBy.ip, createdBy.userAgent]);
 
             await db.commitTransaction(client);
@@ -316,7 +316,7 @@ const permissionService = {
                     gen_random_uuid()::varchar(50), 'update', $1, 'permission_update',
                     'permissions', $2, $3, $4, $5, $6
                 )
-            `, [updatedBy, permissionId, JSON.stringify(currentPermission), 
+            `, [updatedBy.id, permissionId, JSON.stringify(currentPermission),
                 JSON.stringify(filteredUpdates), updatedBy.ip, updatedBy.userAgent]);
 
             await db.commitTransaction(client);
@@ -387,7 +387,7 @@ const permissionService = {
                     gen_random_uuid()::varchar(50), 'delete', $1, 'permission_delete',
                     'permissions', $2, $3, $4, $5
                 )
-            `, [deletedBy, permissionId, JSON.stringify(permission), 
+            `, [deletedBy.id, permissionId, JSON.stringify(permission),
                 deletedBy.ip, deletedBy.userAgent]);
 
             await db.commitTransaction(client);
@@ -681,7 +681,7 @@ const permissionService = {
                     gen_random_uuid()::varchar(50), 'sync', $1, 'permissions_sync',
                     'permissions', 'bulk', $2, $3, $4
                 )
-            `, [syncedBy, JSON.stringify(results), syncedBy.ip, syncedBy.userAgent]);
+            `, [syncedBy.id, JSON.stringify(results), syncedBy.ip, syncedBy.userAgent]);
 
             await db.commitTransaction(client);
 
