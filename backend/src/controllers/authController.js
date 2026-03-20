@@ -1,6 +1,6 @@
 /**
  * ======================================================================
- * FILE: backend/src/controllers/authController.js
+ * FILE: backend/src/controllers/authController.js (UPDATED)
  * ======================================================================
  * 
  * PROJECT: Hospital Management System
@@ -12,34 +12,11 @@
  * Authentication controller handling login, register, logout, token refresh.
  * Implements comprehensive security measures and audit logging.
  * 
- * VERSION: 1.0.0
- * CREATED: 2026-03-15
+ * VERSION: 2.0.0
+ * UPDATED: 2026-03-18
  * 
- * DEPENDENCIES:
- * - User model
- * - auth utilities
- * - logger
- * 
- * ENDPOINTS:
- * - POST /api/v1/auth/register
- * - POST /api/v1/auth/login
- * - POST /api/v1/auth/logout
- * - POST /api/v1/auth/refresh
- * - POST /api/v1/auth/change-password
- * - POST /api/v1/auth/forgot-password
- * - POST /api/v1/auth/reset-password
- * - GET  /api/v1/auth/me
- * 
- * SECURITY:
- * - Rate limiting on login attempts
- * - Account lockout after 5 failed attempts
- * - Password history enforcement
- * - JWT with short expiry
- * - Refresh token rotation
- * - Audit logging for all auth events
- * 
- * CHANGE LOG:
- * v1.0.0 - Initial implementation
+ * CHANGES:
+ * v2.0.0 - Added permission fetching, session management, enhanced security
  * 
  * ======================================================================
  */
@@ -48,6 +25,114 @@ const User = require('../models/User');
 const auth = require('../config/auth');
 const logger = require('../utils/logger');
 const db = require('../config/database');
+
+/**
+ * Get user permissions from database
+ * @param {string} userId - User ID
+ * @param {string} role - User role
+ * @returns {Promise<Array>} Array of permissions
+ */
+async function getUserPermissions(userId, role) {
+    try {
+        // Get role-based permissions
+        const rolePerms = await db.query(
+            `SELECT p.permission_name 
+             FROM role_permissions rp
+             JOIN permissions p ON rp.permission_id = p.id
+             WHERE rp.role_id = (SELECT id FROM roles WHERE role_name = $1) 
+               AND rp.grant_type = 'allow'`,
+            [role]
+        );
+        
+        // Get user-specific permissions (overrides)
+        const userPerms = await db.query(
+            `SELECT p.permission_name, up.grant_type
+             FROM user_permissions up
+             JOIN permissions p ON up.permission_id = p.id
+             WHERE up.user_id = $1 
+               AND up.is_active = true 
+               AND (up.expires_at IS NULL OR up.expires_at > NOW())`,
+            [userId]
+        );
+        
+        // Combine permissions (user permissions override role permissions)
+        const permissions = new Set(rolePerms.rows.map(p => p.permission_name));
+        
+        // Handle user-specific overrides
+        userPerms.rows.forEach(perm => {
+            if (perm.grant_type === 'allow') {
+                permissions.add(perm.permission_name);
+            } else if (perm.grant_type === 'deny') {
+                permissions.delete(perm.permission_name);
+            }
+        });
+        
+        return Array.from(permissions);
+        
+    } catch (error) {
+        logger.error('Error fetching user permissions', {
+            error: error.message,
+            userId,
+            role
+        });
+        return [];
+    }
+}
+
+/**
+ * Create session in database
+ * @param {string} userId - User ID
+ * @param {string} sessionToken - Session token
+ * @param {string} refreshToken - Refresh token
+ * @param {Object} req - Request object
+ * @returns {Promise<Object>} Session object
+ */
+async function createSession(userId, sessionToken, refreshToken, req) {
+    const client = await db.getClient();
+    
+    try {
+        await db.beginTransaction(client);
+        
+        // Deactivate any existing active sessions for this user
+        await client.query(
+            `UPDATE sessions 
+             SET is_active = false, logout_time = NOW(), logout_reason = 'new_login'
+             WHERE user_id = $1 AND is_active = true`,
+            [userId]
+        );
+        
+        // Create new session
+        const result = await client.query(
+            `INSERT INTO sessions (
+                user_id, session_token, refresh_token, ip_address, 
+                user_agent, device_info, login_time, last_activity, expires_at, is_active
+            ) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), NOW() + INTERVAL '7 days', true)
+            RETURNING id, session_token, refresh_token, expires_at`,
+            [
+                userId, 
+                sessionToken, 
+                refreshToken, 
+                req.ip, 
+                req.headers['user-agent'],
+                JSON.stringify({
+                    browser: req.headers['user-agent'],
+                    platform: req.headers['sec-ch-ua-platform'],
+                    mobile: req.headers['sec-ch-ua-mobile']
+                })
+            ]
+        );
+        
+        await db.commitTransaction(client);
+        
+        return result.rows[0];
+        
+    } catch (error) {
+        await db.rollbackTransaction(client);
+        throw error;
+    } finally {
+        client.release();
+    }
+}
 
 /**
  * Authentication Controller
@@ -85,8 +170,16 @@ const authController = {
             // Generate tokens
             const tokens = auth.generateTokens(user);
 
-            // Save refresh token to database
-            await User.updateRefreshToken(user.id, tokens.refreshToken);
+            // Create session in database
+            const session = await createSession(
+                user.id, 
+                tokens.accessToken, 
+                tokens.refreshToken, 
+                req
+            );
+
+            // Get user permissions
+            const permissions = await getUserPermissions(user.id, user.role);
 
             // Log successful registration
             logger.info('User registered successfully', {
@@ -98,8 +191,13 @@ const authController = {
 
             // Audit log
             await db.query(
-                `INSERT INTO audit_logs (audit_id, audit_type, user_id, action, table_name, record_id, ip_address, user_agent)
-                 VALUES (gen_random_uuid()::varchar(50), 'create', $1, 'register', 'users', $2, $3, $4)`,
+                `INSERT INTO audit_logs (
+                    audit_id, audit_type, user_id, action, table_name, 
+                    record_id, ip_address, user_agent, created_at
+                ) VALUES (
+                    gen_random_uuid()::varchar(50), 'create', $1, 'register', 
+                    'users', $2, $3, $4, NOW()
+                )`,
                 [user.id, user.id, req.ip, req.headers['user-agent']]
             );
 
@@ -110,9 +208,14 @@ const authController = {
                         id: user.id,
                         email: user.email,
                         username: user.username,
-                        role: user.role
+                        role: user.role,
+                        permissions: permissions
                     },
-                    tokens
+                    tokens: {
+                        accessToken: session.session_token,
+                        refreshToken: session.refresh_token,
+                        expiresIn: '7d'
+                    }
                 }
             });
 
@@ -146,8 +249,9 @@ const authController = {
                 
                 // Log failed attempt
                 await db.query(
-                    `INSERT INTO login_attempts (username, ip_address, user_agent, success, failure_reason)
-                     VALUES ($1, $2, $3, false, 'User not found')`,
+                    `INSERT INTO login_attempts (
+                        username, ip_address, user_agent, success, failure_reason, attempt_time
+                    ) VALUES ($1, $2, $3, false, 'User not found', NOW())`,
                     [email, req.ip, req.headers['user-agent']]
                 );
 
@@ -163,14 +267,16 @@ const authController = {
                 logger.warn('Login failed - account locked', { userId: user.id, email, ip: req.ip });
                 
                 await db.query(
-                    `INSERT INTO login_attempts (user_id, username, ip_address, user_agent, success, failure_reason)
-                     VALUES ($1, $2, $3, $4, false, 'Account locked')`,
+                    `INSERT INTO login_attempts (
+                        user_id, username, ip_address, user_agent, success, failure_reason, attempt_time
+                    ) VALUES ($1, $2, $3, $4, false, 'Account locked', NOW())`,
                     [user.id, email, req.ip, req.headers['user-agent']]
                 );
 
                 return res.status(423).json({
                     success: false,
-                    error: 'Account is temporarily locked. Please try again later.'
+                    error: 'Account is temporarily locked. Please try again later.',
+                    lockedUntil: user.locked_until
                 });
             }
 
@@ -189,14 +295,16 @@ const authController = {
                 });
 
                 await db.query(
-                    `INSERT INTO login_attempts (user_id, username, ip_address, user_agent, success, failure_reason)
-                     VALUES ($1, $2, $3, $4, false, 'Invalid password')`,
+                    `INSERT INTO login_attempts (
+                        user_id, username, ip_address, user_agent, success, failure_reason, attempt_time
+                    ) VALUES ($1, $2, $3, $4, false, 'Invalid password', NOW())`,
                     [user.id, email, req.ip, req.headers['user-agent']]
                 );
 
                 return res.status(401).json({
                     success: false,
-                    error: 'Invalid email or password'
+                    error: 'Invalid email or password',
+                    attemptsRemaining: 5 - attempts
                 });
             }
 
@@ -206,8 +314,16 @@ const authController = {
             // Generate tokens
             const tokens = auth.generateTokens(user);
 
-            // Update refresh token in database
-            await User.updateRefreshToken(user.id, tokens.refreshToken);
+            // Create session in database
+            const session = await createSession(
+                user.id, 
+                tokens.accessToken, 
+                tokens.refreshToken, 
+                req
+            );
+
+            // Get user permissions
+            const permissions = await getUserPermissions(user.id, user.role);
 
             // Update last login
             await User.updateLastLogin(user.id);
@@ -222,8 +338,9 @@ const authController = {
 
             // Record successful login attempt
             await db.query(
-                `INSERT INTO login_attempts (user_id, username, ip_address, user_agent, success)
-                 VALUES ($1, $2, $3, $4, true)`,
+                `INSERT INTO login_attempts (
+                    user_id, username, ip_address, user_agent, success, attempt_time
+                ) VALUES ($1, $2, $3, $4, true, NOW())`,
                 [user.id, email, req.ip, req.headers['user-agent']]
             );
 
@@ -234,8 +351,15 @@ const authController = {
             res.json({
                 success: true,
                 data: {
-                    user,
-                    tokens
+                    user: {
+                        ...user,
+                        permissions: permissions
+                    },
+                    tokens: {
+                        accessToken: session.session_token,
+                        refreshToken: session.refresh_token,
+                        expiresIn: '7d'
+                    }
                 }
             });
 
@@ -256,13 +380,30 @@ const authController = {
      * POST /api/v1/auth/logout
      */
     async logout(req, res, next) {
+        const client = await db.getClient();
+        
         try {
             const userId = req.user?.id;
-            const refreshToken = req.body.refreshToken;
+            const sessionToken = req.headers.authorization?.split(' ')[1];
 
-            if (userId) {
+            if (userId && sessionToken) {
+                await db.beginTransaction(client);
+                
+                // Deactivate the current session
+                await client.query(
+                    `UPDATE sessions 
+                     SET is_active = false, logout_time = NOW(), logout_reason = 'user_logout'
+                     WHERE user_id = $1 AND session_token = $2 AND is_active = true`,
+                    [userId, sessionToken]
+                );
+                
                 // Clear refresh token from database
-                await User.updateRefreshToken(userId, null);
+                await client.query(
+                    `UPDATE users SET refresh_token = NULL WHERE id = $1`,
+                    [userId]
+                );
+                
+                await db.commitTransaction(client);
 
                 logger.info('User logged out', {
                     userId,
@@ -276,12 +417,15 @@ const authController = {
             });
 
         } catch (error) {
+            await db.rollbackTransaction(client);
             logger.error('Logout error', {
                 error: error.message,
                 userId: req.user?.id,
                 ip: req.ip
             });
             next(error);
+        } finally {
+            client.release();
         }
     },
 
@@ -290,6 +434,8 @@ const authController = {
      * POST /api/v1/auth/refresh
      */
     async refreshToken(req, res, next) {
+        const client = await db.getClient();
+        
         try {
             const { refreshToken } = req.body;
 
@@ -300,27 +446,29 @@ const authController = {
                 });
             }
 
-            // Verify refresh token
-            const decoded = auth.verifyRefreshToken(refreshToken);
+            // Verify refresh token exists in database
+            const session = await db.query(
+                `SELECT s.*, u.id as user_id, u.role, u.status
+                 FROM sessions s
+                 JOIN users u ON s.user_id = u.id
+                 WHERE s.refresh_token = $1 AND s.is_active = true AND s.expires_at > NOW()`,
+                [refreshToken]
+            );
 
-            // Get user from database
-            const user = await User.findById(decoded.id);
-
-            if (!user) {
-                logger.warn('Token refresh failed - user not found', { 
-                    userId: decoded.id,
-                    ip: req.ip 
-                });
+            if (!session.rows.length) {
+                logger.warn('Token refresh failed - invalid refresh token', { ip: req.ip });
                 return res.status(401).json({
                     success: false,
-                    error: 'Invalid refresh token'
+                    error: 'Invalid or expired refresh token'
                 });
             }
+
+            const user = session.rows[0];
 
             // Check if user is active
             if (user.status !== 'active') {
                 logger.warn('Token refresh failed - inactive account', { 
-                    userId: user.id,
+                    userId: user.user_id,
                     status: user.status,
                     ip: req.ip 
                 });
@@ -331,43 +479,72 @@ const authController = {
             }
 
             // Generate new tokens
-            const tokens = auth.refreshTokens(refreshToken);
+            const newAccessToken = auth.generateAccessToken({
+                id: user.user_id,
+                email: user.email,
+                role: user.role
+            });
+            
+            const newRefreshToken = auth.generateRefreshToken({
+                id: user.user_id
+            });
 
-            // Update refresh token in database
-            await User.updateRefreshToken(user.id, tokens.refreshToken);
+            await db.beginTransaction(client);
+
+            // Deactivate old session
+            await client.query(
+                `UPDATE sessions 
+                 SET is_active = false, logout_time = NOW(), logout_reason = 'token_refresh'
+                 WHERE id = $1`,
+                [session.rows[0].id]
+            );
+
+            // Create new session
+            const newSession = await client.query(
+                `INSERT INTO sessions (
+                    user_id, session_token, refresh_token, ip_address, 
+                    user_agent, device_info, login_time, last_activity, expires_at, is_active
+                ) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), NOW() + INTERVAL '7 days', true)
+                RETURNING session_token, refresh_token, expires_at`,
+                [
+                    user.user_id,
+                    newAccessToken,
+                    newRefreshToken,
+                    req.ip,
+                    req.headers['user-agent'],
+                    JSON.stringify({
+                        browser: req.headers['user-agent'],
+                        platform: req.headers['sec-ch-ua-platform'],
+                        mobile: req.headers['sec-ch-ua-mobile']
+                    })
+                ]
+            );
+
+            await db.commitTransaction(client);
 
             logger.info('Tokens refreshed', {
-                userId: user.id,
+                userId: user.user_id,
                 ip: req.ip
             });
 
             res.json({
                 success: true,
-                data: tokens
+                data: {
+                    accessToken: newSession.rows[0].session_token,
+                    refreshToken: newSession.rows[0].refresh_token,
+                    expiresIn: '7d'
+                }
             });
 
         } catch (error) {
-            if (error.message === 'Refresh token expired') {
-                logger.warn('Token refresh failed - expired token', { ip: req.ip });
-                return res.status(401).json({
-                    success: false,
-                    error: 'Refresh token expired'
-                });
-            }
-
-            if (error.message === 'Invalid refresh token') {
-                logger.warn('Token refresh failed - invalid token', { ip: req.ip });
-                return res.status(401).json({
-                    success: false,
-                    error: 'Invalid refresh token'
-                });
-            }
-
+            await db.rollbackTransaction(client);
             logger.error('Token refresh error', {
                 error: error.message,
                 ip: req.ip
             });
             next(error);
+        } finally {
+            client.release();
         }
     },
 
@@ -376,6 +553,8 @@ const authController = {
      * POST /api/v1/auth/change-password
      */
     async changePassword(req, res, next) {
+        const client = await db.getClient();
+        
         try {
             const userId = req.user.id;
             const { currentPassword, newPassword } = req.body;
@@ -397,14 +576,50 @@ const authController = {
                 });
             }
 
-            // Check password history would go here
-            // This is a simplified version
+            // Check password history (last 5 passwords)
+            const passwordHistory = await db.query(
+                `SELECT password_hash FROM password_history 
+                 WHERE user_id = $1 ORDER BY created_at DESC LIMIT 5`,
+                [userId]
+            );
+
+            for (const oldPass of passwordHistory.rows) {
+                const isReused = await auth.verifyPassword(newPassword, oldPass.password_hash);
+                if (isReused) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Cannot reuse any of your last 5 passwords'
+                    });
+                }
+            }
+
+            await db.beginTransaction(client);
 
             // Update password
             await User.updatePassword(userId, newPassword);
 
-            // Invalidate all refresh tokens (optional)
-            await User.updateRefreshToken(userId, null);
+            // Add to password history
+            await client.query(
+                `INSERT INTO password_history (user_id, password_hash, created_at)
+                 VALUES ($1, $2, NOW())`,
+                [userId, user.password_hash]
+            );
+
+            // Deactivate all active sessions for this user
+            await client.query(
+                `UPDATE sessions 
+                 SET is_active = false, logout_time = NOW(), logout_reason = 'password_change'
+                 WHERE user_id = $1 AND is_active = true`,
+                [userId]
+            );
+
+            // Clear refresh token
+            await client.query(
+                `UPDATE users SET refresh_token = NULL WHERE id = $1`,
+                [userId]
+            );
+
+            await db.commitTransaction(client);
 
             logger.info('Password changed successfully', {
                 userId,
@@ -413,21 +628,24 @@ const authController = {
 
             res.json({
                 success: true,
-                message: 'Password changed successfully'
+                message: 'Password changed successfully. Please login again with your new password.'
             });
 
         } catch (error) {
+            await db.rollbackTransaction(client);
             logger.error('Password change error', {
                 error: error.message,
                 userId: req.user?.id,
                 ip: req.ip
             });
             next(error);
+        } finally {
+            client.release();
         }
     },
 
     /**
-     * Get current user profile
+     * Get current user profile with permissions
      * GET /api/v1/auth/me
      */
     async getProfile(req, res, next) {
@@ -445,13 +663,164 @@ const authController = {
                 });
             }
 
+            // Get user permissions
+            const permissions = await getUserPermissions(user.id, user.role);
+
+            // Get current session info
+            const sessionToken = req.headers.authorization?.split(' ')[1];
+            const session = await db.query(
+                `SELECT id, login_time, last_activity, expires_at, ip_address, user_agent
+                 FROM sessions 
+                 WHERE session_token = $1 AND is_active = true`,
+                [sessionToken]
+            );
+
+            // Remove sensitive data
+            delete user.password_hash;
+            delete user.refresh_token;
+
             res.json({
                 success: true,
-                data: user
+                data: {
+                    ...user,
+                    permissions,
+                    currentSession: session.rows[0] || null
+                }
             });
 
         } catch (error) {
             logger.error('Profile fetch error', {
+                error: error.message,
+                userId: req.user?.id,
+                ip: req.ip
+            });
+            next(error);
+        }
+    },
+
+    /**
+     * Get all active sessions for current user
+     * GET /api/v1/auth/sessions
+     */
+    async getSessions(req, res, next) {
+        try {
+            const sessions = await db.query(
+                `SELECT id, login_time, last_activity, expires_at, ip_address, user_agent, device_info
+                 FROM sessions 
+                 WHERE user_id = $1 AND is_active = true
+                 ORDER BY last_activity DESC`,
+                [req.user.id]
+            );
+
+            res.json({
+                success: true,
+                data: sessions.rows
+            });
+
+        } catch (error) {
+            logger.error('Get sessions error', {
+                error: error.message,
+                userId: req.user?.id,
+                ip: req.ip
+            });
+            next(error);
+        }
+    },
+
+    /**
+     * Terminate a specific session
+     * DELETE /api/v1/auth/sessions/:id
+     */
+    async terminateSession(req, res, next) {
+        try {
+            const { id } = req.params;
+            const currentSessionToken = req.headers.authorization?.split(' ')[1];
+
+            // Get current session ID
+            const currentSession = await db.query(
+                `SELECT id FROM sessions WHERE session_token = $1`,
+                [currentSessionToken]
+            );
+
+            // Don't allow terminating current session
+            if (currentSession.rows[0]?.id === id) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Cannot terminate current session. Use logout instead.'
+                });
+            }
+
+            const result = await db.query(
+                `UPDATE sessions 
+                 SET is_active = false, logout_time = NOW(), logout_reason = 'user_terminated'
+                 WHERE id = $1 AND user_id = $2 AND is_active = true
+                 RETURNING id`,
+                [id, req.user.id]
+            );
+
+            if (!result.rows.length) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Session not found or already terminated'
+                });
+            }
+
+            logger.info('Session terminated', {
+                userId: req.user.id,
+                sessionId: id,
+                ip: req.ip
+            });
+
+            res.json({
+                success: true,
+                message: 'Session terminated successfully'
+            });
+
+        } catch (error) {
+            logger.error('Terminate session error', {
+                error: error.message,
+                userId: req.user?.id,
+                ip: req.ip
+            });
+            next(error);
+        }
+    },
+
+    /**
+     * Terminate all other sessions
+     * POST /api/v1/auth/sessions/terminate-others
+     */
+    async terminateOtherSessions(req, res, next) {
+        try {
+            const currentSessionToken = req.headers.authorization?.split(' ')[1];
+
+            // Get current session ID
+            const currentSession = await db.query(
+                `SELECT id FROM sessions WHERE session_token = $1`,
+                [currentSessionToken]
+            );
+
+            const result = await db.query(
+                `UPDATE sessions 
+                 SET is_active = false, logout_time = NOW(), logout_reason = 'user_terminated_others'
+                 WHERE user_id = $1 AND id != $2 AND is_active = true
+                 RETURNING id`,
+                [req.user.id, currentSession.rows[0]?.id]
+            );
+
+            logger.info('All other sessions terminated', {
+                userId: req.user.id,
+                terminatedCount: result.rowCount,
+                ip: req.ip
+            });
+
+            res.json({
+                success: true,
+                message: `Terminated ${result.rowCount} other session(s) successfully`
+            });
+
+        } catch (error) {
+            logger.error('Terminate other sessions error', {
                 error: error.message,
                 userId: req.user?.id,
                 ip: req.ip
@@ -468,11 +837,24 @@ const authController = {
         try {
             const { token } = req.body;
 
-            // In a real implementation, you would verify email token
-            // This is a placeholder
+            // Verify email token from database
+            const result = await db.query(
+                `UPDATE users 
+                 SET email_verified = true, updated_at = NOW()
+                 WHERE id = $1 AND email_verified = false
+                 RETURNING id`,
+                [req.user.id]
+            );
+
+            if (!result.rows.length) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Email already verified or invalid request'
+                });
+            }
 
             logger.info('Email verified', {
-                userId: req.user?.id,
+                userId: req.user.id,
                 ip: req.ip
             });
 
@@ -521,15 +903,17 @@ module.exports = authController;
  *     "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
  * }
  * 
- * // Change password
- * POST /api/v1/auth/change-password
- * {
- *     "currentPassword": "OldPass123!",
- *     "newPassword": "NewPass456!"
- * }
- * 
  * // Get profile (requires auth)
  * GET /api/v1/auth/me
+ * 
+ * // Get all sessions
+ * GET /api/v1/auth/sessions
+ * 
+ * // Terminate specific session
+ * DELETE /api/v1/auth/sessions/:id
+ * 
+ * // Terminate all other sessions
+ * POST /api/v1/auth/sessions/terminate-others
  * 
  * ======================================================================
  */

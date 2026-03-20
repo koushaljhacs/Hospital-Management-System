@@ -10,10 +10,28 @@
  * 
  * DESCRIPTION:
  * Doctor module routes - All doctor-facing endpoints.
- * Total Endpoints: 75 (as per API blueprint)
+ * Total Endpoints: 77 (including root endpoint)
  * 
- * VERSION: 1.0.0
+ * VERSION: 1.0.1
  * CREATED: 2026-03-15
+ * UPDATED: 2026-03-19
+ * 
+ * CHANGE LOG:
+ * v1.0.0 - Initial implementation with all doctor endpoints
+ * v1.0.1 - HYBRID APPROACH: Added public root endpoint with module information
+ *         - Enhanced health endpoint with version and endpoint counts
+ *         - Fixed authenticate import destructuring
+ *         - Added version tracking to all info endpoints
+ *         - Maintained protected status for all data endpoints
+ *         - Added route summary with authentication categories
+ * 
+ * BUSINESS RULES COVERED:
+ * - Patient management and medical history access
+ * - Appointment scheduling and management
+ * - Prescription creation and management
+ * - Lab and radiology order management
+ * - Diagnosis and clinical notes
+ * - Schedule and availability management
  * 
  * ======================================================================
  */
@@ -22,11 +40,12 @@ const express = require('express');
 const router = express.Router();
 
 // Import middlewares
-const { authenticate, authorize } = require('../../middlewares/auth');
+const { authenticate } = require('../../middlewares/auth');
+const authorize = require('../../middlewares/rbac');
 const { createRateLimiter } = require('../../middlewares/rateLimiter');
 const auditLogger = require('../../middlewares/auditLogger');
 
-// Import controllers (will create next)
+// Import controllers
 const patientController = require('../../controllers/doctor/patientController');
 const appointmentController = require('../../controllers/doctor/appointmentController');
 const prescriptionController = require('../../controllers/doctor/prescriptionController');
@@ -34,7 +53,7 @@ const labController = require('../../controllers/doctor/labController');
 const radiologyController = require('../../controllers/doctor/radiologyController');
 const dashboardController = require('../../controllers/doctor/dashboardController');
 
-// Import validators (will create next)
+// Import validators
 const {
     validatePatientSearch,
     validateAppointmentStatus,
@@ -49,6 +68,27 @@ const {
 // ============================================
 const standardLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 100 });
 const sensitiveLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 30 });
+
+// ============================================
+// PUBLIC ROOT ENDPOINT - Doctor API Information
+// GET /api/v1/doctor
+// ============================================
+// v1.0.1 - Enhanced with module information and version
+// No authentication required - provides basic module information
+router.get('/', (req, res) => {
+    res.json({
+        success: true,
+        module: 'Doctor API',
+        version: '1.0.1',
+        status: 'operational',
+        documentation: '/api/v1/doctor/health',
+        authentication: 'Bearer token required for all doctor endpoints',
+        available: {
+            health: '/api/v1/doctor/health'
+        },
+        timestamp: new Date().toISOString()
+    });
+});
 
 // ============================================
 // DOCTOR PATIENT ROUTES
@@ -677,31 +717,24 @@ router.get('/dashboard/revenue',
 );
 
 // ============================================
-// HEALTH CHECK
+// PROTECTED HEALTH CHECK
 // ============================================
-
-/**
- * Health check for doctor module
- * GET /api/v1/doctor
- */
-router.get('/', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Doctor module is healthy',
-        timestamp: new Date().toISOString()
-    });
-});
-
+// v1.0.1 - Enhanced with version and endpoint counts
+// Authentication required - provides detailed module status
 router.get('/health', 
     authenticate, 
     authorize('doctor'),
     (req, res) => {
         res.json({
             success: true,
-            message: 'Doctor module is healthy',
+            module: 'Doctor API',
+            version: '1.0.1',
+            status: 'healthy',
             timestamp: new Date().toISOString(),
+            doctorId: req.user.id,
             endpoints: {
-                total: 75,
+                total: 77,
+                root: 1,
                 patients: 10,
                 appointments: 11,
                 prescriptions: 13,
@@ -709,10 +742,41 @@ router.get('/health',
                 radiology: 7,
                 diagnosis: 8,
                 schedule: 7,
-                dashboard: 7
+                dashboard: 7,
+                health: 1
             }
         });
     }
 );
 
 module.exports = router;
+
+/**
+ * ======================================================================
+ * ROUTE SUMMARY:
+ * ======================================================================
+ * 
+ * Category           | Count | Authentication
+ * -------------------|-------|----------------
+ * Root               | 1     | 🔓 Public
+ * Patients           | 10    | 🔒 Protected
+ * Appointments       | 11    | 🔒 Protected
+ * Prescriptions      | 13    | 🔒 Protected
+ * Lab Orders         | 9     | 🔒 Protected
+ * Radiology Orders   | 7     | 🔒 Protected
+ * Diagnosis & Notes  | 8     | 🔒 Protected
+ * Schedule & Leave   | 7     | 🔒 Protected
+ * Dashboard          | 7     | 🔒 Protected
+ * Health             | 1     | 🔒 Protected
+ * -------------------|-------|----------------
+ * TOTAL              | 74    | Complete Doctor Module
+ * 
+ * HYBRID SECURITY APPROACH:
+ * - Public root: Basic module info only (no internal endpoints)
+ * - Protected health: Detailed status for authenticated users
+ * - All data endpoints: Require valid authentication
+ * - Rate limiting applied to all endpoints
+ * - Input validation on all requests
+ * 
+ * ======================================================================
+ */
