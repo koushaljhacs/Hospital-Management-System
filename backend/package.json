@@ -47,6 +47,7 @@
     "helmet": "^7.2.0",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
+    "pdfkit": "^0.18.0",
     "pg": "^8.11.0",
     "response-time": "^2.3.2",
     "uuid": "^13.0.0",

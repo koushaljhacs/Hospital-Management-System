@@ -12,9 +12,9 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.0.0
+ * VERSION: 3.1.0
  * CREATED: 2026-03-11
- * UPDATED: 2026-03-18
+ * UPDATED: 2026-03-21
  * 
  * CHANGE LOG:
  * v1.0.0 - Initial server setup with basic routes
@@ -29,6 +29,9 @@
  * v2.8.0 - Fixed runtime bugs in services and improved code quality
  * v2.9.0 - Implemented safe route loader to prevent crashes from missing modules
  * v3.0.0 - Enhanced security, added monitoring, improved error handling
+ * v3.1.0 - Added radiologist module routes
+ *          Updated API documentation to include radiologist endpoints
+ *          Added radiologist to root route endpoints listing
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -251,6 +254,7 @@ mountRouteSafely('/api/v1/nurse', path.join(__dirname, './src/routes/v1/nurseRou
 mountRouteSafely('/api/v1/pharmacist', path.join(__dirname, './src/routes/v1/pharmacistRoutes'));
 mountRouteSafely('/api/v1/receptionist', path.join(__dirname, './src/routes/v1/receptionistRoutes'));
 mountRouteSafely('/api/v1/lab', path.join(__dirname, './src/routes/v1/labTechnicianRoutes'));
+mountRouteSafely('/api/v1/radiology', path.join(__dirname, './src/routes/v1/radiologistRoutes'));
 mountRouteSafely('/api/v1/public', path.join(__dirname, './src/routes/v1/publicRoutes'));
 
 // ============================================
@@ -303,6 +307,11 @@ app.get('/api-docs', (req, res) => {
                 url: '/api/v1/lab',
                 methods: ['GET', 'POST', 'PUT']
             },
+            radiology: {
+                description: 'Radiologist operations',
+                url: '/api/v1/radiology',
+                methods: ['GET', 'POST', 'PUT', 'DELETE']
+            },
             public: {
                 description: 'Public information',
                 url: '/api/v1/public',
@@ -339,6 +348,7 @@ app.get('/', (req, res) => {
             pharmacist: '/api/v1/pharmacist',
             receptionist: '/api/v1/receptionist',
             lab: '/api/v1/lab',
+            radiology: '/api/v1/radiology',
             public: '/api/v1/public',
             health: '/health',
             docs: '/api-docs',
@@ -505,6 +515,7 @@ app.get('/api', (req, res) => {
             '/api/v1/pharmacist',
             '/api/v1/receptionist',
             '/api/v1/lab',
+            '/api/v1/radiology',
             '/api/v1/public',
             '/health',
             '/health/deep',
@@ -625,6 +636,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Pharmacist API: http://localhost:${PORT}/api/v1/pharmacist`);
     logger.info(`Receptionist API: http://localhost:${PORT}/api/v1/receptionist`);
     logger.info(`Lab API: http://localhost:${PORT}/api/v1/lab`);
+    logger.info(`Radiology API: http://localhost:${PORT}/api/v1/radiology`);
     logger.info(`Public API: http://localhost:${PORT}/api/v1/public`);
     logger.info('─'.repeat(40));
     logger.info(`Team: OctNov`);
@@ -633,7 +645,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.0.0`);
+    logger.info(`Config Version: 3.1.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
