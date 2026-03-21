@@ -12,7 +12,7 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.1.0
+ * VERSION: 3.2.0
  * CREATED: 2026-03-11
  * UPDATED: 2026-03-21
  * 
@@ -32,6 +32,10 @@
  * v3.1.0 - Added radiologist module routes
  *          Updated API documentation to include radiologist endpoints
  *          Added radiologist to root route endpoints listing
+ * v3.2.0 - Added billing module routes
+ *          Updated API documentation to include billing endpoints
+ *          Added billing to root route endpoints listing
+ *          Updated server startup log to show billing API
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -255,6 +259,7 @@ mountRouteSafely('/api/v1/pharmacist', path.join(__dirname, './src/routes/v1/pha
 mountRouteSafely('/api/v1/receptionist', path.join(__dirname, './src/routes/v1/receptionistRoutes'));
 mountRouteSafely('/api/v1/lab', path.join(__dirname, './src/routes/v1/labTechnicianRoutes'));
 mountRouteSafely('/api/v1/radiology', path.join(__dirname, './src/routes/v1/radiologistRoutes'));
+mountRouteSafely('/api/v1/billing', path.join(__dirname, './src/routes/v1/billingRoutes'));
 mountRouteSafely('/api/v1/public', path.join(__dirname, './src/routes/v1/publicRoutes'));
 
 // ============================================
@@ -312,6 +317,11 @@ app.get('/api-docs', (req, res) => {
                 url: '/api/v1/radiology',
                 methods: ['GET', 'POST', 'PUT', 'DELETE']
             },
+            billing: {
+                description: 'Billing operations',
+                url: '/api/v1/billing',
+                methods: ['GET', 'POST', 'PUT', 'DELETE']
+            },
             public: {
                 description: 'Public information',
                 url: '/api/v1/public',
@@ -349,6 +359,7 @@ app.get('/', (req, res) => {
             receptionist: '/api/v1/receptionist',
             lab: '/api/v1/lab',
             radiology: '/api/v1/radiology',
+            billing: '/api/v1/billing',
             public: '/api/v1/public',
             health: '/health',
             docs: '/api-docs',
@@ -516,6 +527,7 @@ app.get('/api', (req, res) => {
             '/api/v1/receptionist',
             '/api/v1/lab',
             '/api/v1/radiology',
+            '/api/v1/billing',
             '/api/v1/public',
             '/health',
             '/health/deep',
@@ -637,6 +649,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Receptionist API: http://localhost:${PORT}/api/v1/receptionist`);
     logger.info(`Lab API: http://localhost:${PORT}/api/v1/lab`);
     logger.info(`Radiology API: http://localhost:${PORT}/api/v1/radiology`);
+    logger.info(`Billing API: http://localhost:${PORT}/api/v1/billing`);
     logger.info(`Public API: http://localhost:${PORT}/api/v1/public`);
     logger.info('─'.repeat(40));
     logger.info(`Team: OctNov`);
@@ -645,7 +658,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.1.0`);
+    logger.info(`Config Version: 3.2.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
