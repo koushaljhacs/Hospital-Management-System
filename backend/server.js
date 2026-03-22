@@ -12,7 +12,7 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.9.0
+ * VERSION: 3.10.0
  * CREATED: 2026-03-11
  * UPDATED: 2026-03-22
  * 
@@ -54,6 +54,12 @@
  *          Updated root route and API docs to include system endpoints
  *          Added system endpoints to server startup log
  *          Added health check routes to global rate limiter skip
+ * v3.10.0 - Added Rate Limit Management module routes
+ *           Created new folder structure for Rate Limits (services/rateLimit, controllers/rateLimit)
+ *           Added rateLimitRoutes to route loader and documentation
+ *           Updated root route and API docs to include rate limit endpoints
+ *           Added rate limit endpoints to server startup log
+ *           Updated global rate limiter to skip rate limit admin endpoints
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -64,6 +70,7 @@
  * - compression (for response compression)
  * - response-time (for response time monitoring)
  * - axios (for webhook delivery)
+ * - redis (optional for rate limit tracking)
  * ======================================================================
  */
 
@@ -210,11 +217,12 @@ const globalLimiter = rateLimit({
         return req.user?.id || req.ip;
     },
     skip: (req) => {
-        // Skip rate limiting for health checks, webhooks, and system health endpoints
+        // Skip rate limiting for health checks, webhooks, system health, and rate limit admin endpoints
         return req.path === '/health' || 
                req.path === '/' || 
                req.path.startsWith('/webhooks') ||
-               req.path.startsWith('/system/health');
+               req.path.startsWith('/system/health') ||
+               req.path.startsWith('/admin/rate-limits');
     }
 });
 
@@ -291,6 +299,7 @@ mountRouteSafely('/api/v1/dashboard', path.join(__dirname, './src/routes/v1/dash
 mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/apiKeyRoutes'));
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/webhookRoutes'));
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/systemRoutes'));
+mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/rateLimitRoutes'));
 
 // ============================================
 // API DOCUMENTATION ROUTE
@@ -442,6 +451,25 @@ app.get('/api-docs', (req, res) => {
                     'GET    /system/info                - System information (protected)',
                     'GET    /system/status              - System status (protected)'
                 ]
+            },
+            rateLimits: {
+                description: 'Rate Limit Management (Dynamic rate limit configuration)',
+                url: '/api/v1',
+                basePath: '/api/v1/admin/rate-limits',
+                methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                endpoints: [
+                    'GET    /admin/rate-limits/rules          - List rate limit rules',
+                    'GET    /admin/rate-limits/rules/:id      - Get rule by ID',
+                    'POST   /admin/rate-limits/rules          - Create rate limit rule',
+                    'PUT    /admin/rate-limits/rules/:id      - Update rule',
+                    'DELETE /admin/rate-limits/rules/:id      - Delete rule',
+                    'GET    /admin/rate-limits/exemptions     - List exemptions',
+                    'GET    /admin/rate-limits/exemptions/:id - Get exemption by ID',
+                    'POST   /admin/rate-limits/exemptions     - Create exemption',
+                    'DELETE /admin/rate-limits/exemptions/:id - Delete exemption',
+                    'GET    /admin/rate-limits/stats          - Rate limit statistics',
+                    'GET    /admin/rate-limits/breaches       - Rate limit breaches'
+                ]
             }
         },
         utilities: {
@@ -484,6 +512,7 @@ app.get('/', (req, res) => {
             apiKeys: '/api/v1/admin/api-keys',
             webhooks: '/api/v1/webhooks',
             system: '/api/v1/system',
+            rateLimits: '/api/v1/admin/rate-limits',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -659,6 +688,7 @@ app.get('/api', (req, res) => {
             '/api/v1/admin/api-keys (API Key Management)',
             '/api/v1/webhooks (Webhook Management)',
             '/api/v1/system (System Management)',
+            '/api/v1/admin/rate-limits (Rate Limit Management)',
             '/health',
             '/health/deep',
             '/test-db',
@@ -793,6 +823,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`API Key Management: http://${tailscaleIp}:${PORT}/api/v1/admin/api-keys`);
     logger.info(`Webhook Management: http://${tailscaleIp}:${PORT}/api/v1/webhooks`);
     logger.info(`System Management: http://${tailscaleIp}:${PORT}/api/v1/system`);
+    logger.info(`Rate Limit Management: http://${tailscaleIp}:${PORT}/api/v1/admin/rate-limits`);
     logger.info('─'.repeat(40));
     logger.info('SERVER & APP INFO:');
     logger.info(`Team: OctNov`);
@@ -801,7 +832,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.9.0`);
+    logger.info(`Config Version: 3.10.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
