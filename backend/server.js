@@ -12,7 +12,7 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.10.0
+ * VERSION: 3.11.0
  * CREATED: 2026-03-11
  * UPDATED: 2026-03-22
  * 
@@ -60,6 +60,12 @@
  *           Updated root route and API docs to include rate limit endpoints
  *           Added rate limit endpoints to server startup log
  *           Updated global rate limiter to skip rate limit admin endpoints
+ * v3.11.0 - Added Token Management module routes
+ *           Created new folder structure for Tokens (services/token, controllers/token)
+ *           Added tokenRoutes to route loader and documentation
+ *           Updated root route and API docs to include token endpoints
+ *           Added token endpoints to server startup log
+ *           Updated global rate limiter to skip token validation endpoints
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -71,6 +77,7 @@
  * - response-time (for response time monitoring)
  * - axios (for webhook delivery)
  * - redis (optional for rate limit tracking)
+ * - jsonwebtoken (for token generation)
  * ======================================================================
  */
 
@@ -217,12 +224,13 @@ const globalLimiter = rateLimit({
         return req.user?.id || req.ip;
     },
     skip: (req) => {
-        // Skip rate limiting for health checks, webhooks, system health, and rate limit admin endpoints
+        // Skip rate limiting for health checks, webhooks, system health, rate limit admin, and token validation
         return req.path === '/health' || 
                req.path === '/' || 
                req.path.startsWith('/webhooks') ||
                req.path.startsWith('/system/health') ||
-               req.path.startsWith('/admin/rate-limits');
+               req.path.startsWith('/admin/rate-limits') ||
+               req.path.startsWith('/auth/tokens/validate');
     }
 });
 
@@ -300,6 +308,7 @@ mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/apiKeyRo
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/webhookRoutes'));
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/systemRoutes'));
 mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/rateLimitRoutes'));
+mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/tokenRoutes'));
 
 // ============================================
 // API DOCUMENTATION ROUTE
@@ -470,6 +479,24 @@ app.get('/api-docs', (req, res) => {
                     'GET    /admin/rate-limits/stats          - Rate limit statistics',
                     'GET    /admin/rate-limits/breaches       - Rate limit breaches'
                 ]
+            },
+            tokens: {
+                description: 'Token Management (JWT, refresh, blacklist)',
+                url: '/api/v1',
+                basePath: '/api/v1/admin/tokens',
+                methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                endpoints: [
+                    'GET    /admin/tokens                      - List all tokens',
+                    'GET    /admin/tokens/user/:userId         - Get tokens by user',
+                    'DELETE /admin/tokens/:id                  - Revoke token',
+                    'POST   /admin/tokens/blacklist/:id        - Blacklist token',
+                    'GET    /admin/tokens/blacklist            - List blacklisted tokens',
+                    'DELETE /admin/tokens/blacklist/:id        - Remove from blacklist',
+                    'GET    /admin/tokens/stats                - Token statistics',
+                    'POST   /auth/tokens/refresh               - Refresh token',
+                    'DELETE /auth/tokens/all                   - Revoke all user tokens',
+                    'GET    /auth/tokens/validate              - Validate token'
+                ]
             }
         },
         utilities: {
@@ -513,6 +540,7 @@ app.get('/', (req, res) => {
             webhooks: '/api/v1/webhooks',
             system: '/api/v1/system',
             rateLimits: '/api/v1/admin/rate-limits',
+            tokens: '/api/v1/admin/tokens',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -689,6 +717,7 @@ app.get('/api', (req, res) => {
             '/api/v1/webhooks (Webhook Management)',
             '/api/v1/system (System Management)',
             '/api/v1/admin/rate-limits (Rate Limit Management)',
+            '/api/v1/admin/tokens (Token Management)',
             '/health',
             '/health/deep',
             '/test-db',
@@ -824,6 +853,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Webhook Management: http://${tailscaleIp}:${PORT}/api/v1/webhooks`);
     logger.info(`System Management: http://${tailscaleIp}:${PORT}/api/v1/system`);
     logger.info(`Rate Limit Management: http://${tailscaleIp}:${PORT}/api/v1/admin/rate-limits`);
+    logger.info(`Token Management: http://${tailscaleIp}:${PORT}/api/v1/admin/tokens`);
     logger.info('─'.repeat(40));
     logger.info('SERVER & APP INFO:');
     logger.info(`Team: OctNov`);
@@ -832,7 +862,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.10.0`);
+    logger.info(`Config Version: 3.11.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
