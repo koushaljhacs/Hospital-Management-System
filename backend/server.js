@@ -12,7 +12,7 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.11.0
+ * VERSION: 3.12.0
  * CREATED: 2026-03-11
  * UPDATED: 2026-03-22
  * 
@@ -66,6 +66,12 @@
  *           Updated root route and API docs to include token endpoints
  *           Added token endpoints to server startup log
  *           Updated global rate limiter to skip token validation endpoints
+ * v3.12.0 - Added Session Management module routes
+ *           Created new folder structure for Sessions (services/session, controllers/session)
+ *           Added sessionRoutes to route loader and documentation
+ *           Updated root route and API docs to include session endpoints
+ *           Added session endpoints to server startup log
+ *           Updated global rate limiter to skip session validation endpoints
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -224,13 +230,14 @@ const globalLimiter = rateLimit({
         return req.user?.id || req.ip;
     },
     skip: (req) => {
-        // Skip rate limiting for health checks, webhooks, system health, rate limit admin, and token validation
+        // Skip rate limiting for health checks, webhooks, system health, rate limit admin, token validation, and session endpoints
         return req.path === '/health' || 
                req.path === '/' || 
                req.path.startsWith('/webhooks') ||
                req.path.startsWith('/system/health') ||
                req.path.startsWith('/admin/rate-limits') ||
-               req.path.startsWith('/auth/tokens/validate');
+               req.path.startsWith('/auth/tokens/validate') ||
+               req.path.startsWith('/auth/sessions');
     }
 });
 
@@ -309,6 +316,7 @@ mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/webhookRoutes'
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/systemRoutes'));
 mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/rateLimitRoutes'));
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/tokenRoutes'));
+mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/sessionRoutes'));
 
 // ============================================
 // API DOCUMENTATION ROUTE
@@ -497,6 +505,26 @@ app.get('/api-docs', (req, res) => {
                     'DELETE /auth/tokens/all                   - Revoke all user tokens',
                     'GET    /auth/tokens/validate              - Validate token'
                 ]
+            },
+            sessions: {
+                description: 'Session Management (User sessions, activity tracking)',
+                url: '/api/v1',
+                basePath: '/api/v1/admin/sessions',
+                methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                endpoints: [
+                    'GET    /admin/sessions                      - List all sessions',
+                    'GET    /admin/sessions/active               - Get active sessions',
+                    'DELETE /admin/sessions/:id                  - Terminate session',
+                    'DELETE /admin/sessions/user/:userId         - Terminate user sessions',
+                    'GET    /admin/sessions/statistics           - Session statistics',
+                    'PUT    /admin/sessions/timeout/:minutes     - Update session timeout',
+                    'GET    /auth/sessions/current               - Get current session',
+                    'GET    /auth/sessions                       - List my sessions',
+                    'DELETE /auth/sessions/:id                   - Terminate my session',
+                    'DELETE /auth/sessions/others                - Terminate other sessions',
+                    'DELETE /auth/sessions/all                   - Terminate all sessions',
+                    'POST   /auth/sessions/extend                - Extend current session'
+                ]
             }
         },
         utilities: {
@@ -541,6 +569,7 @@ app.get('/', (req, res) => {
             system: '/api/v1/system',
             rateLimits: '/api/v1/admin/rate-limits',
             tokens: '/api/v1/admin/tokens',
+            sessions: '/api/v1/admin/sessions',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -718,6 +747,7 @@ app.get('/api', (req, res) => {
             '/api/v1/system (System Management)',
             '/api/v1/admin/rate-limits (Rate Limit Management)',
             '/api/v1/admin/tokens (Token Management)',
+            '/api/v1/admin/sessions (Session Management)',
             '/health',
             '/health/deep',
             '/test-db',
@@ -854,6 +884,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`System Management: http://${tailscaleIp}:${PORT}/api/v1/system`);
     logger.info(`Rate Limit Management: http://${tailscaleIp}:${PORT}/api/v1/admin/rate-limits`);
     logger.info(`Token Management: http://${tailscaleIp}:${PORT}/api/v1/admin/tokens`);
+    logger.info(`Session Management: http://${tailscaleIp}:${PORT}/api/v1/admin/sessions`);
     logger.info('─'.repeat(40));
     logger.info('SERVER & APP INFO:');
     logger.info(`Team: OctNov`);
@@ -862,7 +893,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.11.0`);
+    logger.info(`Config Version: 3.12.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
