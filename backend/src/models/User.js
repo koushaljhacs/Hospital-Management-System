@@ -12,8 +12,9 @@
  * User model for database operations.
  * Handles all user-related database queries.
  * 
- * VERSION: 1.0.0
+ * VERSION: 1.1.0
  * CREATED: 2026-03-15
+ * UPDATED: 2026-03-22
  * 
  * DEPENDENCIES:
  * - db: database connection pool
@@ -41,7 +42,8 @@
  * - updated_at: timestamp
  * 
  * CHANGE LOG:
- * v1.0.0 - Initial implementation
+ * v1.0.0 (2026-03-15) - Initial implementation
+ * v1.1.0 (2026-03-22) - Added getAll() method for user listing with filters
  * 
  * ======================================================================
  */
@@ -577,6 +579,69 @@ const User = {
     },
 
     /**
+     * Get all users with pagination and filters
+     * @param {Object} filters - Filter conditions (role, status, department)
+     * @param {Object} options - Pagination options
+     * @returns {Promise<Array>} List of users
+     */
+    async getAll(filters = {}, options = {}) {
+        try {
+            const { limit = 20, offset = 0 } = options;
+            const values = [];
+            let paramIndex = 1;
+            const conditions = [];
+
+            // Build filters
+            if (filters.role) {
+                conditions.push(`role = $${paramIndex++}`);
+                values.push(filters.role);
+            }
+            if (filters.status) {
+                conditions.push(`status = $${paramIndex++}`);
+                values.push(filters.status);
+            }
+            if (filters.department_id) {
+                conditions.push(`department_id = $${paramIndex++}`);
+                values.push(filters.department_id);
+            }
+
+            const whereClause = conditions.length > 0 
+                ? `WHERE ${conditions.join(' AND ')} AND is_deleted = false` 
+                : 'WHERE is_deleted = false';
+
+            const query = `
+                SELECT 
+                    id, username, email, role, status, 
+                    profile_picture, email_verified, phone_verified,
+                    two_factor_enabled, last_login, created_at
+                FROM users 
+                ${whereClause}
+                ORDER BY created_at DESC
+                LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+            `;
+
+            values.push(limit, offset);
+            
+            const result = await db.query(query, values);
+            
+            logger.debug('Retrieved all users', { 
+                count: result.rows.length,
+                filters,
+                limit,
+                offset
+            });
+            
+            return result.rows;
+        } catch (error) {
+            logger.error('Error getting all users', { 
+                error: error.message,
+                filters 
+            });
+            throw new Error(`Database error: ${error.message}`);
+        }
+    },
+
+    /**
      * Get users by role
      * @param {string} role - User role
      * @param {Object} options - Pagination options
@@ -710,6 +775,12 @@ module.exports = User;
  * USAGE EXAMPLES:
  * ======================================================================
  * 
+ * // Get all users with filters and pagination
+ * const users = await User.getAll(
+ *     { role: 'doctor', status: 'active' },
+ *     { limit: 20, offset: 0 }
+ * );
+ * 
  * // Create new user
  * const user = await User.create({
  *     email: 'doctor@hospital.com',
@@ -739,6 +810,9 @@ module.exports = User;
  * // Search users
  * const doctors = await User.findByRole('doctor');
  * const searchResults = await User.search('john');
+ * 
+ * // Count users
+ * const total = await User.count({ role: 'patient' });
  * 
  * ======================================================================
  */

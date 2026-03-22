@@ -12,7 +12,7 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.7.0
+ * VERSION: 3.8.0
  * CREATED: 2026-03-11
  * UPDATED: 2026-03-22
  * 
@@ -43,6 +43,11 @@
  *          Created new folder structure for API Keys (services/apiKey, controllers/apiKey)
  *          Added apiKeyRoutes to route loader and documentation
  *          Updated root route and API docs to include api-key endpoints
+ * v3.8.0 - Added Webhook Management module routes
+ *          Created new folder structure for Webhooks (services/webhook, controllers/webhook)
+ *          Added webhookRoutes to route loader and documentation
+ *          Updated root route and API docs to include webhook endpoints
+ *          Added webhook endpoints to server startup log
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -52,6 +57,7 @@
  * - express-rate-limit (for auth endpoints)
  * - compression (for response compression)
  * - response-time (for response time monitoring)
+ * - axios (for webhook delivery)
  * ======================================================================
  */
 
@@ -198,8 +204,8 @@ const globalLimiter = rateLimit({
         return req.user?.id || req.ip;
     },
     skip: (req) => {
-        // Skip rate limiting for health checks
-        return req.path === '/health' || req.path === '/';
+        // Skip rate limiting for health checks and webhooks
+        return req.path === '/health' || req.path === '/' || req.path.startsWith('/webhooks');
     }
 });
 
@@ -274,6 +280,7 @@ mountRouteSafely('/api/v1/employee', path.join(__dirname, './src/routes/v1/emplo
 mountRouteSafely('/api/v1/public', path.join(__dirname, './src/routes/v1/publicRoutes'));
 mountRouteSafely('/api/v1/dashboard', path.join(__dirname, './src/routes/v1/dashboardRoutes'));
 mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/apiKeyRoutes'));
+mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/webhookRoutes'));
 
 // ============================================
 // API DOCUMENTATION ROUTE
@@ -379,6 +386,33 @@ app.get('/api-docs', (req, res) => {
                     'POST   /admin/api-keys/validate  - Validate API key',
                     'GET    /admin/api-keys/usage/:id - Get key usage details'
                 ]
+            },
+            webhooks: {
+                description: 'Webhook Management (Payment gateways, SMS, Email)',
+                url: '/api/v1',
+                basePath: '/api/v1/webhooks',
+                methods: ['POST', 'GET', 'PUT', 'DELETE'],
+                endpoints: [
+                    'POST   /webhooks/payment/razorpay   - Razorpay payment webhook',
+                    'POST   /webhooks/payment/stripe     - Stripe payment webhook',
+                    'POST   /webhooks/payment/phonepe    - PhonePe payment webhook',
+                    'POST   /webhooks/payment/paytm      - Paytm payment webhook',
+                    'POST   /webhooks/sms/delivery       - SMS delivery status',
+                    'POST   /webhooks/email/bounce       - Email bounce notification',
+                    'POST   /webhooks/email/open         - Email open tracking',
+                    'GET    /webhooks/endpoints          - List webhook endpoints',
+                    'GET    /webhooks/endpoints/:id      - Get endpoint by ID',
+                    'POST   /webhooks/endpoints          - Create webhook endpoint',
+                    'PUT    /webhooks/endpoints/:id      - Update endpoint',
+                    'DELETE /webhooks/endpoints/:id      - Delete endpoint',
+                    'POST   /webhooks/endpoints/:id/test - Test endpoint',
+                    'GET    /webhooks/deliveries         - List deliveries',
+                    'GET    /webhooks/deliveries/:id     - Get delivery details',
+                    'POST   /webhooks/deliveries/:id/retry - Retry failed delivery',
+                    'GET    /webhooks/logs               - Webhook logs',
+                    'GET    /webhooks/statistics         - Webhook statistics',
+                    'GET    /webhooks/events             - Available webhook events'
+                ]
             }
         },
         utilities: {
@@ -418,7 +452,8 @@ app.get('/', (req, res) => {
             employee: '/api/v1/employee',
             dashboard: '/api/v1/dashboard',
             public: '/api/v1/public',
-            apiKeys: '/api/v1 (admin/api-keys)',
+            apiKeys: '/api/v1/admin/api-keys',
+            webhooks: '/api/v1/webhooks',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -592,6 +627,7 @@ app.get('/api', (req, res) => {
             '/api/v1/dashboard',
             '/api/v1/public',
             '/api/v1/admin/api-keys (API Key Management)',
+            '/api/v1/webhooks (Webhook Management)',
             '/health',
             '/health/deep',
             '/test-db',
@@ -724,6 +760,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Dashboard API: http://${tailscaleIp}:${PORT}/api/v1/dashboard`);
     logger.info(`Public API: http://${tailscaleIp}:${PORT}/api/v1/public`);
     logger.info(`API Key Management: http://${tailscaleIp}:${PORT}/api/v1/admin/api-keys`);
+    logger.info(`Webhook Management: http://${tailscaleIp}:${PORT}/api/v1/webhooks`);
     logger.info('─'.repeat(40));
     logger.info('SERVER & APP INFO:');
     logger.info(`Team: OctNov`);
@@ -732,7 +769,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.7.0`);
+    logger.info(`Config Version: 3.8.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
