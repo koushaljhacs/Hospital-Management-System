@@ -12,7 +12,7 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.8.0
+ * VERSION: 3.9.0
  * CREATED: 2026-03-11
  * UPDATED: 2026-03-22
  * 
@@ -48,6 +48,12 @@
  *          Added webhookRoutes to route loader and documentation
  *          Updated root route and API docs to include webhook endpoints
  *          Added webhook endpoints to server startup log
+ * v3.9.0 - Added System Management module routes
+ *          Created new folder structure for System (services/system, controllers/system)
+ *          Added systemRoutes to route loader and documentation
+ *          Updated root route and API docs to include system endpoints
+ *          Added system endpoints to server startup log
+ *          Added health check routes to global rate limiter skip
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -204,8 +210,11 @@ const globalLimiter = rateLimit({
         return req.user?.id || req.ip;
     },
     skip: (req) => {
-        // Skip rate limiting for health checks and webhooks
-        return req.path === '/health' || req.path === '/' || req.path.startsWith('/webhooks');
+        // Skip rate limiting for health checks, webhooks, and system health endpoints
+        return req.path === '/health' || 
+               req.path === '/' || 
+               req.path.startsWith('/webhooks') ||
+               req.path.startsWith('/system/health');
     }
 });
 
@@ -281,6 +290,7 @@ mountRouteSafely('/api/v1/public', path.join(__dirname, './src/routes/v1/publicR
 mountRouteSafely('/api/v1/dashboard', path.join(__dirname, './src/routes/v1/dashboardRoutes'));
 mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/apiKeyRoutes'));
 mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/webhookRoutes'));
+mountRouteSafely('/api/v1', path.join(__dirname, './src/routes/v1/systemRoutes'));
 
 // ============================================
 // API DOCUMENTATION ROUTE
@@ -413,6 +423,25 @@ app.get('/api-docs', (req, res) => {
                     'GET    /webhooks/statistics         - Webhook statistics',
                     'GET    /webhooks/events             - Available webhook events'
                 ]
+            },
+            system: {
+                description: 'System Management (Health checks, Version, Info)',
+                url: '/api/v1',
+                basePath: '/api/v1/system',
+                methods: ['GET'],
+                endpoints: [
+                    'GET    /system                      - Module info',
+                    'GET    /system/health              - Basic health check',
+                    'GET    /system/health/detailed     - Detailed health check',
+                    'GET    /system/health/db           - Database health check',
+                    'GET    /system/health/cache        - Cache health check',
+                    'GET    /system/version             - API version info',
+                    'GET    /system/api-docs            - API documentation',
+                    'GET    /system/swagger.json        - Swagger JSON',
+                    'GET    /system/swagger.yaml        - Swagger YAML',
+                    'GET    /system/info                - System information (protected)',
+                    'GET    /system/status              - System status (protected)'
+                ]
             }
         },
         utilities: {
@@ -454,6 +483,7 @@ app.get('/', (req, res) => {
             public: '/api/v1/public',
             apiKeys: '/api/v1/admin/api-keys',
             webhooks: '/api/v1/webhooks',
+            system: '/api/v1/system',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -628,6 +658,7 @@ app.get('/api', (req, res) => {
             '/api/v1/public',
             '/api/v1/admin/api-keys (API Key Management)',
             '/api/v1/webhooks (Webhook Management)',
+            '/api/v1/system (System Management)',
             '/health',
             '/health/deep',
             '/test-db',
@@ -761,6 +792,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Public API: http://${tailscaleIp}:${PORT}/api/v1/public`);
     logger.info(`API Key Management: http://${tailscaleIp}:${PORT}/api/v1/admin/api-keys`);
     logger.info(`Webhook Management: http://${tailscaleIp}:${PORT}/api/v1/webhooks`);
+    logger.info(`System Management: http://${tailscaleIp}:${PORT}/api/v1/system`);
     logger.info('─'.repeat(40));
     logger.info('SERVER & APP INFO:');
     logger.info(`Team: OctNov`);
@@ -769,7 +801,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.8.0`);
+    logger.info(`Config Version: 3.9.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
