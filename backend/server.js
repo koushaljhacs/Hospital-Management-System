@@ -12,9 +12,9 @@
  * Main entry point for the backend server.
  * Updated with enhanced security, monitoring, and production-ready features.
  * 
- * VERSION: 3.3.0
+ * VERSION: 3.7.0
  * CREATED: 2026-03-11
- * UPDATED: 2026-03-21
+ * UPDATED: 2026-03-22
  * 
  * CHANGE LOG:
  * v1.0.0 - Initial server setup with basic routes
@@ -30,16 +30,19 @@
  * v2.9.0 - Implemented safe route loader to prevent crashes from missing modules
  * v3.0.0 - Enhanced security, added monitoring, improved error handling
  * v3.1.0 - Added radiologist module routes
- *          Updated API documentation to include radiologist endpoints
- *          Added radiologist to root route endpoints listing
  * v3.2.0 - Added billing module routes
- *          Updated API documentation to include billing endpoints
- *          Added billing to root route endpoints listing
- *          Updated server startup log to show billing API
  * v3.3.0 - Added ground staff module routes
- *          Updated API documentation to include staff endpoints
- *          Added staff to root route endpoints listing
- *          Updated server startup log to show staff API
+ * v3.4.0 - Added security guard module routes
+ * v3.5.0 - Added employee common module routes
+ * v3.6.0 - Added dashboard module routes (admin, doctor, nurse, pharmacist, 
+ *          lab, billing, reception dashboards)
+ *          Updated API documentation to include dashboard endpoints
+ *          Added dashboard to root route endpoints listing
+ *          Updated server startup log to show dashboard API
+ * v3.7.0 - Added API Key Management module routes
+ *          Created new folder structure for API Keys (services/apiKey, controllers/apiKey)
+ *          Added apiKeyRoutes to route loader and documentation
+ *          Updated root route and API docs to include api-key endpoints
  * 
  * DEPENDENCIES:
  * - express v4.22.1
@@ -254,6 +257,7 @@ const mountRouteSafely = (path, modulePath) => {
 };
 
 // Mount all API routes
+logger.info('Mounting API routes...');
 mountRouteSafely('/api/v1/auth', path.join(__dirname, './src/routes/v1/authRoutes'));
 mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/adminRoutes'));
 mountRouteSafely('/api/v1/patient', path.join(__dirname, './src/routes/v1/patientRoutes'));
@@ -265,7 +269,11 @@ mountRouteSafely('/api/v1/lab', path.join(__dirname, './src/routes/v1/labTechnic
 mountRouteSafely('/api/v1/radiology', path.join(__dirname, './src/routes/v1/radiologistRoutes'));
 mountRouteSafely('/api/v1/billing', path.join(__dirname, './src/routes/v1/billingRoutes'));
 mountRouteSafely('/api/v1/staff', path.join(__dirname, './src/routes/v1/staffRoutes'));
+mountRouteSafely('/api/v1/security', path.join(__dirname, './src/routes/v1/securityRoutes'));
+mountRouteSafely('/api/v1/employee', path.join(__dirname, './src/routes/v1/employeeRoutes'));
 mountRouteSafely('/api/v1/public', path.join(__dirname, './src/routes/v1/publicRoutes'));
+mountRouteSafely('/api/v1/dashboard', path.join(__dirname, './src/routes/v1/dashboardRoutes'));
+mountRouteSafely('/api/v1/admin', path.join(__dirname, './src/routes/v1/apiKeyRoutes'));
 
 // ============================================
 // API DOCUMENTATION ROUTE
@@ -332,10 +340,45 @@ app.get('/api-docs', (req, res) => {
                 url: '/api/v1/staff',
                 methods: ['GET', 'POST', 'PUT']
             },
+            security: {
+                description: 'Security guard operations',
+                url: '/api/v1/security',
+                methods: ['GET', 'POST', 'PUT']
+            },
+            employee: {
+                description: 'Employee common operations',
+                url: '/api/v1/employee',
+                methods: ['GET', 'POST', 'PUT', 'DELETE']
+            },
+            dashboard: {
+                description: 'Role-based dashboards',
+                url: '/api/v1/dashboard',
+                methods: ['GET']
+            },
             public: {
                 description: 'Public information',
                 url: '/api/v1/public',
                 methods: ['GET']
+            },
+            apiKeys: {
+                description: 'API Key Management (Third-party authentication)',
+                url: '/api/v1',
+                basePath: '/api/v1/admin/api-keys',
+                methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                endpoints: [
+                    'GET    /admin/api-keys           - List all API keys',
+                    'GET    /admin/api-keys/:id       - Get API key by ID',
+                    'POST   /admin/api-keys           - Create new API key',
+                    'PUT    /admin/api-keys/:id       - Update API key',
+                    'DELETE /admin/api-keys/:id       - Delete API key',
+                    'POST   /admin/api-keys/:id/revoke - Revoke API key',
+                    'POST   /admin/api-keys/:id/rotate - Rotate API key',
+                    'GET    /admin/api-keys/logs      - Get API key logs',
+                    'GET    /admin/api-keys/stats     - Get API key statistics',
+                    'GET    /admin/api-keys/permissions - Available permissions',
+                    'POST   /admin/api-keys/validate  - Validate API key',
+                    'GET    /admin/api-keys/usage/:id - Get key usage details'
+                ]
             }
         },
         utilities: {
@@ -371,7 +414,11 @@ app.get('/', (req, res) => {
             radiology: '/api/v1/radiology',
             billing: '/api/v1/billing',
             staff: '/api/v1/staff',
+            security: '/api/v1/security',
+            employee: '/api/v1/employee',
+            dashboard: '/api/v1/dashboard',
             public: '/api/v1/public',
+            apiKeys: '/api/v1 (admin/api-keys)',
             health: '/health',
             docs: '/api-docs',
             testDb: '/test-db',
@@ -540,7 +587,11 @@ app.get('/api', (req, res) => {
             '/api/v1/radiology',
             '/api/v1/billing',
             '/api/v1/staff',
+            '/api/v1/security',
+            '/api/v1/employee',
+            '/api/v1/dashboard',
             '/api/v1/public',
+            '/api/v1/admin/api-keys (API Key Management)',
             '/health',
             '/health/deep',
             '/test-db',
@@ -639,39 +690,49 @@ const server = app.listen(PORT, '0.0.0.0', () => {
         });
     });
 
+    const networkIp = addresses[0] || '127.0.0.1';
+    const tailscaleIp = '100.81.13.80';
+
     logger.info('\n' + '='.repeat(40));
     logger.info('SERVER STARTED SUCCESSFULLY!');
     logger.info('='.repeat(40));
     logger.info(`Local:    http://localhost:${PORT}`);
-    logger.info(`Network:   http://${addresses[0] || '127.0.0.1'}:${PORT}`);
-    logger.info(`Tailscale: http://100.81.13.80:${PORT}`);
+    logger.info(`Network:  http://${networkIp}:${PORT}`);
+    logger.info(`Tailscale: http://${tailscaleIp}:${PORT}`);
     logger.info('─'.repeat(40));
-    logger.info(`Health:    http://localhost:${PORT}/health`);
-    logger.info(`Deep Health: http://localhost:${PORT}/health/deep`);
-    logger.info(`Config:    http://localhost:${PORT}/config`);
-    logger.info(`API Docs:  http://localhost:${PORT}/api-docs`);
-    logger.info(`Test DB:   http://localhost:${PORT}/test-db`);
+    logger.info('UTILITY ENDPOINTS:');
+    logger.info(`Health:    http://${tailscaleIp}:${PORT}/health`);
+    logger.info(`Deep Health: http://${tailscaleIp}:${PORT}/health/deep`);
+    logger.info(`Config:    http://${tailscaleIp}:${PORT}/config`);
+    logger.info(`API Docs:  http://${tailscaleIp}:${PORT}/api-docs`);
+    logger.info(`Test DB:   http://${tailscaleIp}:${PORT}/test-db`);
     logger.info('─'.repeat(40));
-    logger.info(`Auth API:  http://localhost:${PORT}/api/v1/auth`);
-    logger.info(`Admin API: http://localhost:${PORT}/api/v1/admin`);
-    logger.info(`Patient API: http://localhost:${PORT}/api/v1/patient`);
-    logger.info(`Doctor API: http://localhost:${PORT}/api/v1/doctor`);
-    logger.info(`Nurse API:  http://localhost:${PORT}/api/v1/nurse`);
-    logger.info(`Pharmacist API: http://localhost:${PORT}/api/v1/pharmacist`);
-    logger.info(`Receptionist API: http://localhost:${PORT}/api/v1/receptionist`);
-    logger.info(`Lab API: http://localhost:${PORT}/api/v1/lab`);
-    logger.info(`Radiology API: http://localhost:${PORT}/api/v1/radiology`);
-    logger.info(`Billing API: http://localhost:${PORT}/api/v1/billing`);
-    logger.info(`Staff API: http://localhost:${PORT}/api/v1/staff`);
-    logger.info(`Public API: http://localhost:${PORT}/api/v1/public`);
+    logger.info('API ENDPOINTS:');
+    logger.info(`Auth API:  http://${tailscaleIp}:${PORT}/api/v1/auth`);
+    logger.info(`Admin API: http://${tailscaleIp}:${PORT}/api/v1/admin`);
+    logger.info(`Patient API: http://${tailscaleIp}:${PORT}/api/v1/patient`);
+    logger.info(`Doctor API: http://${tailscaleIp}:${PORT}/api/v1/doctor`);
+    logger.info(`Nurse API:  http://${tailscaleIp}:${PORT}/api/v1/nurse`);
+    logger.info(`Pharmacist API: http://${tailscaleIp}:${PORT}/api/v1/pharmacist`);
+    logger.info(`Receptionist API: http://${tailscaleIp}:${PORT}/api/v1/receptionist`);
+    logger.info(`Lab API: http://${tailscaleIp}:${PORT}/api/v1/lab`);
+    logger.info(`Radiology API: http://${tailscaleIp}:${PORT}/api/v1/radiology`);
+    logger.info(`Billing API: http://${tailscaleIp}:${PORT}/api/v1/billing`);
+    logger.info(`Staff API: http://${tailscaleIp}:${PORT}/api/v1/staff`);
+    logger.info(`Security API: http://${tailscaleIp}:${PORT}/api/v1/security`);
+    logger.info(`Employee API: http://${tailscaleIp}:${PORT}/api/v1/employee`);
+    logger.info(`Dashboard API: http://${tailscaleIp}:${PORT}/api/v1/dashboard`);
+    logger.info(`Public API: http://${tailscaleIp}:${PORT}/api/v1/public`);
+    logger.info(`API Key Management: http://${tailscaleIp}:${PORT}/api/v1/admin/api-keys`);
     logger.info('─'.repeat(40));
+    logger.info('SERVER & APP INFO:');
     logger.info(`Team: OctNov`);
     logger.info(`Lead: Koushal Jha`);
     logger.info(`Server PID: ${process.pid}`);
     logger.info(`Node Version: ${process.version}`);
     logger.info(`Environment: ${config.server.env}`);
     logger.info(`API Version: ${config.server.api.version}`);
-    logger.info(`Config Version: 3.3.0`);
+    logger.info(`Config Version: 3.7.0`);
     logger.info('='.repeat(40) + '\n');
 });
 
